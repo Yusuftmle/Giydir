@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NanoBanana - AI Virtual Try-On for Boutiques</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>/* Custom styles for the comparison slider effect */
+.comparison-slider {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden
+    }
+.comparison-after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuB3Q1mFKQMY0CgZYaW2YlV0yBCfjgXUCiOAvMShPJmD367xDnSwpIHRRmMIr0fKPEZ6tcbnj1k-FmI3z_2M61yfmTMBN-TcaW3uzQRjsGIN04nOJvi_7QjjDPJrDsLTPCCNpyZ5i45nxRzTUwJsaseZpqYSwGIxYCxBl3YeYig5PqaTI1oBOHGhVWC24Kn8s6_EweorXwuyos4q6MopTVMFXr8eO3Gf2wQuwXV1Y5KG4hI7MDcH9Dcl-CW4Q6qp3_oQ9zZ__wRdGpSR);
+    /* AI Model */
+    background-size: cover;
+    background-position: center
+    }
+.comparison-before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 50%;
+    background-image: url(https://lh3.googleusercontent.com/aida-public/AB6AXuA7dzI3kocFAakFKFxG4PkS-M011TSxmpJhY8gsnb8m8wMRlzSLM6W_DnV0A7NOlffgB_LL2u_CZFVpO99_uG9S18fpOlr9od-Xk7w3Ll9NCFrnKsP1ebYdsyVLldwQqI34eS0fawOxvytYUX4txgcuiv-2n-0e3s6KfT8EGfcQWIdUs4SYpni7NdR9m2wckp0AKQ5XYEhBByWUBUsz2NJ4ihn3iGfEIh86KQ8WLuIvvXKd7_DhsebnU7t7UEpIbi-Xip1TgmOLFzzT);
+    /* Flat Lay */
+    background-size: cover;
+    background-position: center;
+    border-right: 2px solid #135bec;
+    z-index: 10
+    }
+.slider-handle {
+    position: absolute;
+    top: 50%;
+    right: -20px;
+    transform: translatey(-50%);
+    width: 40px;
+    height: 40px;
+    background-color: #135bec;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 15px rgba(19, 91, 236, 0.5);
+    z-index: 20;
+    cursor: ew-resize
+    }
+/* Glassmorphism utility */
+.glass {
+    background: rgba(16, 22, 34, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05)
+    }</style>
+</head>
+<body class="font-display bg-background-light dark:bg-background-dark text-gray-900 dark:text-gray-100 antialiased selection:bg-primary selection:text-white">
+<!-- Navigation -->
+<nav class="fixed top-0 w-full z-50 glass border-b border-white/5">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-20">
+<div class="flex-shrink-0 flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center">
+<span class="text-white font-bold text-xl">N</span>
+</div>
+<span class="font-bold text-xl tracking-tight text-white">NanoBanana</span>
+</div>
+<div class="hidden md:block">
+<div class="ml-10 flex items-baseline space-x-8">
+<a class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors" href="#">Features</a>
+<a class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors" href="#">How it Works</a>
+<a class="text-gray-300 hover:text-white px-3 py-2 rounded-md text-sm font-medium transition-colors" href="#">Pricing</a>
+</div>
+</div>
+<div>
+<a class="bg-white text-background-dark hover:bg-gray-100 px-5 py-2.5 rounded-lg text-sm font-bold transition-all transform hover:scale-105" href="#">
+                        Start Free Trial
+                    </a>
+</div>
+</div>
+</div>
+</nav>
+<!-- Hero Section -->
+<section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+<!-- Background Gradient Glow -->
+<div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-primary/20 blur-[120px] rounded-full pointer-events-none"></div>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+<div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+<!-- Text Content -->
+<div class="text-center lg:text-left">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-6">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="text-xs font-semibold text-primary uppercase tracking-wider">New AI Model V2.0</span>
+</div>
+<h1 class="text-5xl lg:text-7xl font-bold tracking-tight text-white mb-6 leading-tight">
+                        Transform Your Boutique with <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-400">AI Models</span>
+</h1>
+<p class="text-lg text-gray-400 mb-8 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
+                        Stop spending thousands on photoshoots. Turn simple flat-lay clothing photos into professional on-model photography in seconds using our generative AI engine.
+                    </p>
+<div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+<a class="inline-flex justify-center items-center px-8 py-4 border border-transparent text-base font-semibold rounded-xl text-white bg-primary hover:bg-blue-600 transition-all shadow-lg shadow-primary/25" href="#">
+                            Get Started Free
+                            <span class="material-icons ml-2 text-sm">arrow_forward</span>
+</a>
+<a class="inline-flex justify-center items-center px-8 py-4 border border-white/10 text-base font-semibold rounded-xl text-white bg-white/5 hover:bg-white/10 transition-all backdrop-blur-sm" href="#">
+                            View Demo Gallery
+                        </a>
+</div>
+<div class="mt-10 flex items-center justify-center lg:justify-start gap-4 text-sm text-gray-500">
+<div class="flex -space-x-2">
+<img alt="User Avatar 1" class="inline-block h-8 w-8 rounded-full ring-2 ring-background-dark object-cover" data-alt="Portrait of a young woman" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDECPc8TCm_oi0jEAxF5Swpk4vlFBKtLCKHA2Qr_pDQr21fuatapsnVl6mLxCkE5mJ1uDqHERrpYLxlFaGMPoMUbMiCHOxXmsrr9COcWwOjFvi6CU8YI_4rByXYZxHAQLnZe8nbD_DGJWX3Wr8Hu1n79vVhRu2DiaAk92lwbuSKwiDwi_iEri-vaZSoeH_IZTKDaxqlFq8YX1uURSepvJ7F88_8TE9pQv_eQYt_1_cXS2HQHV9pNvpToQOOY2n-tCyHjHkNxr5x5_OF"/>
+<img alt="User Avatar 2" class="inline-block h-8 w-8 rounded-full ring-2 ring-background-dark object-cover" data-alt="Portrait of a young man" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDEaBoDp2E-e6rQ451qzaGsu-AVYB7w44pYl29QHc63hC_uEHijOuFg8nLROq4mMY82Vn4cfpy7ATWhRsbXcy2rgcBbc7lATMeWTOImII4fuLlgsf_GANI_NIlfjaDB8qEycKCCiT1Evckt5GOL3U0Z9szwe70NB0P08kDObWkBffjpC9Nu9VKKwQPig_9vN02g5iar61F6TcmDX406R0ialPtTlVuNTdRU6mJC4-PP-dRGjvF60SoaLYZD-mUDW0yzORIPUbeazZHA"/>
+<img alt="User Avatar 3" class="inline-block h-8 w-8 rounded-full ring-2 ring-background-dark object-cover" data-alt="Portrait of a smiling man" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC8a189l5jTtI3ZewE4F4X1CElmkgqw1Z4ifeceGbIp_rRFZxhEOVVsD6o0glE3sCn260T71xIR9yfPIKGKN0w_-vyM9_9JLWba_2vuaiTAEqUbD5cJplaVNifQDAmuywtDpprBYNXZms7u2gxWkonbeIJ1Q5n5uqQ6CIAfmutkhPjuPumd3Jlgh7PGYN1hB1tzlBO6tOHrip81_AfTWnxHGgetn_I9JNPTYhEnI9scDdSZFaEKjBI4ZQnK5HdUr-0AF3a14VO4wvW-"/>
+</div>
+<p>Trusted by 2,000+ Boutique Owners</p>
+</div>
+</div>
+<!-- Interactive Visual -->
+<div class="relative group">
+<div class="absolute -inset-1 bg-gradient-to-r from-primary to-purple-600 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-1000"></div>
+<div class="relative rounded-2xl overflow-hidden aspect-[4/5] shadow-2xl border border-white/10 bg-background-dark">
+<!-- Label -->
+<div class="absolute top-4 left-4 z-30 bg-black/60 backdrop-blur-md text-white text-xs font-bold px-3 py-1.5 rounded-full border border-white/10">
+                            Drag to compare
+                        </div>
+<!-- Comparison Slider Logic (Visual representation only for this output) -->
+<div class="comparison-slider">
+<div class="comparison-after" data-alt="AI generated fashion model wearing clothes"></div> <!-- Background Image (After) -->
+<div class="comparison-before" data-alt="Flat lay clothing photography on table"> <!-- Foreground Image (Before) -->
+<div class="slider-handle">
+<span class="material-icons text-white text-sm">code</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Social Proof -->
+<section class="py-10 border-y border-white/5 bg-white/5 relative overflow-hidden">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<p class="text-center text-sm font-semibold text-gray-500 uppercase tracking-widest mb-8">Powering next-gen fashion commerce</p>
+<div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 items-center opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
+<!-- Logo Placeholders using simple text/svg style representation -->
+<div class="flex justify-center"><h3 class="text-xl font-bold text-white tracking-tighter">VOGUE<span class="font-light">style</span></h3></div>
+<div class="flex justify-center"><h3 class="text-xl font-serif font-bold text-white">LUMIÈRE</h3></div>
+<div class="flex justify-center"><h3 class="text-xl font-mono font-bold text-white">MODA.AI</h3></div>
+<div class="flex justify-center"><h3 class="text-xl font-bold italic text-white">FashionWeek</h3></div>
+<div class="hidden lg:flex justify-center"><h3 class="text-xl font-bold text-white tracking-widest">BOUTIQUE</h3></div>
+</div>
+</div>
+</section>
+<!-- How It Works -->
+<section class="py-24 relative">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="text-center mb-16">
+<h2 class="text-3xl md:text-4xl font-bold text-white mb-4">From Flat-Lay to Runway in 3 Steps</h2>
+<p class="text-gray-400 max-w-2xl mx-auto">Our AI understands fabric physics and lighting, ensuring your clothes look natural on any body type.</p>
+</div>
+<div class="grid md:grid-cols-3 gap-8 relative">
+<!-- Connecting Line (Desktop) -->
+<div class="hidden md:block absolute top-12 left-[16%] right-[16%] h-0.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent z-0"></div>
+<!-- Step 1 -->
+<div class="relative z-10 group">
+<div class="glass p-8 rounded-2xl h-full border border-white/5 hover:border-primary/50 transition-all hover:-translate-y-1">
+<div class="w-16 h-16 rounded-xl bg-background-dark border border-white/10 flex items-center justify-center mb-6 shadow-lg shadow-black/50 mx-auto group-hover:bg-primary/20 transition-colors">
+<span class="material-icons text-primary text-3xl">cloud_upload</span>
+</div>
+<h3 class="text-xl font-bold text-white mb-3 text-center">1. Upload Flat-Lay</h3>
+<p class="text-gray-400 text-center text-sm leading-relaxed">
+                            Simply drag and drop your clothing photos. No mannequin needed, just a flat surface.
+                        </p>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="relative z-10 group">
+<div class="glass p-8 rounded-2xl h-full border border-white/5 hover:border-primary/50 transition-all hover:-translate-y-1">
+<div class="w-16 h-16 rounded-xl bg-background-dark border border-white/10 flex items-center justify-center mb-6 shadow-lg shadow-black/50 mx-auto group-hover:bg-primary/20 transition-colors">
+<span class="material-icons text-primary text-3xl">face_retouching_natural</span>
+</div>
+<h3 class="text-xl font-bold text-white mb-3 text-center">2. Select Model</h3>
+<p class="text-gray-400 text-center text-sm leading-relaxed">
+                            Choose from our diverse library of AI models tailored to your brand's aesthetic and demographic.
+                        </p>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="relative z-10 group">
+<div class="glass p-8 rounded-2xl h-full border border-white/5 hover:border-primary/50 transition-all hover:-translate-y-1">
+<div class="w-16 h-16 rounded-xl bg-background-dark border border-white/10 flex items-center justify-center mb-6 shadow-lg shadow-black/50 mx-auto group-hover:bg-primary/20 transition-colors">
+<span class="material-icons text-primary text-3xl">download_done</span>
+</div>
+<h3 class="text-xl font-bold text-white mb-3 text-center">3. Download Assets</h3>
+<p class="text-gray-400 text-center text-sm leading-relaxed">
+                            Get high-resolution, photorealistic images instantly ready for your Instagram or Shopify store.
+                        </p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Pricing Section -->
+<section class="py-24 bg-background-dark relative overflow-hidden">
+<!-- Decoration -->
+<div class="absolute right-0 top-1/4 w-96 h-96 bg-primary/10 blur-[100px] rounded-full pointer-events-none"></div>
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+<div class="text-center mb-16">
+<h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Simple Pricing for Growing Brands</h2>
+<p class="text-gray-400 max-w-2xl mx-auto">Choose the plan that fits your inventory volume.</p>
+</div>
+<div class="grid lg:grid-cols-3 gap-8 max-w-5xl mx-auto items-start">
+<!-- Starter Tier -->
+<div class="glass p-8 rounded-2xl border border-white/5 hover:border-white/20 transition-all">
+<h3 class="text-lg font-medium text-gray-300 mb-2">Starter</h3>
+<div class="flex items-baseline gap-1 mb-6">
+<span class="text-4xl font-bold text-white">$0</span>
+<span class="text-gray-500">/mo</span>
+</div>
+<p class="text-sm text-gray-400 mb-6">Perfect for testing the waters with a few items.</p>
+<a class="block w-full py-3 px-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-center text-white font-semibold transition-colors mb-8" href="#">Start Free Trial</a>
+<ul class="space-y-4 text-sm text-gray-300">
+<li class="flex items-center gap-3">
+<span class="material-icons text-primary text-sm">check</span>
+                            5 AI Generations / month
+                        </li>
+<li class="flex items-center gap-3">
+<span class="material-icons text-primary text-sm">check</span>
+                            Standard Resolution
+                        </li>
+<li class="flex items-center gap-3">
+<span class="material-icons text-primary text-sm">check</span>
+                            1 Model Choice
+                        </li>
+</ul>
+</div>
+<!-- Boutique Tier (Highlighted) -->
+<div class="relative bg-gradient-to-b from-primary/20 to-background-dark p-8 rounded-2xl border border-primary/50 shadow-2xl shadow-primary/10 transform lg:-translate-y-4">
+<div class="absolute top-0 right-0 bg-primary text-white text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-lg">POPULAR</div>
+<h3 class="text-lg font-medium text-primary mb-2">Boutique</h3>
+<div class="flex items-baseline gap-1 mb-6">
+<span class="text-4xl font-bold text-white">$49</span>
+<span class="text-gray-500">/mo</span>
+</div>
+<p class="text-sm text-gray-300 mb-6">For active sellers updating inventory weekly.</p>
+<a class="block w-full py-3 px-4 bg-primary hover:bg-blue-600 rounded-lg text-center text-white font-semibold transition-colors mb-8 shadow-lg shadow-primary/25" href="#">Get Started</a>
+<ul class="space-y-4 text-sm text-white">
+<li class="flex items-center gap-3">
+<span class="material-icons text-primary text-sm">check_circle</span>
+<span class="font-medium">50 AI Generations / month</span>
+</li>
+<li class="flex items-center gap-3">
+<span class="material-icons text-primary text-sm">check_circle</span>
+                            4K High Resolution
+                        </li>
+<li class="flex items-center gap-3">
+<span class="material-icons text-primary text-sm">check_circle</span>
+                            Full Model Library Access
+                        </li>
+<li class="flex items-center gap-3">
+<span class="material-icons text-primary text-sm">check_circle</span>
+                            Priority Support
+                        </li>
+</ul>
+</div>
+<!-- Agency Tier -->
+<div class="glass p-8 rounded-2xl border border-white/5 hover:border-white/20 transition-all">
+<h3 class="text-lg font-medium text-gray-300 mb-2">Agency</h3>
+<div class="flex items-baseline gap-1 mb-6">
+<span class="text-4xl font-bold text-white">$199</span>
+<span class="text-gray-500">/mo</span>
+</div>
+<p class="text-sm text-gray-400 mb-6">High volume production for multiple brands.</p>
+<a class="block w-full py-3 px-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-center text-white font-semibold transition-colors mb-8" href="#">Contact Sales</a>
+<ul class="space-y-4 text-sm text-gray-300">
+<li class="flex items-center gap-3">
+<span class="material-icons text-primary text-sm">check</span>
+                            Unlimited Generations
+                        </li>
+<li class="flex items-center gap-3">
+<span class="material-icons text-primary text-sm">check</span>
+                            Custom Model Training
+                        </li>
+<li class="flex items-center gap-3">
+<span class="material-icons text-primary text-sm">check</span>
+                            API Access
+                        </li>
+<li class="flex items-center gap-3">
+<span class="material-icons text-primary text-sm">check</span>
+                            Dedicated Account Manager
+                        </li>
+</ul>
+</div>
+</div>
+</div>
+</section>
+<!-- Testimonial Section -->
+<section class="py-20 relative border-t border-white/5">
+<div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+<span class="material-icons text-primary text-5xl mb-6 opacity-50">format_quote</span>
+<blockquote class="text-2xl md:text-3xl font-medium text-white mb-8 leading-relaxed">
+                "NanoBanana completely changed how we launch new collections. We went from spending $5k per photoshoot to $49/month, and the engagement on our Instagram has doubled."
+            </blockquote>
+<div class="flex items-center justify-center gap-4">
+<img alt="Sarah Jenkins" class="w-12 h-12 rounded-full object-cover ring-2 ring-primary" data-alt="Professional headshot of a smiling woman" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbRYYEXpo_pL13QzQLrslrb-BxYfgIQoP50zeTHYVaLVGnfrs__0DHAbckgajDbErVeWeK83ifgQNzKoI3mgt7WidoLboE3uuDMyr7BJAGGP75e5fAP7oULhYht6QALFK1CiGP9YNY-JxH8l3Bd-BIJGIrWm4GPgpl1ABR4Bi6QWnj-nA5VxjpDolw1nj8kF58i8zG9NHsNwubp56jN3u_D_-K5KDzM3sNX3hO9aL1KluJ6TC8RF_Bwz_ZAGhFdjbLaCMHxB_6wIzA"/>
+<div class="text-left">
+<div class="text-white font-bold">Sarah Jenkins</div>
+<div class="text-primary text-sm">Owner, The Velvet Loft</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer -->
+<footer class="bg-black py-12 border-t border-white/10">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+<div class="col-span-2 md:col-span-1">
+<div class="flex items-center gap-2 mb-4">
+<div class="w-6 h-6 rounded bg-primary flex items-center justify-center">
+<span class="text-white font-bold text-xs">N</span>
+</div>
+<span class="font-bold text-lg text-white">NanoBanana</span>
+</div>
+<p class="text-gray-500 text-sm mb-6">Empowering fashion commerce with next-generation AI visualization tools.</p>
+</div>
+<div>
+<h4 class="text-white font-bold mb-4">Product</h4>
+<ul class="space-y-2 text-sm text-gray-400">
+<li><a class="hover:text-primary transition-colors" href="#">Virtual Try-On</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Model Library</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Pricing</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">API</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-white font-bold mb-4">Company</h4>
+<ul class="space-y-2 text-sm text-gray-400">
+<li><a class="hover:text-primary transition-colors" href="#">About Us</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Blog</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Careers</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Contact</a></li>
+</ul>
+</div>
+<div>
+<h4 class="text-white font-bold mb-4">Legal</h4>
+<ul class="space-y-2 text-sm text-gray-400">
+<li><a class="hover:text-primary transition-colors" href="#">Privacy Policy</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Terms of Service</a></li>
+<li><a class="hover:text-primary transition-colors" href="#">Cookie Policy</a></li>
+</ul>
+</div>
+</div>
+<div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="text-gray-600 text-sm">© 2024 NanoBanana Inc. All rights reserved.</p>
+<div class="flex space-x-6">
+<a class="text-gray-500 hover:text-white transition-colors" href="#">
+<span class="sr-only">Twitter</span>
+<svg class="h-5 w-5" fill="currentColor" viewbox="0 0 24 24"><path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path></svg>
+</a>
+<a class="text-gray-500 hover:text-white transition-colors" href="#">
+<span class="sr-only">Instagram</span>
+<svg class="h-5 w-5" fill="currentColor" viewbox="0 0 24 24"><path clip-rule="evenodd" d="M12.315 2c2.43 0 2.784.013 3.808.06 1.064.049 1.791.218 2.427.465a4.902 4.902 0 011.772 1.153 4.902 4.902 0 011.153 1.772c.247.636.416 1.363.465 2.427.048 1.067.06 1.407.06 4.123v.08c0 2.643-.012 2.987-.06 4.043-.049 1.064-.218 1.791-.465 2.427a4.902 4.902 0 01-1.153 1.772 4.902 4.902 0 01-1.772 1.153c-.636.247-1.363.416-2.427.465-1.067.048-1.407.06-4.123.06h-.08c-2.643 0-2.987-.012-4.043-.06-1.064-.049-1.791-.218-2.427-.465a4.902 4.902 0 01-1.772-1.153 4.902 4.902 0 01-1.153-1.772c-.247-.636-.416-1.363-.465-2.427-.047-1.024-.06-1.379-.06-3.808v-.63c0-2.43.013-2.784.06-3.808.049-1.064.218-1.791.465-2.427a4.902 4.902 0 011.153-1.772A4.902 4.902 0 015.468 2.37c.636-.247 1.363-.416 2.427-.465C8.901 2.013 9.256 2 11.685 2h.63zm-.081 1.802h-.468c-2.456 0-2.784.011-3.807.058-.975.045-1.504.207-1.857.344-.467.182-.8.398-1.15.748-.35.35-.566.683-.748 1.15-.137.353-.3.882-.344 1.857-.047 1.023-.058 1.351-.058 3.807v.468c0 2.456.011 2.784.058 3.807.045.975.207 1.504.344 1.857.182.466.399.8.748 1.15.35.35.683.566 1.15.748.353.137.882.3 1.857.344 1.054.048 1.37.058 4.041.058h.08c2.597 0 2.917-.01 3.96-.058.976-.045 1.505-.207 1.858-.344.466-.182.8-.398 1.15-.748.35-.35.566-.683.748-1.15.137-.353.3-.882.344-1.857.048-1.055.058-1.37.058-4.041v-.08c0-2.597-.01-2.917-.058-3.96-.045-.976-.207-1.505-.344-1.858a3.097 3.097 0 00-.748-1.15 3.098 3.098 0 00-1.15-.748c-.353-.137-.882-.3-1.857-.344-1.023-.047-1.351-.058-3.807-.058zM12 6.865a5.135 5.135 0 110 10.27 5.135 5.135 0 010-10.27zm0 1.802a3.333 3.333 0 100 6.666 3.333 3.333 0 000-6.666zm5.338-3.205a1.2 1.2 0 110 2.4 1.2 1.2 0 010-2.4z" fill-rule="evenodd"></path></svg>
+</a>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

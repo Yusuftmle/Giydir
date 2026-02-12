@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NanoBanana - Project History</title>
+<!-- Google Fonts: Space Grotesk -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Icons -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13c8ec",
+                        "background-light": "#f6f8f8",
+                        "background-dark": "#101f22",
+                    },
+                    fontFamily: {
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar for webkit */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #101f22; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2a3e42; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #13c8ec; 
+        }
+        
+        .masonry-grid {
+            column-count: 1;
+            column-gap: 1.5rem;
+        }
+        @media (min-width: 640px) {
+            .masonry-grid { column-count: 2; }
+        }
+        @media (min-width: 1024px) {
+            .masonry-grid { column-count: 3; }
+        }
+        @media (min-width: 1280px) {
+            .masonry-grid { column-count: 4; }
+        }
+        
+        .masonry-item {
+            break-inside: avoid;
+            margin-bottom: 1.5rem;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200 font-display transition-colors duration-300 min-h-screen flex flex-col">
+<!-- Navbar -->
+<nav class="sticky top-0 z-50 w-full backdrop-blur-xl bg-background-light/80 dark:bg-background-dark/80 border-b border-primary/10">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-20">
+<!-- Logo -->
+<div class="flex-shrink-0 flex items-center gap-2">
+<div class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-background-dark font-bold text-xl">
+                        N
+                    </div>
+<span class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">NanoBanana</span>
+</div>
+<!-- Center Nav (Desktop) -->
+<div class="hidden md:flex items-center space-x-8">
+<a class="text-sm font-medium text-primary hover:text-primary transition-colors" href="#">Gallery</a>
+<a class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">Studio</a>
+<a class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">Models</a>
+<a class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors" href="#">Billing</a>
+</div>
+<!-- Right Side Actions -->
+<div class="flex items-center gap-4">
+<!-- Credits Pill -->
+<div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20">
+<span class="material-icons-outlined text-primary text-sm">bolt</span>
+<span class="text-sm font-bold text-primary">240 Credits</span>
+</div>
+<!-- User Profile -->
+<div class="flex items-center gap-3 pl-4 border-l border-slate-200 dark:border-slate-800">
+<div class="text-right hidden sm:block">
+<p class="text-sm font-semibold text-slate-900 dark:text-white">Sarah Jenkins</p>
+<p class="text-xs text-slate-500 dark:text-slate-400">Pro Plan</p>
+</div>
+<img alt="User Profile" class="h-10 w-10 rounded-full border-2 border-primary/30 object-cover" data-alt="Profile picture of a smiling woman with long hair" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcaZ71f4ERmuKx2EwQ76RxXzj3CiEW7ZHXQE8f9qoX45nmVQDScd8eoDjudGSW7zhgsnnzIEUKAbLD6WS2rq837eDryD4yFVr7BfjQw_NnlerYP2NmSKnLSBd0x7nWl_uGcYj2tUrsOXoM1QB-J1YLCo8ThvvcyfRn7CaU-F4MvfgxbcEIIgJJqE2dhU_c85Mnh34migkUfQ_TAQ-HvWwhVValdcxnm2hIYPI0iaj3ISSzmGWA4S5yRxGsyiBTetD70pF3d4qpdaYk"/>
+</div>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+<!-- Page Header & Filters -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">My Projects</h1>
+<p class="text-slate-500 dark:text-slate-400">Manage your virtual try-on generations and history.</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+<!-- Search -->
+<div class="relative group w-full sm:w-64">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-icons-outlined text-slate-400 group-focus-within:text-primary transition-colors">search</span>
+</div>
+<input class="block w-full pl-10 pr-3 py-2.5 border border-slate-200 dark:border-slate-700 rounded-lg leading-5 bg-white dark:bg-slate-800/50 text-slate-900 dark:text-white placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm transition-all shadow-sm" placeholder="Search projects..." type="text"/>
+</div>
+<!-- Create New Button -->
+<button class="flex items-center justify-center gap-2 px-6 py-2.5 bg-primary hover:bg-primary/90 text-background-dark font-semibold rounded-lg shadow-lg shadow-primary/20 transition-all transform active:scale-95 whitespace-nowrap">
+<span class="material-icons-outlined text-lg">add_circle</span>
+                    New Project
+                </button>
+</div>
+</div>
+<!-- Filter Tabs -->
+<div class="flex items-center gap-2 mb-8 overflow-x-auto pb-2 scrollbar-hide">
+<button class="px-4 py-2 rounded-full text-sm font-medium bg-primary text-background-dark shadow-sm">All Projects</button>
+<button class="px-4 py-2 rounded-full text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Completed</button>
+<button class="px-4 py-2 rounded-full text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors flex items-center gap-2">
+                Processing 
+                <span class="flex h-2 w-2 relative">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+</span>
+</button>
+<button class="px-4 py-2 rounded-full text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">Failed</button>
+</div>
+<!-- Masonry Grid -->
+<div class="masonry-grid">
+<!-- Card 1: Completed (Tall) -->
+<div class="masonry-item group relative bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 rounded-xl overflow-hidden shadow-sm hover:shadow-xl hover:border-primary/50 transition-all duration-300">
+<!-- Main Image -->
+<div class="relative overflow-hidden aspect-[3/4]">
+<img alt="Woman in colorful floral dress fashion shot" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="Fashion model wearing a vibrant floral summer dress" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCItIcXme0RcNrD1P5KqjaqI0uM_DSLaZnavo302BXpG-JtmH6ugAH7DJ75ldgbPdGaZOPveWugpfba9Ih9XW2C_csrMAdpnxsexhfg_g6q1Dsg9y33-eCdXlb636yXyYSZX6dP7Y5LAre6B3FU4fZwqavUERWPN64wQ9gDz0DFdRUme4umVf8kLjRW9J7qmOnkpKEBVKnbS_5sQSMW5vLBLvAF1Je1PCfFb5CvQ0OOq8UjyVaGk2UQdYWyzpILWsSLKdgjDtcT4XZW"/>
+<!-- Hover Actions Overlay -->
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+<div class="flex gap-2 justify-center mb-2 translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-75">
+<button class="p-2 rounded-full bg-white text-slate-900 hover:bg-primary hover:text-white transition-colors shadow-lg" title="Download">
+<span class="material-icons-outlined text-lg">download</span>
+</button>
+<button class="p-2 rounded-full bg-white text-slate-900 hover:bg-primary hover:text-white transition-colors shadow-lg" title="Share">
+<span class="material-icons-outlined text-lg">share</span>
+</button>
+<button class="p-2 rounded-full bg-white text-red-500 hover:bg-red-500 hover:text-white transition-colors shadow-lg" title="Delete">
+<span class="material-icons-outlined text-lg">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Content Body -->
+<div class="p-4">
+<div class="flex justify-between items-start mb-3">
+<div>
+<h3 class="font-bold text-slate-900 dark:text-white leading-tight">Summer Floral Dress</h3>
+<p class="text-xs text-slate-500 mt-1">Model: Sarah K. • Size M</p>
+</div>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border border-green-200 dark:border-green-800">
+                            Completed
+                        </span>
+</div>
+<!-- Inset Sources -->
+<div class="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-700">
+<div class="flex items-center space-x-2">
+<!-- Garment Thumb -->
+<div class="w-8 h-8 rounded-md overflow-hidden border border-slate-200 dark:border-slate-600 relative group/tooltip">
+<img alt="Thumb garment" class="w-full h-full object-cover" data-alt="Thumbnail of a floral dress on a hanger" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDprgcxgyWhKSaWZalRijVG6yVFa_nLDcBPC5piB3uDaiJFP9yICJomyt4qXDICsCZ3N6eqqgHW-lW_pk9ZJ5fGEkICIlZ4WdWcMOOAWkW_geuEH8x_Ror5eQaSKqPHm4ZEM8nGhZSlYStDAt2VNFcNkx_TAI282zUxUWJf0LHAuQ-qggqVPTNkMOnt--T9cXXLf4jAsO06DlveAEBokx3-gMr-HOGChWo4PgEIa-p8vmQCNQjKcChMMN58YrnI-8nVg5Lzosy2uIgq"/>
+</div>
+<span class="text-slate-300 text-xs">+</span>
+<!-- Model Thumb -->
+<div class="w-8 h-8 rounded-full overflow-hidden border border-slate-200 dark:border-slate-600">
+<img alt="Thumb model" class="w-full h-full object-cover" data-alt="Thumbnail of a model's face looking forward" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1Ct9nUBDcOD1waftP8N0ho7_SQV7_bWYPQkzXUc82ihLjeb_l-gtHrF3giJh10ClfNMx1HdaJrMTrdj8k8Q0wIKY8RBsAi0iBxkRK40tbJoDY4znktee9B2tkaIXhCpFRUN8xBuW10B9OR5sFkDOQBDVLilQp9GVh4he32Tpyyhqec510Y8EHA7Xk0Jf5R-w7IslpjmcKdCpCE8VwaJbSzpIeRvExzEzDkCDg-u6l5U8GS__07qICzxYs99bBrAyXgsheS_beSw8r"/>
+</div>
+</div>
+<span class="text-xs text-slate-400">2h ago</span>
+</div>
+</div>
+</div>
+<!-- Card 2: Processing (Square) -->
+<div class="masonry-item bg-white dark:bg-slate-800/40 border border-primary/30 rounded-xl overflow-hidden shadow-lg shadow-primary/5">
+<div class="relative aspect-square bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+<div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+<div class="text-center z-10 p-6">
+<div class="relative w-16 h-16 mx-auto mb-4">
+<div class="absolute inset-0 border-4 border-slate-700 rounded-full"></div>
+<div class="absolute inset-0 border-4 border-primary rounded-full border-t-transparent animate-spin"></div>
+</div>
+<p class="text-primary font-semibold animate-pulse">Generating...</p>
+<p class="text-xs text-slate-500 mt-2">Estimated: 12s</p>
+</div>
+</div>
+<div class="p-4 bg-white dark:bg-slate-800/60">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-bold text-slate-900 dark:text-white">Urban Streetwear Set</h3>
+<p class="text-xs text-slate-500 mt-1">Applying physics...</p>
+</div>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400 border border-yellow-200 dark:border-yellow-800">
+                            Processing
+                        </span>
+</div>
+</div>
+</div>
+<!-- Card 3: Completed (Wide/Short) -->
+<div class="masonry-item group relative bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 rounded-xl overflow-hidden shadow-sm hover:shadow-xl hover:border-primary/50 transition-all duration-300">
+<div class="relative overflow-hidden aspect-[4/3]">
+<img alt="Model in black velvet evening gown" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="Elegant woman wearing a black velvet evening dress" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA1MdD86IMMFuJZsTtyR1XfLWTVf1b5jWo7G6ioHBpA4-weIEfP-zuNpeZWw6j84_uvrTckMSJuxjKauJ8aLBrnckxaLEoz8rensCZF25oiMKpCfbAJTMHWnpOOTKBecyMq4MojKbJHkOtP6wgV7FFHnKmZCaX3TbuPzvdV7WXgLyoUI9pA-GtNC3aXhQkxW6MBKxbj8UE25kKAkiOlwFRnWeritI1tkJX76LoKpn4dkpKxbVVLFqbD1Pag0tx7A1bFgLwr17_piQPW"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+<div class="flex gap-2 justify-center mb-2 translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-75">
+<button class="p-2 rounded-full bg-white text-slate-900 hover:bg-primary hover:text-white transition-colors shadow-lg"><span class="material-icons-outlined text-lg">download</span></button>
+<button class="p-2 rounded-full bg-white text-slate-900 hover:bg-primary hover:text-white transition-colors shadow-lg"><span class="material-icons-outlined text-lg">share</span></button>
+</div>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-3">
+<div>
+<h3 class="font-bold text-slate-900 dark:text-white">Velvet Evening Gown</h3>
+<p class="text-xs text-slate-500 mt-1">High Resolution • 4K</p>
+</div>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border border-green-200 dark:border-green-800">
+                            Completed
+                        </span>
+</div>
+<div class="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-700">
+<div class="flex items-center space-x-2">
+<div class="w-8 h-8 rounded-md overflow-hidden border border-slate-200 dark:border-slate-600">
+<img alt="Dress thumb" class="w-full h-full object-cover" data-alt="Thumbnail of a black evening gown" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDC219YoByrDNEYzW4ekMg-ggVPX_CTS8e9DpapEyT_4ghwdDN4z1JQcuZ5fHFAy4_bslCwgW0PyYxL7koMsqhJ5TsbKVhkGX3EmRGOX9GKmDyyoDgSQGMzqqPWfJBBd5Xqsu0VNuduorMxNE0-6LOMbgbrpPgjwFG7otZhc-usgD3DAxR8hePYmwYiH-pQhM0OAPmXw-6lLke6tq5GQ0BMCkfYbRa1mSISLOlbQ1b6xWU8vkTWP4sab_jw2r5rU_hIdbQo9W-QzTcP"/>
+</div>
+<span class="text-slate-300 text-xs">+</span>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-slate-200 dark:border-slate-600">
+<img alt="Model thumb" class="w-full h-full object-cover" data-alt="Thumbnail of a woman's face" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBv-ziAtJY4aMzYqn_gvGL6kGuI97HdZfCHm2JafBH5T4O0GCzcJ-FyRzHPm39WAI6lNm_0N-93olrILpF0QnbUzun6IEArKTdzo4QPBGUs39PTM4pdAKLmZye9AH1LQJAc-P5HNmAEvZ7_pSUzzs-ldO7o8fAbH1pVL5KyPGFoVpCSC7PG6zwE5_vo4TjdBhDsXRFw00TeNOzECfX_mkZoKzdffyrNJFpG3IdPXrxdUVfgdoQ99tuJ5E0xNlyJvEwcldLLE2EjaWpq"/>
+</div>
+</div>
+<span class="text-xs text-slate-400">Yesterday</span>
+</div>
+</div>
+</div>
+<!-- Card 4: Failed -->
+<div class="masonry-item group relative bg-white dark:bg-slate-800/40 border border-red-200 dark:border-red-900/30 rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all">
+<div class="relative aspect-video bg-slate-100 dark:bg-slate-800 flex flex-col items-center justify-center p-6 text-center">
+<span class="material-icons-outlined text-4xl text-red-400 mb-2">error_outline</span>
+<p class="text-sm text-slate-600 dark:text-slate-400">Generation Failed</p>
+<button class="mt-3 text-xs text-primary hover:underline">View Logs</button>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start">
+<div>
+<h3 class="font-bold text-slate-900 dark:text-white">Denim Jacket V2</h3>
+<p class="text-xs text-red-400 mt-1">Error: Input resolution too low</p>
+</div>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 border border-red-200 dark:border-red-800">
+                            Failed
+                        </span>
+</div>
+<div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-700 flex justify-end">
+<button class="text-xs font-medium text-slate-500 hover:text-white transition-colors flex items-center gap-1">
+<span class="material-icons-outlined text-sm">refresh</span> Retry
+                        </button>
+</div>
+</div>
+</div>
+<!-- Card 5: Completed (Tall) -->
+<div class="masonry-item group relative bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 rounded-xl overflow-hidden shadow-sm hover:shadow-xl hover:border-primary/50 transition-all duration-300">
+<div class="relative overflow-hidden aspect-[3/5]">
+<img alt="Man in casual tech wear outfit" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="Fashion model wearing a futuristic casual outfit in a city setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDsBS2xdbwUVA9V4jwCUUtBR158LRPusRRr1-HavO6VK8KWmsYES0ncYKYMykYuQMAjq2lvrFet_13soqsw4EKs_4iHTdSaq_w-sEQV8B7_Ln6JjF4l-CZZMuX-s_M7snF0cQf2iYTkJ9yFVxAyUogAJ2g1jnYbcAX-E2s5Ft3eDzOQDB3ARgJhVtI2kIBJSRR1YpOfaxIVwwU25apxBmWvfj-tUJP9UTkG8y1efexNIgUkIeOPRE_Xi4vGHZ7l58RIfHNGoyE9fUHP"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+<div class="flex gap-2 justify-center mb-2 translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-75">
+<button class="p-2 rounded-full bg-white text-slate-900 hover:bg-primary hover:text-white transition-colors shadow-lg"><span class="material-icons-outlined text-lg">download</span></button>
+<button class="p-2 rounded-full bg-white text-slate-900 hover:bg-primary hover:text-white transition-colors shadow-lg"><span class="material-icons-outlined text-lg">share</span></button>
+</div>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-3">
+<div>
+<h3 class="font-bold text-slate-900 dark:text-white">Techwear Hoodie</h3>
+<p class="text-xs text-slate-500 mt-1">Male Model • Studio Lighting</p>
+</div>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border border-green-200 dark:border-green-800">
+                            Completed
+                        </span>
+</div>
+<div class="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-700">
+<div class="flex items-center space-x-2">
+<div class="w-8 h-8 rounded-md overflow-hidden border border-slate-200 dark:border-slate-600">
+<img alt="Hoodie thumb" class="w-full h-full object-cover" data-alt="Thumbnail of a grey hoodie" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAbzT_cen9RT7Cc6dwYuqY3BMdpnRQkQRhDZElUOMcyHK3sdIXuvS8_eMzykNIrV5KCNF-jeqwoXIt3Wrj6cDwO6OUtHmVYEDoakiSnDCEYont-Wj7iHkoGqu2CpCcvJ0cbV0z_i1OC-jtpFtbPI3gnjauJ5ZVubjaA9NF93ao7S3FQ2LX-WCLyanh-9U_7D5O5pLnDOWHGYm-co1qQJdnAxAYhZk73UZ7GlxkOaXV9tPFhROZ8B4bJ_dKmFqvSC0J6CI7yo5KUMsA3"/>
+</div>
+<span class="text-slate-300 text-xs">+</span>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-slate-200 dark:border-slate-600">
+<img alt="Model thumb" class="w-full h-full object-cover" data-alt="Thumbnail of a man's face" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUIGSVUbdiHHES-iNoApIhJEDzZDZBFE4YjYDGWSMAFXyN_Krvek8dP5yvM0WGn1rxsa_8L_PgexmSaYliF9AK52kw0KJF5JcsIsZLkIGzOiqXGmI9t5GJYHB6YcAwzc0fLNcL801TAKnMrVYEXT9LTSjZQ2kG4cT2biiTAq3nEvKm-5Ohq7gbl6hUlOYrzv0Loft-Twa9F2kXFJM8W9TZcV1anoCsXuwF8UMeMNY0Xn1kNArGhlhyXQgN_-8HYk65gzdoKONuElFa"/>
+</div>
+</div>
+<span class="text-xs text-slate-400">2 days ago</span>
+</div>
+</div>
+</div>
+<!-- Card 6: Completed (Square) -->
+<div class="masonry-item group relative bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 rounded-xl overflow-hidden shadow-sm hover:shadow-xl hover:border-primary/50 transition-all duration-300">
+<div class="relative overflow-hidden aspect-square">
+<img alt="Close up of knitted sweater texture" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="Detailed texture shot of a cozy knitted sweater" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbfEUDYYb77i4NTG8kgtH11PC8fGGy52-Yi6xBqqCqU3BfFpyf1Ui_Kdk2-Vv2_B-tVAOaU0m8eBnFlJU_EyoUIjgQWOWm5ZTHK8YAkQwQm6d3Fn16z2-7HyzYVyzmqeXIG3EdwUKJsi9wE1dOyfZcT6PBeFXqeC3TLD9NCk0QvDBRVfCV2KLbGTTfwlMDiVmkkj1uEEw46ik6CnN93-CGfpd56Z3QHRLQY2K7kSLeOLA7Tlis0rdo3MEziscUCzvWgKlweBKgNg6n"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+<div class="flex gap-2 justify-center mb-2 translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-75">
+<button class="p-2 rounded-full bg-white text-slate-900 hover:bg-primary hover:text-white transition-colors shadow-lg"><span class="material-icons-outlined text-lg">download</span></button>
+<button class="p-2 rounded-full bg-white text-slate-900 hover:bg-primary hover:text-white transition-colors shadow-lg"><span class="material-icons-outlined text-lg">share</span></button>
+</div>
+</div>
+</div>
+<div class="p-4">
+<div class="flex justify-between items-start mb-3">
+<div>
+<h3 class="font-bold text-slate-900 dark:text-white">Wool Sweater Detail</h3>
+<p class="text-xs text-slate-500 mt-1">Macro • Texture Focus</p>
+</div>
+<span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border border-green-200 dark:border-green-800">
+                            Completed
+                        </span>
+</div>
+<div class="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-700">
+<div class="flex items-center space-x-2">
+<div class="w-8 h-8 rounded-md overflow-hidden border border-slate-200 dark:border-slate-600">
+<img alt="Cloth thumb" class="w-full h-full object-cover" data-alt="Thumbnail of white folded clothes" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCREnU3H9J-xKcBcJDS1NgFSNBWyntDDksw1rRBjMl0VpM0jBHP21vaA1O_KQCzO1WeOtsSYDvpiHQNdNMo-riNaIiESBA-MPnBvvixSHY734Rtfs5hVeHlF35gUDAJeRwPW_Kcv1i9vbsm6k6q8KhTCnoOoCGO6T2Y6IBjdS8oaeNFa_zOZVkEp7-UwvW9nq2eDhZyAYhrcELmn-BjjfES71-_m6N1o49c9Xtg_TdwIZJzblFveK7gbFFalRtYXRNHD5VM4_KUR151"/>
+</div>
+<span class="text-slate-300 text-xs">+</span>
+<div class="w-8 h-8 rounded-full overflow-hidden border border-slate-200 dark:border-slate-600">
+<img alt="Model thumb" class="w-full h-full object-cover" data-alt="Thumbnail of a woman looking serious" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDyx-ywlnoKiRRFmH0zDtHnbrZizxvOoZQ7bAl8DflHPsKmjFG8qgltnpbzoW13KPEwxE6DwchUQdxxKDCD_Id1r5mbAs9F9JGvo-WftO7di3izrSolxxP9l8jYxhFyQ0ziZxbT8JBIQfq4BXc9VifYYnP8vfl5fV1qbPavZQoipZHf4Nz7tQzNTKobtJYldo3X6BxT0EPuurLm8FMs4O7rslz7x6PDlyM6jLbzJVoYE9kz1-Vxm80XMtdOhpopZFwrEYIe0XqZhEfI"/>
+</div>
+</div>
+<span class="text-xs text-slate-400">3 days ago</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination / Load More -->
+<div class="mt-10 flex justify-center">
+<button class="group flex items-center gap-2 px-6 py-3 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 hover:border-primary dark:hover:border-primary text-slate-600 dark:text-slate-300 hover:text-primary transition-all shadow-sm">
+<span class="text-sm font-medium">Load More Projects</span>
+<span class="material-icons-outlined text-sm group-hover:translate-y-0.5 transition-transform">expand_more</span>
+</button>
+</div>
+</main>
+<!-- Footer -->
+<footer class="mt-auto border-t border-slate-200 dark:border-slate-800 bg-background-light dark:bg-background-dark py-8">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+<p class="text-sm text-slate-500 dark:text-slate-400">© 2023 NanoBanana AI. All rights reserved.</p>
+<div class="flex items-center space-x-6">
+<a class="text-sm text-slate-400 hover:text-primary transition-colors" href="#">Help Center</a>
+<a class="text-sm text-slate-400 hover:text-primary transition-colors" href="#">Privacy</a>
+<a class="text-sm text-slate-400 hover:text-primary transition-colors" href="#">Terms</a>
+</div>
+</div>
+</footer>
+</body></html>

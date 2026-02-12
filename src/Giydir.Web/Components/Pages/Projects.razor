@@ -1,0 +1,130 @@
+@page "/projects"
+@using Giydir.Core.Interfaces
+@inject IProjectRepository ProjectRepository
+@inject IGeneratedImageRepository ImageRepository
+@rendermode InteractiveServer
+
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
+    <!-- Page Header & Filters -->
+    <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+        <div>
+            <h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">Projelerim</h1>
+            <p class="text-slate-500 dark:text-slate-400">Sanal giyim denemelerinizi ve geçmişinizi yönetin.</p>
+        </div>
+        <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+            <!-- Create New Button -->
+            <a href="/editor" class="flex items-center justify-center gap-2 px-6 py-2.5 bg-primary hover:bg-primary/90 text-background-dark font-semibold rounded-lg shadow-lg shadow-primary/20 transition-all transform active:scale-95 whitespace-nowrap no-underline">
+                <span class="material-icons-outlined text-lg">add_circle</span>
+                Yeni Oluştur
+            </a>
+        </div>
+    </div>
+
+    <!-- Filter Tabs -->
+    <div class="flex items-center gap-2 mb-8 overflow-x-auto pb-2 hide-scrollbar">
+        <button class="px-4 py-2 rounded-full text-sm font-medium @(statusFilter == "All" ? "bg-primary text-background-dark shadow-sm" : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors")"
+                @onclick='() => statusFilter = "All"'>Tüm Projeler</button>
+        <button class="px-4 py-2 rounded-full text-sm font-medium @(statusFilter == "Completed" ? "bg-primary text-background-dark shadow-sm" : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors")"
+                @onclick='() => statusFilter = "Completed"'>Tamamlanan</button>
+        <button class="px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2 @(statusFilter == "Processing" ? "bg-primary text-background-dark shadow-sm" : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors")"
+                @onclick='() => statusFilter = "Processing"'>
+            İşleniyor
+            <span class="flex h-2 w-2 relative">
+                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+            </span>
+        </button>
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="flex items-center justify-center py-20">
+            <div class="relative w-12 h-12">
+                <div class="absolute inset-0 border-4 border-gray-700 rounded-full"></div>
+                <div class="absolute inset-0 border-4 border-primary rounded-full border-t-transparent animate-spin"></div>
+            </div>
+        </div>
+    }
+    else if (projects.Count == 0)
+    {
+        <div class="text-center py-20">
+            <span class="material-icons-outlined text-6xl text-gray-600 mb-4">photo_library</span>
+            <h3 class="text-xl font-bold text-white mb-2">Henüz proje yok</h3>
+            <p class="text-gray-400 mb-6">İlk AI görselinizi oluşturmak için editöre gidin</p>
+            <a href="/editor" class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-background-dark rounded-xl font-semibold no-underline">
+                <span class="material-icons-outlined">add_circle</span>
+                Editöre Git
+            </a>
+        </div>
+    }
+    else
+    {
+        <!-- Project Cards Grid -->
+        <div class="masonry-grid">
+            @foreach (var project in FilteredProjects)
+            {
+                <div class="masonry-item group relative bg-white dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 rounded-xl overflow-hidden shadow-sm hover:shadow-xl hover:border-primary/50 transition-all duration-300">
+                    <!-- Image placeholder -->
+                    <div class="relative overflow-hidden aspect-[3/4] bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center">
+                        <span class="material-icons-outlined text-5xl text-gray-600">auto_awesome</span>
+                        <!-- Hover Actions Overlay -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
+                            <div class="flex gap-2 justify-center mb-2 translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                                <a href="/editor" class="p-2 rounded-full bg-white text-slate-900 hover:bg-primary hover:text-white transition-colors shadow-lg no-underline">
+                                    <span class="material-icons-outlined text-lg">edit</span>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Content Body -->
+                    <div class="p-4">
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 class="font-bold text-slate-900 dark:text-white leading-tight m-0">@project.Name</h3>
+                                <p class="text-xs text-slate-500 mt-1 m-0">@project.ImageCount görsel</p>
+                            </div>
+                            <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border border-green-200 dark:border-green-800">
+                                Aktif
+                            </span>
+                        </div>
+                        <div class="flex items-center justify-between pt-3 border-t border-slate-100 dark:border-slate-700">
+                            <span class="text-xs text-slate-400">@project.CreatedAt.ToString("dd MMM yyyy")</span>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private List<Giydir.Core.DTOs.ProjectDto> projects = new();
+    private bool isLoading = true;
+    private string statusFilter = "All";
+
+    private IEnumerable<Giydir.Core.DTOs.ProjectDto> FilteredProjects => projects;
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var projectEntities = await ProjectRepository.GetByUserIdAsync(1);
+            projects = projectEntities.Select(p => new Giydir.Core.DTOs.ProjectDto
+            {
+                Id = p.Id,
+                Name = p.Name,
+                CreatedAt = p.CreatedAt,
+                ImageCount = p.Images?.Count ?? 0
+            }).ToList();
+        }
+        catch (Exception)
+        {
+            projects = new();
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}
+

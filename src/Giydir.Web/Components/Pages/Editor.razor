@@ -1,0 +1,354 @@
+@page "/editor"
+@using Giydir.Core.DTOs
+@using Giydir.Core.Interfaces
+@inject HttpClient Http
+@inject IVirtualTryOnService TryOnService
+@inject IModelAssetRepository ModelAssetRepository
+@inject ILogger<Editor> Logger
+@rendermode InteractiveServer
+
+<div class="flex h-[calc(100vh-5rem)] overflow-hidden">
+    <!-- Column 1: Upload (Left Sidebar) -->
+    <aside class="w-80 flex-none flex flex-col border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-surface-dark z-10">
+        <div class="p-5 border-b border-gray-200 dark:border-gray-800">
+            <div class="flex items-center justify-between mb-2">
+                <h2 class="text-sm uppercase tracking-wider text-primary font-bold">Adım 1</h2>
+                @if (!string.IsNullOrEmpty(uploadedClothingUrl))
+                {
+                    <span class="material-icons-outlined text-primary text-sm">check_circle</span>
+                }
+            </div>
+            <h3 class="text-xl font-bold mb-1">Kıyafet Seç</h3>
+            <p class="text-xs text-gray-500 dark:text-gray-400">Fotoğraf yükleyin veya galeriden seçin.</p>
+        </div>
+
+        <!-- Drag & Drop Area -->
+        <div class="px-5 pt-5 pb-2 flex-none">
+            <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-6 flex flex-col items-center justify-center text-center transition-all hover:border-primary hover:bg-primary/5 cursor-pointer group h-40 @(isDragging ? "border-primary bg-primary/5" : "") upload-pulse"
+                 @ondragover="HandleDragOver"
+                 @ondragover:preventDefault
+                 @ondragleave="HandleDragLeave">
+                @if (string.IsNullOrEmpty(uploadedClothingUrl))
+                {
+                    <div class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-3 group-hover:bg-primary group-hover:text-background-dark transition-colors">
+                        <span class="material-icons-outlined text-xl">cloud_upload</span>
+                    </div>
+                    <p class="text-sm font-medium mb-1">Tıklayın veya Sürükleyin</p>
+                    <p class="text-xs text-gray-500">JPG, PNG desteklenir (Maks 10MB)</p>
+                    <InputFile OnChange="HandleClothingUpload" class="mt-2 text-xs w-full" accept="image/jpeg,image/png,image/webp" />
+                }
+                else
+                {
+                    <img src="@uploadedClothingUrl" class="max-h-28 rounded-lg object-contain" alt="Yüklenen kıyafet" />
+                    <button class="mt-2 text-xs text-red-400 hover:text-red-300 flex items-center gap-1" @onclick="ClearClothing">
+                        <span class="material-icons-outlined text-sm">delete</span> Kaldır
+                    </button>
+                }
+            </div>
+        </div>
+
+        @if (!string.IsNullOrEmpty(uploadError))
+        {
+            <div class="mx-5 mt-2 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-xs text-red-400">
+                <span class="material-icons-outlined text-sm align-middle mr-1">error</span>@uploadError
+            </div>
+        }
+
+        <!-- Category Chips -->
+        <div class="px-5 py-4 flex-none">
+            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Kategori</p>
+            <div class="flex gap-2">
+                <button class="flex-none px-4 py-1.5 rounded-full text-sm transition-all @(selectedCategory == "upper_body" ? "bg-primary text-background-dark font-medium" : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-primary")"
+                        @onclick='() => selectedCategory = "upper_body"'>Üst Giyim</button>
+                <button class="flex-none px-4 py-1.5 rounded-full text-sm transition-all @(selectedCategory == "lower_body" ? "bg-primary text-background-dark font-medium" : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-primary")"
+                        @onclick='() => selectedCategory = "lower_body"'>Alt Giyim</button>
+                <button class="flex-none px-4 py-1.5 rounded-full text-sm transition-all @(selectedCategory == "dresses" ? "bg-primary text-background-dark font-medium" : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-primary")"
+                        @onclick='() => selectedCategory = "dresses"'>Elbise</button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Column 2: Select Model (Center) -->
+    <section class="flex-1 flex flex-col bg-gray-50 dark:bg-background-dark min-w-0">
+        <!-- Filter Bar -->
+        <div class="flex-none p-5 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-10 bg-gray-50/95 dark:bg-background-dark/95 backdrop-blur">
+            <div class="flex items-center justify-between mb-4">
+                <div class="flex items-center gap-2">
+                    <h2 class="text-sm uppercase tracking-wider text-primary font-bold">Adım 2</h2>
+                    <div class="h-1 w-1 rounded-full bg-gray-400"></div>
+                    <h3 class="text-xl font-bold">Model Seç</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Model Grid -->
+        <div class="flex-1 overflow-y-auto p-5">
+            <ModelSelector @bind-SelectedModelId="selectedModelId" />
+        </div>
+    </section>
+
+    <!-- Column 3: Result (Right Sidebar) -->
+    <aside class="w-96 flex-none bg-white dark:bg-surface-dark border-l border-gray-200 dark:border-gray-800 flex flex-col z-10 shadow-xl">
+        <div class="p-5 border-b border-gray-200 dark:border-gray-800">
+            <div class="flex items-center justify-between mb-2">
+                <h2 class="text-sm uppercase tracking-wider text-primary font-bold">Adım 3</h2>
+                <span class="material-icons-outlined text-gray-400 text-sm">auto_fix_high</span>
+            </div>
+            <h3 class="text-xl font-bold">Sonuç</h3>
+        </div>
+
+        <div class="flex-1 p-6 flex flex-col items-center justify-center relative">
+            <!-- Canvas / Preview Area -->
+            <div class="w-full h-full max-h-[500px] bg-gray-100 dark:bg-gray-800/50 rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-600 flex flex-col items-center justify-center relative overflow-hidden group">
+                @if (isProcessing)
+                {
+                    <!-- Processing State -->
+                    <div class="text-center p-6 z-10">
+                        <div class="relative w-16 h-16 mx-auto mb-4">
+                            <div class="absolute inset-0 border-4 border-slate-700 rounded-full"></div>
+                            <div class="absolute inset-0 border-4 border-primary rounded-full border-t-transparent animate-spin"></div>
+                        </div>
+                        <p class="text-primary font-semibold animate-pulse">Oluşturuluyor...</p>
+                        <p class="text-xs text-gray-500 mt-2">Tahmini süre: ~30s</p>
+                    </div>
+                }
+                else if (!string.IsNullOrEmpty(resultImageUrl))
+                {
+                    <!-- Result State -->
+                    <img src="@resultImageUrl" class="w-full h-full object-contain rounded-xl" alt="Oluşturulan görsel" />
+                    <div class="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                        <a href="@resultImageUrl" download class="bg-black/60 backdrop-blur text-white p-2 rounded-lg hover:bg-primary hover:text-black transition-colors no-underline">
+                            <span class="material-icons-outlined text-sm">download</span>
+                        </a>
+                    </div>
+                }
+                else if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <!-- Error State -->
+                    <div class="text-center p-6">
+                        <span class="material-icons-outlined text-4xl text-red-400 mb-2">error_outline</span>
+                        <p class="text-sm text-red-400 mb-3">@errorMessage</p>
+                        <button class="text-xs text-primary hover:underline" @onclick="ClearResult">Tekrar Dene</button>
+                    </div>
+                }
+                else
+                {
+                    <!-- Placeholder State -->
+                    <div class="text-center p-6">
+                        <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span class="material-icons-outlined text-primary text-3xl">style</span>
+                        </div>
+                        <h4 class="text-lg font-bold mb-2">Görselleştirmeye Hazır mısınız?</h4>
+                        <p class="text-sm text-gray-500 mb-6">Oluşturulan görseliniz burada yüksek çözünürlükte görünecek.</p>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Action Area -->
+        <div class="p-6 bg-gray-50 dark:bg-gray-800/30 border-t border-gray-200 dark:border-gray-800">
+            <div class="flex items-center justify-between text-xs text-gray-500 mb-3 px-1">
+                <span>Tahmini süre: ~30s</span>
+                <span>Çözünürlük: 2K</span>
+            </div>
+            <button class="w-full bg-primary hover:bg-primary/90 text-background-dark font-bold text-lg py-4 rounded-xl shadow-lg shadow-primary/25 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed"
+                    @onclick="GenerateImage"
+                    disabled="@(!CanGenerate)">
+                @if (isProcessing)
+                {
+                    <div class="w-5 h-5 border-2 border-background-dark/30 border-t-background-dark rounded-full animate-spin"></div>
+                    <span>Oluşturuluyor...</span>
+                }
+                else
+                {
+                    <span class="material-icons-outlined group-hover:animate-pulse">auto_awesome</span>
+                    <span>Oluştur</span>
+                    <span class="bg-background-dark/20 text-background-dark text-xs py-0.5 px-2 rounded-full ml-1">-2 Kredi</span>
+                }
+            </button>
+
+            @if (!string.IsNullOrEmpty(resultImageUrl))
+            {
+                <!-- Download buttons after result -->
+                <div class="mt-4 flex gap-2">
+                    <a href="@resultImageUrl" download class="flex-1 py-2.5 bg-green-600 hover:bg-green-500 text-white rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 no-underline">
+                        <span class="material-icons-outlined text-base">download</span>
+                        İndir
+                    </a>
+                    <button class="flex-1 py-2.5 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
+                            @onclick="ClearResult">
+                        <span class="material-icons-outlined text-base">refresh</span>
+                        Yeni Oluştur
+                    </button>
+                </div>
+            }
+        </div>
+    </aside>
+</div>
+
+@code {
+    private string? uploadedClothingUrl;
+    private string? selectedModelId;
+    private string selectedCategory = "upper_body";
+    private string? resultImageUrl;
+    private string? errorMessage;
+    private string? uploadError;
+    private bool isProcessing;
+    private bool isDragging;
+    private int? currentImageId;
+
+    private bool CanGenerate => !string.IsNullOrEmpty(uploadedClothingUrl)
+                                && !string.IsNullOrEmpty(selectedModelId)
+                                && !isProcessing;
+
+    private void HandleDragOver() => isDragging = true;
+    private void HandleDragLeave() => isDragging = false;
+
+    private async Task HandleClothingUpload(InputFileChangeEventArgs e)
+    {
+        uploadError = null;
+        isDragging = false;
+
+        var file = e.File;
+
+        if (file.Size > 10 * 1024 * 1024)
+        {
+            uploadError = "Dosya boyutu 10MB'dan büyük olamaz";
+            return;
+        }
+
+        var allowedTypes = new[] { "image/jpeg", "image/png", "image/webp" };
+        if (!allowedTypes.Contains(file.ContentType))
+        {
+            uploadError = "Sadece JPEG, PNG ve WebP dosyaları destekleniyor";
+            return;
+        }
+
+        try
+        {
+            using var content = new MultipartFormDataContent();
+            using var stream = file.OpenReadStream(maxAllowedSize: 10 * 1024 * 1024);
+            using var streamContent = new StreamContent(stream);
+            streamContent.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue(file.ContentType);
+            content.Add(streamContent, "file", file.Name);
+
+            var response = await Http.PostAsync("/api/upload/clothing", content);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<UploadResponseDto>();
+                uploadedClothingUrl = result?.Url;
+            }
+            else
+            {
+                uploadError = "Dosya yüklenirken bir hata oluştu";
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Dosya yükleme hatası");
+            uploadError = "Dosya yüklenirken bir hata oluştu";
+        }
+    }
+
+    private async Task GenerateImage()
+    {
+        if (!CanGenerate) return;
+
+        isProcessing = true;
+        errorMessage = null;
+        resultImageUrl = null;
+
+        try
+        {
+            var request = new TryOnRequestDto
+            {
+                ClothingImagePath = uploadedClothingUrl!,
+                ModelAssetId = selectedModelId!,
+                Category = selectedCategory
+            };
+
+            var response = await Http.PostAsJsonAsync("/api/tryon/generate", request);
+
+            if (!response.IsSuccessStatusCode)
+            {
+                errorMessage = "Görsel oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.";
+                return;
+            }
+
+            var tryOnResponse = await response.Content.ReadFromJsonAsync<TryOnResponseDto>();
+            if (tryOnResponse == null)
+            {
+                errorMessage = "Beklenmeyen bir hata oluştu";
+                return;
+            }
+
+            currentImageId = tryOnResponse.ImageId;
+            await PollForResult(tryOnResponse.ImageId);
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Görsel oluşturma hatası");
+            errorMessage = "Görsel oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.";
+        }
+        finally
+        {
+            isProcessing = false;
+        }
+    }
+
+    private async Task PollForResult(int imageId)
+    {
+        var maxAttempts = 60;
+        var attempt = 0;
+
+        while (attempt < maxAttempts)
+        {
+            await Task.Delay(2000);
+            attempt++;
+
+            try
+            {
+                var response = await Http.GetAsync($"/api/tryon/status/{imageId}");
+                if (!response.IsSuccessStatusCode) continue;
+
+                var status = await response.Content.ReadFromJsonAsync<TryOnStatusDto>();
+                if (status == null) continue;
+
+                if (status.Status == "Completed" && !string.IsNullOrEmpty(status.GeneratedImageUrl))
+                {
+                    resultImageUrl = status.GeneratedImageUrl;
+                    StateHasChanged();
+                    return;
+                }
+                else if (status.Status == "Failed")
+                {
+                    errorMessage = status.ErrorMessage ?? "AI görsel oluşturma başarısız oldu";
+                    StateHasChanged();
+                    return;
+                }
+
+                StateHasChanged();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning(ex, "Status kontrol hatası, tekrar deneniyor...");
+            }
+        }
+
+        errorMessage = "İşlem zaman aşımına uğradı. Lütfen tekrar deneyin.";
+    }
+
+    private void ClearClothing()
+    {
+        uploadedClothingUrl = null;
+        uploadError = null;
+    }
+
+    private void ClearResult()
+    {
+        resultImageUrl = null;
+        errorMessage = null;
+        currentImageId = null;
+    }
+}

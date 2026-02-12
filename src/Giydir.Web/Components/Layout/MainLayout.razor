@@ -1,0 +1,57 @@
+@inherits LayoutComponentBase
+
+<!-- Navigation -->
+<nav class="sticky top-0 w-full z-50 backdrop-blur-xl bg-background-light/80 dark:bg-background-dark/80 border-b border-primary/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-20">
+            <!-- Logo -->
+            <a href="/" class="flex-shrink-0 flex items-center gap-2 no-underline">
+                <div class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-background-dark font-bold text-xl">
+                    G
+                </div>
+                <span class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Giydir<span class="text-primary">.ai</span></span>
+            </a>
+            <!-- Center Nav -->
+            <div class="hidden md:flex items-center space-x-8">
+                <a href="/" class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors no-underline">Ana Sayfa</a>
+                <a href="/editor" class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors no-underline">Editör</a>
+                <a href="/projects" class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors no-underline">Projeler</a>
+            </div>
+            <!-- Right Side -->
+            <div class="flex items-center gap-4">
+                <!-- Credits Pill -->
+                <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20">
+                    <span class="material-icons-outlined text-primary text-sm">bolt</span>
+                    <span class="text-sm font-bold text-primary">50 Kredi</span>
+                </div>
+                <!-- Profile -->
+                <div class="flex items-center gap-3 pl-4 border-l border-slate-200 dark:border-slate-800">
+                    <div class="text-right hidden sm:block">
+                        <p class="text-sm font-semibold text-slate-900 dark:text-white m-0">Demo Kullanıcı</p>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 m-0">Pro Plan</p>
+                    </div>
+                    <div class="w-10 h-10 rounded-full bg-primary/20 border-2 border-primary/30 flex items-center justify-center">
+                        <span class="material-icons-outlined text-primary">person</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<main class="flex-grow min-h-screen">
+    @Body
+</main>
+
+<!-- Footer -->
+<footer class="border-t border-slate-200 dark:border-slate-800 bg-background-light dark:bg-background-dark py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
+        <p class="text-sm text-slate-500 dark:text-slate-400">© 2026 Giydir AI. Tüm hakları saklıdır.</p>
+        <div class="flex items-center space-x-6">
+            <a href="#" class="text-sm text-slate-400 hover:text-primary transition-colors no-underline">Yardım</a>
+            <a href="#" class="text-sm text-slate-400 hover:text-primary transition-colors no-underline">Gizlilik</a>
+            <a href="#" class="text-sm text-slate-400 hover:text-primary transition-colors no-underline">Şartlar</a>
+        </div>
+    </div>
+</footer>

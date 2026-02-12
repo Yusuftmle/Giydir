@@ -1,0 +1,143 @@
+/* ============================================
+   Giydir - AI Virtual Try-On Platform
+   Stitch Design System
+   ============================================ */
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+::-webkit-scrollbar-track {
+    background: #101f22;
+}
+::-webkit-scrollbar-thumb {
+    background: #2a3b40;
+    border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: #36494f;
+}
+.hide-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+/* Glassmorphism */
+.glass {
+    background: rgba(16, 31, 34, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.glass-panel {
+    background: rgba(16, 31, 34, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(19, 200, 236, 0.1);
+}
+
+/* Comparison slider for landing page */
+.comparison-slider {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+}
+.comparison-after {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+}
+.comparison-before {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 50%;
+    background-size: cover;
+    background-position: center;
+    border-right: 2px solid #13c8ec;
+    z-index: 10;
+}
+.slider-handle {
+    position: absolute;
+    top: 50%;
+    right: -20px;
+    transform: translateY(-50%);
+    width: 40px;
+    height: 40px;
+    background-color: #13c8ec;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 0 15px rgba(19, 200, 236, 0.5);
+    z-index: 20;
+    cursor: ew-resize;
+}
+
+/* Masonry grid for gallery */
+.masonry-grid {
+    column-count: 1;
+    column-gap: 1.5rem;
+}
+@media (min-width: 640px) {
+    .masonry-grid { column-count: 2; }
+}
+@media (min-width: 1024px) {
+    .masonry-grid { column-count: 3; }
+}
+@media (min-width: 1280px) {
+    .masonry-grid { column-count: 4; }
+}
+.masonry-item {
+    break-inside: avoid;
+    margin-bottom: 1.5rem;
+}
+
+/* Upload area pulse animation */
+.upload-pulse {
+    animation: uploadPulse 2s ease-in-out infinite;
+}
+@keyframes uploadPulse {
+    0%, 100% { border-color: rgba(100, 116, 139, 0.3); }
+    50% { border-color: rgba(19, 200, 236, 0.5); }
+}
+
+/* Blazor specific */
+.blazor-error-boundary {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
+
+.blazor-error-boundary::after {
+    content: "Bir hata oluştu.";
+    color: #ef4444;
+}
+
+/* Fix for InputFile in Blazor */
+input[type="file"]::file-selector-button {
+    background-color: #13c8ec;
+    color: #101f22;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-right: 0.75rem;
+    transition: all 0.2s;
+}
+input[type="file"]::file-selector-button:hover {
+    background-color: rgba(19, 200, 236, 0.8);
+}

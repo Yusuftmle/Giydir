@@ -1,0 +1,13 @@
+namespace Giydir.Core.Entities;
+
+public class User
+{
+    public int Id { get; set; }
+    public string Email { get; set; } = string.Empty;
+    public string PasswordHash { get; set; } = string.Empty;
+    public int Credits { get; set; } = 10; // Başlangıç kredisi
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+    public List<Project> Projects { get; set; } = new();
+}
+
