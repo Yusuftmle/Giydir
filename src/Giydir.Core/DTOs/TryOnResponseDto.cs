@@ -7,3 +7,4 @@ public class TryOnResponseDto
     public string Status { get; set; } = string.Empty;
 }
 
+

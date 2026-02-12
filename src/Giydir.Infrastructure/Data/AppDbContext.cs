@@ -11,6 +11,7 @@ public class AppDbContext : DbContext
     public DbSet<Project> Projects => Set<Project>();
     public DbSet<GeneratedImage> GeneratedImages => Set<GeneratedImage>();
     public DbSet<ModelAsset> ModelAssets => Set<ModelAsset>();
+    public DbSet<Template> Templates => Set<Template>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -67,6 +68,20 @@ public class AppDbContext : DbContext
             entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
             entity.Property(e => e.Gender).IsRequired().HasMaxLength(20);
             entity.Property(e => e.Category).IsRequired().HasMaxLength(50);
+        });
+
+        // Template
+        modelBuilder.Entity<Template>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(200);
+            entity.Property(e => e.Description).HasMaxLength(500);
+            entity.Property(e => e.Category).IsRequired().HasMaxLength(50);
+            entity.Property(e => e.Style).HasMaxLength(50);
+            entity.Property(e => e.Color).HasMaxLength(50);
+            entity.Property(e => e.Pattern).HasMaxLength(50);
+            entity.Property(e => e.Material).HasMaxLength(50);
+            entity.Property(e => e.PromptTemplate).HasMaxLength(1000);
         });
 
         // Seed data - Stitch tasarımından model pozları
@@ -165,6 +180,70 @@ public class AppDbContext : DbContext
                 Id = 1,
                 UserId = 1,
                 Name = "İlk Projem",
+                CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+            }
+        );
+
+        // Seed templates
+        modelBuilder.Entity<Template>().HasData(
+            new Template
+            {
+                Id = 1,
+                Name = "Klasik Beyaz Gömlek",
+                Description = "Profesyonel ve şık klasik beyaz gömlek",
+                Category = "upper_body",
+                ThumbnailPath = "/images/templates/white-shirt.jpg",
+                Style = "classic",
+                Color = "white",
+                Pattern = "solid",
+                Material = "cotton",
+                PromptTemplate = "professional white cotton classic shirt, clean white background, studio lighting, high quality fashion photography",
+                IsActive = true,
+                CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+            },
+            new Template
+            {
+                Id = 2,
+                Name = "Spor Tişört",
+                Description = "Rahat ve modern spor tişört",
+                Category = "upper_body",
+                ThumbnailPath = "/images/templates/sport-tshirt.jpg",
+                Style = "sporty",
+                Color = "black",
+                Pattern = "solid",
+                Material = "polyester",
+                PromptTemplate = "modern black sporty t-shirt, athletic wear, clean background, professional product photography",
+                IsActive = true,
+                CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+            },
+            new Template
+            {
+                Id = 3,
+                Name = "Elegant Elbise",
+                Description = "Zarif ve şık kadın elbisesi",
+                Category = "dresses",
+                ThumbnailPath = "/images/templates/elegant-dress.jpg",
+                Style = "elegant",
+                Color = "navy",
+                Pattern = "solid",
+                Material = "silk",
+                PromptTemplate = "elegant navy blue silk dress, sophisticated fashion, clean background, luxury fashion photography",
+                IsActive = true,
+                CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
+            },
+            new Template
+            {
+                Id = 4,
+                Name = "Kot Pantolon",
+                Description = "Klasik mavi kot pantolon",
+                Category = "lower_body",
+                ThumbnailPath = "/images/templates/jeans.jpg",
+                Style = "casual",
+                Color = "blue",
+                Pattern = "denim",
+                Material = "denim",
+                PromptTemplate = "classic blue denim jeans, casual wear, clean background, professional fashion photography",
+                IsActive = true,
                 CreatedAt = new DateTime(2026, 1, 1, 0, 0, 0, DateTimeKind.Utc)
             }
         );

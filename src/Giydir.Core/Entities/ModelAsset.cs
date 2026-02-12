@@ -12,3 +12,4 @@ public class ModelAsset
     public List<GeneratedImage> GeneratedImages { get; set; } = new();
 }
 
+

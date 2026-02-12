@@ -34,9 +34,17 @@ public class ImageDownloadService : IImageDownloadService
             _logger.LogInformation("Görsel indiriliyor: {Url}", imageUrl);
 
             var response = await _httpClient.GetAsync(imageUrl);
+            
+            _logger.LogInformation("Görsel indirme response: StatusCode={StatusCode}, ContentType={ContentType}, ContentLength={ContentLength}",
+                response.StatusCode, response.Content.Headers.ContentType?.ToString() ?? "YOK", response.Content.Headers.ContentLength ?? 0);
+            
             response.EnsureSuccessStatusCode();
 
             var imageBytes = await response.Content.ReadAsByteArrayAsync();
+            
+            _logger.LogInformation("Görsel bytes alındı: {Size}KB, Dosya yazılıyor: {FilePath}", 
+                imageBytes.Length / 1024, filePath);
+            
             await File.WriteAllBytesAsync(filePath, imageBytes);
 
             var relativePath = $"/uploads/generated/{fileName}";
@@ -47,7 +55,8 @@ public class ImageDownloadService : IImageDownloadService
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Görsel indirme hatası: {Url}", imageUrl);
+            _logger.LogError(ex, "Görsel indirme hatası: {Url}, Exception: {ExceptionType}, Message: {Message}, StackTrace: {StackTrace}",
+                imageUrl, ex.GetType().Name, ex.Message, ex.StackTrace);
             throw;
         }
     }

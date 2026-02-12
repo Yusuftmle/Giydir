@@ -16,6 +16,9 @@ public class TryOnController : BaseController
     private readonly ICreditService _creditService;
     private readonly IImageDownloadService _imageDownloadService;
     private readonly IProjectRepository _projectRepository;
+    private readonly ITemplateRepository _templateRepository;
+    private readonly IPromptService _promptService;
+    private readonly IAIImageGenerationService _aiImageService;
     private readonly ILogger<TryOnController> _logger;
 
     public TryOnController(
@@ -26,6 +29,9 @@ public class TryOnController : BaseController
         ICreditService creditService,
         IImageDownloadService imageDownloadService,
         IProjectRepository projectRepository,
+        ITemplateRepository templateRepository,
+        IPromptService promptService,
+        IAIImageGenerationService aiImageService,
         ILogger<TryOnController> logger)
     {
         _tryOnService = tryOnService;
@@ -35,6 +41,9 @@ public class TryOnController : BaseController
         _creditService = creditService;
         _imageDownloadService = imageDownloadService;
         _projectRepository = projectRepository;
+        _templateRepository = templateRepository;
+        _promptService = promptService;
+        _aiImageService = aiImageService;
         _logger = logger;
     }
 
@@ -120,8 +129,16 @@ public class TryOnController : BaseController
         }
         catch (Exception ex)
         {
-            _logger.LogError(ex, "Try-on oluşturma hatası");
-            return StatusCode(500, new { error = "Görsel oluşturulurken bir hata oluştu. Lütfen tekrar deneyin." });
+            _logger.LogError(ex, "Try-on oluşturma hatası: {Message}", ex.Message);
+            
+            // Kredi hatası gibi özel durumlar için daha açıklayıcı mesaj
+            var errorMessage = ex.Message;
+            if (errorMessage.Contains("yeterli kredi") || errorMessage.Contains("insufficient credit"))
+            {
+                return StatusCode(402, new { error = errorMessage });
+            }
+            
+            return StatusCode(500, new { error = $"Görsel oluşturulurken bir hata oluştu: {errorMessage}" });
         }
     }
 
@@ -157,34 +174,83 @@ public class TryOnController : BaseController
             // Replicate'den durum kontrol et
             if (!string.IsNullOrEmpty(image.ReplicatePredictionId))
             {
-                var status = await _tryOnService.CheckStatusAsync(image.ReplicatePredictionId);
-
-                if (status.Status == "succeeded" && !string.IsNullOrEmpty(status.OutputUrl))
+                // AI generation (template-based) veya Virtual Try-On kontrolü
+                if (image.ModelAssetId == "ai-generated")
                 {
-                    // Görseli indir ve yerel olarak kaydet
-                    try
-                    {
-                        var localPath = await _imageDownloadService.DownloadAndSaveAsync(
-                            status.OutputUrl,
-                            $"gen_{image.Id}_{Guid.NewGuid():N}.jpg");
+                    // AI Image Generation (nano-banana)
+                    _logger.LogInformation("Status kontrol: ImageId={ImageId}, PredictionId={PredictionId}, MevcutStatus={Status}",
+                        imageId, image.ReplicatePredictionId, image.Status);
+                    
+                    var status = await _aiImageService.CheckStatusAsync(image.ReplicatePredictionId);
+                    
+                    _logger.LogInformation("Replicate status: ImageId={ImageId}, Status={Status}, OutputUrl={OutputUrl}",
+                        imageId, status.Status, status.OutputUrl ?? "YOK");
 
-                        image.Status = "Completed";
-                        image.GeneratedImagePath = localPath;
-                    }
-                    catch (Exception ex)
+                    if (status.Status == "succeeded" && !string.IsNullOrEmpty(status.OutputUrl))
                     {
-                        _logger.LogError(ex, "Görsel indirme hatası, uzak URL kullanılıyor");
-                        image.Status = "Completed";
-                        image.GeneratedImagePath = status.OutputUrl;
-                    }
+                        try
+                        {
+                            var localPath = await _imageDownloadService.DownloadAndSaveAsync(
+                                status.OutputUrl,
+                                $"ai_gen_{image.Id}_{Guid.NewGuid():N}.png");
 
-                    await _imageRepository.UpdateAsync(image);
+                            image.Status = "Completed";
+                            image.GeneratedImagePath = localPath;
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, "AI görsel indirme hatası, uzak URL kullanılıyor");
+                            image.Status = "Completed";
+                            image.GeneratedImagePath = status.OutputUrl;
+                        }
+
+                        await _imageRepository.UpdateAsync(image);
+                    }
+                    else if (status.Status == "failed")
+                    {
+                        image.Status = "Failed";
+                        image.ErrorMessage = status.Error ?? "AI görsel oluşturma başarısız oldu";
+                        await _imageRepository.UpdateAsync(image);
+                        _logger.LogWarning("AI görsel başarısız: ImageId={ImageId}, Error={Error}", imageId, image.ErrorMessage);
+                    }
+                    else
+                    {
+                        // Hala processing/starting durumunda
+                        _logger.LogInformation("AI görsel hala işleniyor: ImageId={ImageId}, Status={Status}", 
+                            imageId, status.Status);
+                    }
                 }
-                else if (status.Status == "failed")
+                else
                 {
-                    image.Status = "Failed";
-                    image.ErrorMessage = status.Error ?? "AI görsel oluşturma başarısız oldu";
-                    await _imageRepository.UpdateAsync(image);
+                    // Virtual Try-On (IDM-VTON)
+                    var status = await _tryOnService.CheckStatusAsync(image.ReplicatePredictionId);
+
+                    if (status.Status == "succeeded" && !string.IsNullOrEmpty(status.OutputUrl))
+                    {
+                        try
+                        {
+                            var localPath = await _imageDownloadService.DownloadAndSaveAsync(
+                                status.OutputUrl,
+                                $"gen_{image.Id}_{Guid.NewGuid():N}.jpg");
+
+                            image.Status = "Completed";
+                            image.GeneratedImagePath = localPath;
+                        }
+                        catch (Exception ex)
+                        {
+                            _logger.LogError(ex, "Görsel indirme hatası, uzak URL kullanılıyor");
+                            image.Status = "Completed";
+                            image.GeneratedImagePath = status.OutputUrl;
+                        }
+
+                        await _imageRepository.UpdateAsync(image);
+                    }
+                    else if (status.Status == "failed")
+                    {
+                        image.Status = "Failed";
+                        image.ErrorMessage = status.Error ?? "AI görsel oluşturma başarısız oldu";
+                        await _imageRepository.UpdateAsync(image);
+                    }
                 }
             }
 
@@ -237,5 +303,112 @@ public class TryOnController : BaseController
 
         // If remote URL, redirect
         return Redirect(image.GeneratedImagePath);
+    }
+
+    [HttpPost("generate-from-template")]
+    [Authorize]
+    public async Task<ActionResult<AIGenerationResponseDto>> GenerateFromTemplate([FromBody] GenerateFromTemplateDto request)
+    {
+        try
+        {
+            var userId = UserId ?? throw new UnauthorizedAccessException("Giriş yapmalısınız");
+
+            // Template kontrolü
+            var template = await _templateRepository.GetByIdAsync(request.TemplateId);
+            if (template == null || !template.IsActive)
+                return BadRequest(new AIGenerationResponseDto { Success = false, Error = "Geçersiz template seçildi" });
+
+            // Kredi kontrolü
+            var creditCheck = await _creditService.CheckCreditsAsync(userId, 2);
+            if (!creditCheck.HasEnough)
+            {
+                return BadRequest(new AIGenerationResponseDto 
+                { 
+                    Success = false, 
+                    Error = $"Yetersiz kredi. Mevcut: {creditCheck.CurrentCredits}, Gerekli: {creditCheck.Required}" 
+                });
+            }
+
+            // ProjectId yoksa kullanıcının ilk projesini bul veya oluştur
+            int projectId;
+            if (request.ProjectId.HasValue)
+            {
+                var project = await _projectRepository.GetByIdAsync(request.ProjectId.Value);
+                if (project == null || project.UserId != userId)
+                    return Forbid("Bu projeye erişim yetkiniz yok");
+                projectId = request.ProjectId.Value;
+            }
+            else
+            {
+                var userProjects = await _projectRepository.GetByUserIdAsync(userId);
+                if (userProjects.Any())
+                {
+                    projectId = userProjects.First().Id;
+                }
+                else
+                {
+                    var newProject = new Project
+                    {
+                        UserId = userId,
+                        Name = "İlk Projem"
+                    };
+                    var createdProject = await _projectRepository.CreateAsync(newProject);
+                    projectId = createdProject.Id;
+                }
+            }
+
+            // Template'den prompt oluştur
+            var prompt = _promptService.GeneratePromptFromTemplate(template, request.CustomPrompt);
+            _logger.LogInformation("Template'den prompt oluşturuldu: {TemplateId} -> {Prompt}", template.Id, prompt);
+
+            // NanoBanana API'ye istek at
+            var predictionId = await _aiImageService.GenerateImageFromPromptAsync(
+                prompt,
+                request.AspectRatio,
+                request.OutputFormat);
+
+            // DB'ye kaydet
+            var generatedImage = new GeneratedImage
+            {
+                ProjectId = projectId,
+                OriginalClothingPath = $"template_{template.Id}", // Template ID'si
+                ModelAssetId = "ai-generated", // AI generated için özel ID
+                ReplicatePredictionId = predictionId,
+                Status = "Processing"
+            };
+
+            await _imageRepository.CreateAsync(generatedImage);
+
+            return Ok(new AIGenerationResponseDto
+            {
+                Success = true,
+                ImageId = generatedImage.Id,
+                PredictionId = predictionId
+            });
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "Template-based görsel oluşturma hatası: {Message}", ex.Message);
+            _logger.LogError(ex, "Stack trace: {StackTrace}", ex.StackTrace);
+            
+            var errorMessage = ex.Message;
+            if (ex.InnerException != null)
+            {
+                errorMessage += $" | Inner: {ex.InnerException.Message}";
+            }
+            
+            // Kredi hatası gibi özel durumlar için daha açıklayıcı mesaj
+            var statusCode = 500;
+            if (errorMessage.Contains("yeterli kredi") || errorMessage.Contains("insufficient credit"))
+            {
+                statusCode = 402;
+            }
+            
+            return StatusCode(statusCode, new AIGenerationResponseDto 
+            { 
+                Success = false, 
+                Error = $"Görsel oluşturulurken bir hata oluştu: {errorMessage}" 
+            });
+        }
     }
 }

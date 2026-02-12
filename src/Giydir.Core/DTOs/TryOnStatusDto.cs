@@ -8,3 +8,4 @@ public class TryOnStatusDto
     public string? ErrorMessage { get; set; }
 }
 
+

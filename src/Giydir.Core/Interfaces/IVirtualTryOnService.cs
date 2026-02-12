@@ -13,3 +13,4 @@ public class TryOnStatusResult
     public string? Error { get; set; }
 }
 
+

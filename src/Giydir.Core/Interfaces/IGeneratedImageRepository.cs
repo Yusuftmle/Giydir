@@ -9,3 +9,4 @@ public interface IGeneratedImageRepository
     Task UpdateAsync(GeneratedImage image);
 }
 
+

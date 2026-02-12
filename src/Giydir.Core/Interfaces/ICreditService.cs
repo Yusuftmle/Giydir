@@ -13,3 +13,4 @@ public class CreditCheckResult
     public int Required { get; set; }
 }
 
+

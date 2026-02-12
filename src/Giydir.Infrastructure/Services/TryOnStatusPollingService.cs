@@ -47,6 +47,7 @@ public class TryOnStatusPollingService : BackgroundService
         using var scope = _scopeFactory.CreateScope();
         var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
         var tryOnService = scope.ServiceProvider.GetRequiredService<IVirtualTryOnService>();
+        var aiImageService = scope.ServiceProvider.GetRequiredService<IAIImageGenerationService>();
         var imageDownloadService = scope.ServiceProvider.GetRequiredService<IImageDownloadService>();
 
         var pendingImages = await context.GeneratedImages
@@ -65,30 +66,93 @@ public class TryOnStatusPollingService : BackgroundService
 
             try
             {
-                var status = await tryOnService.CheckStatusAsync(image.ReplicatePredictionId!);
-
-                if (status.Status == "succeeded" && !string.IsNullOrEmpty(status.OutputUrl))
+                _logger.LogInformation("Görsel kontrol ediliyor: ImageId={ImageId}, ModelAssetId={ModelAssetId}, PredictionId={PredictionId}, Status={Status}",
+                    image.Id, image.ModelAssetId, image.ReplicatePredictionId, image.Status);
+                
+                // AI generation (template-based) veya Virtual Try-On kontrolü
+                if (image.ModelAssetId == "ai-generated")
                 {
-                    // Download and save image locally
-                    var localPath = await imageDownloadService.DownloadAndSaveAsync(
-                        status.OutputUrl,
-                        $"gen_{image.Id}_{Guid.NewGuid():N}.jpg");
+                    // AI Image Generation (nano-banana)
+                    _logger.LogInformation("AI görsel status kontrol ediliyor: ImageId={ImageId}, PredictionId={PredictionId}",
+                        image.Id, image.ReplicatePredictionId);
+                    
+                    var status = await aiImageService.CheckStatusAsync(image.ReplicatePredictionId!);
+                    
+                    _logger.LogInformation("AI görsel status: ImageId={ImageId}, Status={Status}, OutputUrl={OutputUrl}",
+                        image.Id, status.Status, status.OutputUrl ?? "YOK");
 
-                    image.Status = "Completed";
-                    image.GeneratedImagePath = localPath;
+                    if (status.Status == "succeeded" && !string.IsNullOrEmpty(status.OutputUrl))
+                    {
+                        try
+                        {
+                            _logger.LogInformation("AI görsel indiriliyor: ImageId={ImageId}, Url={Url}",
+                                image.Id, status.OutputUrl);
+                            
+                            var localPath = await imageDownloadService.DownloadAndSaveAsync(
+                                status.OutputUrl,
+                                $"ai_gen_{image.Id}_{Guid.NewGuid():N}.png");
 
-                    _logger.LogInformation("Görsel tamamlandı: ImageId={ImageId}, Path={Path}",
-                        image.Id, localPath);
+                            image.Status = "Completed";
+                            image.GeneratedImagePath = localPath;
+
+                            _logger.LogInformation("AI görsel tamamlandı: ImageId={ImageId}, Path={Path}",
+                                image.Id, localPath);
+                        }
+                        catch (Exception downloadEx)
+                        {
+                            _logger.LogError(downloadEx, "AI görsel indirme hatası: ImageId={ImageId}, Url={Url}",
+                                image.Id, status.OutputUrl);
+                            // İndirme başarısız olsa bile remote URL'yi kaydet
+                            image.Status = "Completed";
+                            image.GeneratedImagePath = status.OutputUrl;
+                        }
+                    }
+                    else if (status.Status == "failed")
+                    {
+                        image.Status = "Failed";
+                        image.ErrorMessage = status.Error ?? "AI görsel oluşturma başarısız oldu";
+
+                        _logger.LogWarning("AI görsel başarısız: ImageId={ImageId}, Error={Error}",
+                            image.Id, image.ErrorMessage);
+                    }
+                    else if (status.Status == "processing" || status.Status == "starting")
+                    {
+                        _logger.LogInformation("AI görsel hala işleniyor: ImageId={ImageId}, Status={Status}",
+                            image.Id, status.Status);
+                    }
                 }
-                else if (status.Status == "failed")
+                else
                 {
-                    image.Status = "Failed";
-                    image.ErrorMessage = status.Error ?? "AI görsel oluşturma başarısız oldu";
+                    // Virtual Try-On (IDM-VTON)
+                    _logger.LogInformation("Virtual Try-On status kontrol ediliyor: ImageId={ImageId}, PredictionId={PredictionId}",
+                        image.Id, image.ReplicatePredictionId);
+                    
+                    var status = await tryOnService.CheckStatusAsync(image.ReplicatePredictionId!);
+                    
+                    _logger.LogInformation("Virtual Try-On status: ImageId={ImageId}, Status={Status}, OutputUrl={OutputUrl}",
+                        image.Id, status.Status, status.OutputUrl ?? "YOK");
 
-                    _logger.LogWarning("Görsel başarısız: ImageId={ImageId}, Error={Error}",
-                        image.Id, image.ErrorMessage);
+                    if (status.Status == "succeeded" && !string.IsNullOrEmpty(status.OutputUrl))
+                    {
+                        var localPath = await imageDownloadService.DownloadAndSaveAsync(
+                            status.OutputUrl,
+                            $"gen_{image.Id}_{Guid.NewGuid():N}.jpg");
+
+                        image.Status = "Completed";
+                        image.GeneratedImagePath = localPath;
+
+                        _logger.LogInformation("Görsel tamamlandı: ImageId={ImageId}, Path={Path}",
+                            image.Id, localPath);
+                    }
+                    else if (status.Status == "failed")
+                    {
+                        image.Status = "Failed";
+                        image.ErrorMessage = status.Error ?? "AI görsel oluşturma başarısız oldu";
+
+                        _logger.LogWarning("Görsel başarısız: ImageId={ImageId}, Error={Error}",
+                            image.Id, image.ErrorMessage);
+                    }
                 }
-                // else: still processing, do nothing
             }
             catch (Exception ex)
             {

@@ -8,44 +8,123 @@
 @rendermode InteractiveServer
 
 <div class="flex h-[calc(100vh-5rem)] overflow-hidden">
-    <!-- Column 1: Upload (Left Sidebar) -->
+    <!-- Column 1: Upload/Template (Left Sidebar) -->
     <aside class="w-80 flex-none flex flex-col border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-surface-dark z-10">
         <div class="p-5 border-b border-gray-200 dark:border-gray-800">
             <div class="flex items-center justify-between mb-2">
                 <h2 class="text-sm uppercase tracking-wider text-primary font-bold">Adım 1</h2>
-                @if (!string.IsNullOrEmpty(uploadedClothingUrl))
+                @if ((!string.IsNullOrEmpty(uploadedClothingUrl)) || selectedTemplateId.HasValue)
                 {
                     <span class="material-icons-outlined text-primary text-sm">check_circle</span>
                 }
             </div>
             <h3 class="text-xl font-bold mb-1">Kıyafet Seç</h3>
-            <p class="text-xs text-gray-500 dark:text-gray-400">Fotoğraf yükleyin veya galeriden seçin.</p>
+            <p class="text-xs text-gray-500 dark:text-gray-400">Fotoğraf yükleyin, template seçin veya galeriden seçin.</p>
         </div>
 
-        <!-- Drag & Drop Area -->
-        <div class="px-5 pt-5 pb-2 flex-none">
-            <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-6 flex flex-col items-center justify-center text-center transition-all hover:border-primary hover:bg-primary/5 cursor-pointer group h-40 @(isDragging ? "border-primary bg-primary/5" : "") upload-pulse"
-                 @ondragover="HandleDragOver"
-                 @ondragover:preventDefault
-                 @ondragleave="HandleDragLeave">
-                @if (string.IsNullOrEmpty(uploadedClothingUrl))
+        <!-- Mode Tabs -->
+        <div class="px-5 pt-3 pb-2 border-b border-gray-200 dark:border-gray-800">
+            <div class="flex gap-2 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
+                <button class="flex-1 px-3 py-2 rounded-md text-sm font-medium transition-all @(editorMode == "upload" ? "bg-white dark:bg-gray-700 text-primary shadow-sm" : "text-gray-600 dark:text-gray-400")"
+                        @onclick='() => { editorMode = "upload"; selectedTemplateId = null; }'>
+                    <span class="material-icons-outlined text-base align-middle mr-1">cloud_upload</span>
+                    Yükle
+                </button>
+                <button class="flex-1 px-3 py-2 rounded-md text-sm font-medium transition-all @(editorMode == "template" ? "bg-white dark:bg-gray-700 text-primary shadow-sm" : "text-gray-600 dark:text-gray-400")"
+                        @onclick='() => { editorMode = "template"; uploadedClothingUrl = null; }'>
+                    <span class="material-icons-outlined text-base align-middle mr-1">auto_awesome</span>
+                    Template
+                </button>
+            </div>
+        </div>
+
+        @if (editorMode == "upload")
+        {
+            <!-- Drag & Drop Area -->
+            <div class="px-5 pt-5 pb-2 flex-none">
+                <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-6 flex flex-col items-center justify-center text-center transition-all hover:border-primary hover:bg-primary/5 cursor-pointer group h-40 @(isDragging ? "border-primary bg-primary/5" : "") upload-pulse"
+                     @ondragover="HandleDragOver"
+                     @ondragover:preventDefault
+                     @ondragleave="HandleDragLeave">
+                    @if (string.IsNullOrEmpty(uploadedClothingUrl))
+                    {
+                        <div class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-3 group-hover:bg-primary group-hover:text-background-dark transition-colors">
+                            <span class="material-icons-outlined text-xl">cloud_upload</span>
+                        </div>
+                        <p class="text-sm font-medium mb-1">Tıklayın veya Sürükleyin</p>
+                        <p class="text-xs text-gray-500">JPG, PNG desteklenir (Maks 10MB)</p>
+                        <InputFile OnChange="HandleClothingUpload" class="mt-2 text-xs w-full" accept="image/jpeg,image/png,image/webp" />
+                    }
+                    else
+                    {
+                        <img src="@uploadedClothingUrl" class="max-h-28 rounded-lg object-contain" alt="Yüklenen kıyafet" />
+                        <button class="mt-2 text-xs text-red-400 hover:text-red-300 flex items-center gap-1" @onclick="ClearClothing">
+                            <span class="material-icons-outlined text-sm">delete</span> Kaldır
+                        </button>
+                    }
+                </div>
+            </div>
+        }
+        else
+        {
+            <!-- Template Selector -->
+            <div class="flex-1 overflow-y-auto px-5 py-4">
+                @if (isLoadingTemplates)
                 {
-                    <div class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-3 group-hover:bg-primary group-hover:text-background-dark transition-colors">
-                        <span class="material-icons-outlined text-xl">cloud_upload</span>
+                    <div class="flex items-center justify-center py-10">
+                        <div class="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
                     </div>
-                    <p class="text-sm font-medium mb-1">Tıklayın veya Sürükleyin</p>
-                    <p class="text-xs text-gray-500">JPG, PNG desteklenir (Maks 10MB)</p>
-                    <InputFile OnChange="HandleClothingUpload" class="mt-2 text-xs w-full" accept="image/jpeg,image/png,image/webp" />
+                }
+                else if (templates.Any())
+                {
+                    <div class="grid grid-cols-1 gap-3">
+                        @foreach (var template in templates)
+                        {
+                            <button class="text-left p-4 rounded-xl border-2 transition-all @(selectedTemplateId == template.Id ? "border-primary bg-primary/10" : "border-gray-200 dark:border-gray-700 hover:border-primary/50")"
+                                    @onclick='() => SelectTemplate(template.Id)'>
+                                <div class="flex items-start gap-3">
+                                    @if (!string.IsNullOrEmpty(template.ThumbnailPath))
+                                    {
+                                        <img src="@template.ThumbnailPath" class="w-16 h-16 rounded-lg object-cover" alt="@template.Name" />
+                                    }
+                                    else
+                                    {
+                                        <div class="w-16 h-16 rounded-lg bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center">
+                                            <span class="material-icons-outlined text-white text-2xl">style</span>
+                                        </div>
+                                    }
+                                    <div class="flex-1 min-w-0">
+                                        <h4 class="font-bold text-sm mb-1 truncate">@template.Name</h4>
+                                        <p class="text-xs text-gray-500 dark:text-gray-400 line-clamp-2">@template.Description</p>
+                                        <div class="flex gap-1 mt-2">
+                                            @if (!string.IsNullOrEmpty(template.Color))
+                                            {
+                                                <span class="text-xs px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">@template.Color</span>
+                                            }
+                                            @if (!string.IsNullOrEmpty(template.Style))
+                                            {
+                                                <span class="text-xs px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">@template.Style</span>
+                                            }
+                                        </div>
+                                    </div>
+                                    @if (selectedTemplateId == template.Id)
+                                    {
+                                        <span class="material-icons-outlined text-primary text-lg">check_circle</span>
+                                    }
+                                </div>
+                            </button>
+                        }
+                    </div>
                 }
                 else
                 {
-                    <img src="@uploadedClothingUrl" class="max-h-28 rounded-lg object-contain" alt="Yüklenen kıyafet" />
-                    <button class="mt-2 text-xs text-red-400 hover:text-red-300 flex items-center gap-1" @onclick="ClearClothing">
-                        <span class="material-icons-outlined text-sm">delete</span> Kaldır
-                    </button>
+                    <div class="text-center py-10 text-gray-400">
+                        <span class="material-icons-outlined text-4xl mb-2">inbox</span>
+                        <p class="text-sm">Template bulunamadı</p>
+                    </div>
                 }
             </div>
-        </div>
+        }
 
         @if (!string.IsNullOrEmpty(uploadError))
         {
@@ -68,24 +147,40 @@
         </div>
     </aside>
 
-    <!-- Column 2: Select Model (Center) -->
-    <section class="flex-1 flex flex-col bg-gray-50 dark:bg-background-dark min-w-0">
-        <!-- Filter Bar -->
-        <div class="flex-none p-5 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-10 bg-gray-50/95 dark:bg-background-dark/95 backdrop-blur">
-            <div class="flex items-center justify-between mb-4">
-                <div class="flex items-center gap-2">
-                    <h2 class="text-sm uppercase tracking-wider text-primary font-bold">Adım 2</h2>
-                    <div class="h-1 w-1 rounded-full bg-gray-400"></div>
-                    <h3 class="text-xl font-bold">Model Seç</h3>
+    <!-- Column 2: Select Model (Center) - Sadece upload modunda göster -->
+    @if (editorMode == "upload")
+    {
+        <section class="flex-1 flex flex-col bg-gray-50 dark:bg-background-dark min-w-0">
+            <!-- Filter Bar -->
+            <div class="flex-none p-5 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-10 bg-gray-50/95 dark:bg-background-dark/95 backdrop-blur">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center gap-2">
+                        <h2 class="text-sm uppercase tracking-wider text-primary font-bold">Adım 2</h2>
+                        <div class="h-1 w-1 rounded-full bg-gray-400"></div>
+                        <h3 class="text-xl font-bold">Model Seç</h3>
+                    </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Model Grid -->
-        <div class="flex-1 overflow-y-auto p-5">
-            <ModelSelector @bind-SelectedModelId="selectedModelId" />
-        </div>
-    </section>
+            <!-- Model Grid -->
+            <div class="flex-1 overflow-y-auto p-5">
+                <ModelSelector @bind-SelectedModelId="selectedModelId" />
+            </div>
+        </section>
+    }
+    else
+    {
+        <!-- Template modunda boş alan -->
+        <section class="flex-1 flex flex-col bg-gray-50 dark:bg-background-dark min-w-0 items-center justify-center">
+            <div class="text-center p-10">
+                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="material-icons-outlined text-primary text-4xl">auto_awesome</span>
+                </div>
+                <h3 class="text-xl font-bold mb-2">AI ile Görsel Oluştur</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400">Template seçerek AI'nın görsel oluşturmasını sağlayın</p>
+            </div>
+        </section>
+    }
 
     <!-- Column 3: Result (Right Sidebar) -->
     <aside class="w-96 flex-none bg-white dark:bg-surface-dark border-l border-gray-200 dark:border-gray-800 flex flex-col z-10 shadow-xl">
@@ -148,8 +243,8 @@
         <!-- Action Area -->
         <div class="p-6 bg-gray-50 dark:bg-gray-800/30 border-t border-gray-200 dark:border-gray-800">
             <div class="flex items-center justify-between text-xs text-gray-500 mb-3 px-1">
-                <span>Tahmini süre: ~30s</span>
-                <span>Çözünürlük: 2K</span>
+                <span>Tahmini süre: @(editorMode == "template" ? "~20s" : "~30s")</span>
+                <span>Çözünürlük: @(editorMode == "template" ? "2K" : "2K")</span>
             </div>
             <button class="w-full bg-primary hover:bg-primary/90 text-background-dark font-bold text-lg py-4 rounded-xl shadow-lg shadow-primary/25 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed"
                     @onclick="GenerateImage"
@@ -161,8 +256,8 @@
                 }
                 else
                 {
-                    <span class="material-icons-outlined group-hover:animate-pulse">auto_awesome</span>
-                    <span>Oluştur</span>
+                    <span class="material-icons-outlined group-hover:animate-pulse">@(editorMode == "template" ? "auto_awesome" : "style")</span>
+                    <span>@(editorMode == "template" ? "AI ile Oluştur" : "Oluştur")</span>
                     <span class="bg-background-dark/20 text-background-dark text-xs py-0.5 px-2 rounded-full ml-1">-2 Kredi</span>
                 }
             </button>
@@ -197,9 +292,45 @@
     private bool isDragging;
     private int? currentImageId;
 
-    private bool CanGenerate => !string.IsNullOrEmpty(uploadedClothingUrl)
-                                && !string.IsNullOrEmpty(selectedModelId)
-                                && !isProcessing;
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadTemplatesAsync();
+    }
+
+    private async Task LoadTemplatesAsync()
+    {
+        isLoadingTemplates = true;
+        try
+        {
+            var response = await Http.GetFromJsonAsync<List<TemplateDto>>("api/templates");
+            templates = response ?? new();
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Template yükleme hatası");
+            templates = new();
+        }
+        finally
+        {
+            isLoadingTemplates = false;
+        }
+    }
+
+    private void SelectTemplate(int templateId)
+    {
+        selectedTemplateId = selectedTemplateId == templateId ? null : templateId;
+        uploadedClothingUrl = null; // Template seçildiğinde upload'ı temizle
+    }
+
+    private string editorMode = "upload"; // "upload" or "template"
+    private List<TemplateDto> templates = new();
+    private bool isLoadingTemplates = false;
+    private int? selectedTemplateId;
+
+    private bool CanGenerate => 
+        ((editorMode == "upload" && !string.IsNullOrEmpty(uploadedClothingUrl) && !string.IsNullOrEmpty(selectedModelId))
+        || (editorMode == "template" && selectedTemplateId.HasValue))
+        && !isProcessing;
 
     private void HandleDragOver() => isDragging = true;
     private void HandleDragLeave() => isDragging = false;
@@ -261,30 +392,88 @@
 
         try
         {
-            var request = new TryOnRequestDto
+            if (editorMode == "template" && selectedTemplateId.HasValue)
             {
-                ClothingImagePath = uploadedClothingUrl!,
-                ModelAssetId = selectedModelId!,
-                Category = selectedCategory
-            };
+                // Template-based AI generation
+                var request = new GenerateFromTemplateDto
+                {
+                    TemplateId = selectedTemplateId.Value,
+                    AspectRatio = "4:3",
+                    OutputFormat = "jpg"
+                };
 
-            var response = await Http.PostAsJsonAsync("/api/tryon/generate", request);
+                var response = await Http.PostAsJsonAsync("/api/tryon/generate-from-template", request);
 
-            if (!response.IsSuccessStatusCode)
-            {
-                errorMessage = "Görsel oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.";
-                return;
+                if (!response.IsSuccessStatusCode)
+                {
+                    try
+                    {
+                        var error = await response.Content.ReadFromJsonAsync<AIGenerationResponseDto>();
+                        errorMessage = error?.Error ?? "Görsel oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.";
+                    }
+                    catch
+                    {
+                        var errorText = await response.Content.ReadAsStringAsync();
+                        errorMessage = $"Görsel oluşturulurken bir hata oluştu: {errorText}";
+                    }
+                    return;
+                }
+
+                var aiResponse = await response.Content.ReadFromJsonAsync<AIGenerationResponseDto>();
+                if (aiResponse == null || !aiResponse.Success || !aiResponse.ImageId.HasValue)
+                {
+                    errorMessage = aiResponse?.Error ?? "Beklenmeyen bir hata oluştu";
+                    return;
+                }
+
+                currentImageId = aiResponse.ImageId;
+                await PollForAIGenerationResult(aiResponse.ImageId.Value);
             }
-
-            var tryOnResponse = await response.Content.ReadFromJsonAsync<TryOnResponseDto>();
-            if (tryOnResponse == null)
+            else
             {
-                errorMessage = "Beklenmeyen bir hata oluştu";
-                return;
-            }
+                // Virtual Try-On (mevcut akış)
+                var request = new TryOnRequestDto
+                {
+                    ClothingImagePath = uploadedClothingUrl!,
+                    ModelAssetId = selectedModelId!,
+                    Category = selectedCategory
+                };
 
-            currentImageId = tryOnResponse.ImageId;
-            await PollForResult(tryOnResponse.ImageId);
+                var response = await Http.PostAsJsonAsync("/api/tryon/generate", request);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    try
+                    {
+                        var errorObj = await response.Content.ReadFromJsonAsync<Dictionary<string, object>>();
+                        if (errorObj != null && errorObj.ContainsKey("error"))
+                        {
+                            errorMessage = errorObj["error"]?.ToString() ?? "Görsel oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.";
+                        }
+                        else
+                        {
+                            var errorText = await response.Content.ReadAsStringAsync();
+                            errorMessage = $"Görsel oluşturulurken bir hata oluştu: {errorText}";
+                        }
+                    }
+                    catch
+                    {
+                        var errorText = await response.Content.ReadAsStringAsync();
+                        errorMessage = $"Görsel oluşturulurken bir hata oluştu: {errorText}";
+                    }
+                    return;
+                }
+
+                var tryOnResponse = await response.Content.ReadFromJsonAsync<TryOnResponseDto>();
+                if (tryOnResponse == null)
+                {
+                    errorMessage = "Beklenmeyen bir hata oluştu";
+                    return;
+                }
+
+                currentImageId = tryOnResponse.ImageId;
+                await PollForResult(tryOnResponse.ImageId);
+            }
         }
         catch (Exception ex)
         {
@@ -295,6 +484,48 @@
         {
             isProcessing = false;
         }
+    }
+
+    private async Task PollForAIGenerationResult(int imageId)
+    {
+        var maxAttempts = 60;
+        var attempt = 0;
+
+        while (attempt < maxAttempts)
+        {
+            await Task.Delay(2000);
+            attempt++;
+
+            try
+            {
+                var response = await Http.GetAsync($"/api/tryon/status/{imageId}");
+                if (!response.IsSuccessStatusCode) continue;
+
+                var status = await response.Content.ReadFromJsonAsync<TryOnStatusDto>();
+                if (status == null) continue;
+
+                if (status.Status == "Completed" && !string.IsNullOrEmpty(status.GeneratedImageUrl))
+                {
+                    resultImageUrl = status.GeneratedImageUrl;
+                    StateHasChanged();
+                    return;
+                }
+                else if (status.Status == "Failed")
+                {
+                    errorMessage = status.ErrorMessage ?? "AI görsel oluşturma başarısız oldu";
+                    StateHasChanged();
+                    return;
+                }
+
+                StateHasChanged();
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning(ex, "Status kontrol hatası, tekrar deneniyor...");
+            }
+        }
+
+        errorMessage = "İşlem zaman aşımına uğradı. Lütfen tekrar deneyin.";
     }
 
     private async Task PollForResult(int imageId)
@@ -343,6 +574,7 @@
     {
         uploadedClothingUrl = null;
         uploadError = null;
+        selectedTemplateId = null;
     }
 
     private void ClearResult()
