@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NanoBanana Notifications Center</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Icons -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13c8ec",
+                        "background-light": "#f6f8f8",
+                        "background-dark": "#101f22",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-100 min-h-screen antialiased flex flex-col">
+<!-- Navigation Bar -->
+<nav class="bg-white dark:bg-[#15282c] border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-between h-16">
+<!-- Logo -->
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded bg-gradient-to-br from-primary to-blue-500 flex items-center justify-center text-white font-bold text-lg">N</div>
+<span class="font-bold text-xl tracking-tight">NanoBanana</span>
+</div>
+<!-- Desktop Menu -->
+<div class="hidden md:flex items-center space-x-8">
+<a class="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors text-sm font-medium" href="#">Dashboard</a>
+<a class="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors text-sm font-medium" href="#">Try-On Studio</a>
+<a class="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors text-sm font-medium" href="#">Models</a>
+<a class="text-gray-900 dark:text-white text-sm font-medium border-b-2 border-primary pb-1" href="#">Notifications</a>
+</div>
+<!-- Profile/Credits -->
+<div class="flex items-center gap-4">
+<div class="hidden md:flex flex-col items-end mr-2">
+<span class="text-xs text-gray-400 uppercase font-semibold tracking-wider">Credits</span>
+<span class="text-sm font-bold text-primary">12 remaining</span>
+</div>
+<div class="h-9 w-9 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden border-2 border-transparent hover:border-primary transition-colors cursor-pointer relative">
+<img alt="User Profile" class="h-full w-full object-cover" data-alt="Professional woman profile picture" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDpCkFrA50q_WhSxabW0G3j9fbXErYn2kP10XnhnPVjgLvbGCrKlk983OMGKu2IoukQDCgujlRLoVmJypg1yYK9edd0-dO_eJi1Xwo9KFqdyQVFePJcnQkkg4Ui_s1qpQUx6Q5YQnqShmrJltqU_6aQ8ZWxawwCIkLJoFM-yz0sHhrvflUQ3QfKJuDWfGvCLz4BUgSMP4FxEAv0nGWfB7MrcoTYcKma9309zo5Rp1zAWU614hxV9D91rw3kU8SFzODg67tjfpAtSF3z"/>
+<div class="absolute top-0 right-0 h-2.5 w-2.5 bg-red-500 rounded-full border-2 border-white dark:border-[#15282c]"></div>
+</div>
+</div>
+</div>
+</div>
+</nav>
+<!-- Main Content -->
+<main class="flex-grow max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+<!-- Left Column: Header & Preferences -->
+<div class="lg:col-span-1 space-y-6">
+<!-- Header -->
+<div>
+<h1 class="text-3xl font-bold mb-2">Notifications</h1>
+<p class="text-gray-500 dark:text-gray-400 text-sm">Manage your updates and alert preferences.</p>
+</div>
+<!-- Preferences Card -->
+<div class="bg-white dark:bg-[#15282c] rounded-xl border border-gray-200 dark:border-gray-800 p-6 shadow-sm">
+<h2 class="text-lg font-semibold mb-4 flex items-center gap-2">
+<span class="material-icons-round text-primary">tune</span>
+                        Preferences
+                    </h2>
+<div class="space-y-6">
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-medium text-sm">Email Summaries</span>
+<span class="text-xs text-gray-500 dark:text-gray-400">Daily digest of AI results</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex flex-col">
+<span class="font-medium text-sm">In-App Alerts</span>
+<span class="text-xs text-gray-500 dark:text-gray-400">Real-time credit &amp; job updates</span>
+</div>
+<label class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox" value=""/>
+<div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+</label>
+</div>
+<div class="flex items-center justify-between opacity-50 cursor-not-allowed">
+<div class="flex flex-col">
+<span class="font-medium text-sm">SMS Alerts</span>
+<span class="text-xs text-gray-500 dark:text-gray-400">Pro plan only</span>
+</div>
+<span class="material-icons-round text-gray-500 text-sm">lock</span>
+</div>
+</div>
+<div class="mt-6 pt-6 border-t border-gray-100 dark:border-gray-700">
+<button class="text-xs font-medium text-primary hover:text-cyan-400 transition-colors flex items-center gap-1">
+                            Customize detailed settings
+                            <span class="material-icons-round text-sm">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Quick Stats Widget -->
+<div class="bg-gradient-to-br from-[#15282c] to-[#0d191b] rounded-xl border border-gray-800 p-6 relative overflow-hidden group">
+<div class="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-primary/10 blur-xl group-hover:bg-primary/20 transition-all duration-500"></div>
+<div class="relative z-10">
+<span class="text-xs font-bold text-primary uppercase tracking-wider mb-2 block">System Status</span>
+<div class="flex items-end gap-2">
+<h3 class="text-2xl font-bold text-white">99.9%</h3>
+<span class="text-xs text-green-400 mb-1 flex items-center">
+<span class="material-icons-round text-sm mr-0.5">check_circle</span>
+                                 Operational
+                             </span>
+</div>
+<p class="text-xs text-gray-400 mt-2">Try-On Engine v2.4 is running optimally.</p>
+</div>
+</div>
+</div>
+<!-- Right Column: Notifications Feed -->
+<div class="lg:col-span-2">
+<div class="flex items-center justify-between mb-6">
+<div class="flex gap-2">
+<button class="px-4 py-1.5 rounded-full bg-primary text-white text-sm font-semibold shadow-lg shadow-primary/20">All</button>
+<button class="px-4 py-1.5 rounded-full bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 text-sm font-medium transition-colors">Alerts</button>
+<button class="px-4 py-1.5 rounded-full bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 text-sm font-medium transition-colors">Updates</button>
+</div>
+<button class="text-xs text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors font-medium">Mark all as read</button>
+</div>
+<div class="space-y-8">
+<!-- Section: New -->
+<section class="space-y-4">
+<div class="flex items-center gap-3">
+<h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider">New</h3>
+<div class="h-[1px] flex-grow bg-gray-200 dark:bg-gray-800"></div>
+</div>
+<!-- Notification Item 1: Success -->
+<div class="group relative bg-white dark:bg-[#15282c] hover:bg-gray-50 dark:hover:bg-[#1a3136] rounded-xl p-4 border border-gray-200 dark:border-gray-800 transition-all duration-200 shadow-sm hover:shadow-md flex gap-4 items-start">
+<div class="flex-shrink-0">
+<div class="h-10 w-10 rounded-full bg-green-500/10 flex items-center justify-center text-green-500">
+<span class="material-icons-round">check_circle_outline</span>
+</div>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start">
+<h4 class="font-semibold text-gray-900 dark:text-white group-hover:text-primary transition-colors">AI Generation Complete</h4>
+<span class="text-xs text-gray-400 whitespace-nowrap">2 mins ago</span>
+</div>
+<p class="text-sm text-gray-600 dark:text-gray-300 mt-1">Batch <span class="font-mono text-xs bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded">#402</span> (Summer Dress Collection) is ready for review.</p>
+<div class="mt-3 flex gap-3">
+<button class="text-xs bg-primary hover:bg-cyan-400 text-white px-3 py-1.5 rounded font-medium transition-colors">View Results</button>
+</div>
+</div>
+<button class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 text-gray-400 hover:text-primary transition-all p-1" title="Mark as read">
+<span class="material-icons-round text-sm">circle</span>
+</button>
+<!-- Unread indicator -->
+<div class="absolute top-1/2 -left-1 transform -translate-y-1/2 h-8 w-1 bg-primary rounded-r-full"></div>
+</div>
+<!-- Notification Item 2: Alert -->
+<div class="group relative bg-white dark:bg-[#15282c] hover:bg-gray-50 dark:hover:bg-[#1a3136] rounded-xl p-4 border border-orange-200 dark:border-orange-900/30 transition-all duration-200 shadow-sm hover:shadow-md flex gap-4 items-start">
+<div class="flex-shrink-0">
+<div class="h-10 w-10 rounded-full bg-orange-500/10 flex items-center justify-center text-orange-500 animate-pulse">
+<span class="material-icons-round">bolt</span>
+</div>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start">
+<h4 class="font-semibold text-orange-600 dark:text-orange-400">Low Credit Alert</h4>
+<span class="text-xs text-gray-400 whitespace-nowrap">45 mins ago</span>
+</div>
+<p class="text-sm text-gray-600 dark:text-gray-300 mt-1">You have <strong class="text-gray-900 dark:text-white">12 credits</strong> remaining. Top up now to ensure uninterrupted processing for your next batch.</p>
+<div class="mt-3">
+<button class="text-xs border border-orange-500/30 hover:bg-orange-500/10 text-orange-600 dark:text-orange-400 px-3 py-1.5 rounded font-medium transition-colors">Add Credits</button>
+</div>
+</div>
+<div class="absolute top-1/2 -left-1 transform -translate-y-1/2 h-8 w-1 bg-orange-500 rounded-r-full"></div>
+</div>
+</section>
+<!-- Section: Earlier -->
+<section class="space-y-4">
+<div class="flex items-center gap-3">
+<h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider">Earlier</h3>
+<div class="h-[1px] flex-grow bg-gray-200 dark:bg-gray-800"></div>
+</div>
+<!-- Notification Item 3: Feature -->
+<div class="group relative bg-white/50 dark:bg-[#15282c]/50 hover:bg-white dark:hover:bg-[#15282c] rounded-xl p-4 border border-gray-200 dark:border-gray-800 transition-all duration-200 flex gap-4 items-center">
+<div class="flex-shrink-0">
+<div class="h-10 w-10 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-500">
+<span class="material-icons-round">auto_awesome</span>
+</div>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start">
+<h4 class="font-semibold text-gray-700 dark:text-gray-200">New Model Poses Available</h4>
+<span class="text-xs text-gray-400 whitespace-nowrap">5 hours ago</span>
+</div>
+<p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">We've added 5 new studio poses to the library specifically for formal wear.</p>
+</div>
+<button class="opacity-0 group-hover:opacity-100 text-gray-300 hover:text-primary transition-all p-2">
+<span class="material-icons-round text-lg">check</span>
+</button>
+</div>
+<!-- Notification Item 4: Billing -->
+<div class="group relative bg-white/50 dark:bg-[#15282c]/50 hover:bg-white dark:hover:bg-[#15282c] rounded-xl p-4 border border-gray-200 dark:border-gray-800 transition-all duration-200 flex gap-4 items-center">
+<div class="flex-shrink-0">
+<div class="h-10 w-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500">
+<span class="material-icons-round">receipt_long</span>
+</div>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start">
+<h4 class="font-semibold text-gray-700 dark:text-gray-200">Billing Success</h4>
+<span class="text-xs text-gray-400 whitespace-nowrap">Yesterday</span>
+</div>
+<p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">Invoice #INV-2024-001 has been paid successfully.</p>
+</div>
+<button class="opacity-0 group-hover:opacity-100 text-gray-300 hover:text-primary transition-all p-2">
+<span class="material-icons-round text-lg">download</span>
+</button>
+</div>
+</section>
+<!-- Section: System -->
+<section class="space-y-4">
+<div class="flex items-center gap-3">
+<h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider">System</h3>
+<div class="h-[1px] flex-grow bg-gray-200 dark:bg-gray-800"></div>
+</div>
+<!-- Notification Item 5: Maintenance -->
+<div class="group relative bg-white/30 dark:bg-[#15282c]/30 hover:bg-white dark:hover:bg-[#15282c] rounded-xl p-4 border border-gray-200 dark:border-gray-800 transition-all duration-200 flex gap-4 items-center opacity-75 hover:opacity-100">
+<div class="flex-shrink-0">
+<div class="h-10 w-10 rounded-full bg-gray-500/10 flex items-center justify-center text-gray-500">
+<span class="material-icons-round">dns</span>
+</div>
+</div>
+<div class="flex-grow">
+<div class="flex justify-between items-start">
+<h4 class="font-semibold text-gray-600 dark:text-gray-300">Maintenance Scheduled</h4>
+<span class="text-xs text-gray-400 whitespace-nowrap">Oct 20</span>
+</div>
+<p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5">System update scheduled for Oct 24, 2:00 AM EST. Downtime approx 30 mins.</p>
+</div>
+</div>
+</section>
+<!-- Empty State (Simulated as bottom element) -->
+<div class="py-8 text-center hidden">
+<div class="inline-flex items-center justify-center w-16 h-16 rounded-full bg-gray-100 dark:bg-gray-800 mb-4 text-gray-400">
+<span class="material-icons-round text-3xl">notifications_off</span>
+</div>
+<h3 class="text-lg font-medium text-gray-900 dark:text-white">All caught up!</h3>
+<p class="text-gray-500 dark:text-gray-400 text-sm mt-1">No new notifications at the moment.</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>

@@ -39,5 +39,33 @@
 <body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-100 antialiased selection:bg-primary selection:text-white">
     <Routes />
     <script src="_framework/blazor.web.js"></script>
+    <script>
+        // Token yönetimi için JavaScript fonksiyonları
+        window.tokenStorage = {
+            setToken: function(token) {
+                localStorage.setItem('jwtToken', token);
+                // Cookie'yi de tarayıcıdan set et (Blazor Server SSR için kritik)
+                document.cookie = "JwtToken=" + encodeURIComponent(token) + "; path=/; max-age=" + (10 * 24 * 60 * 60) + "; SameSite=Lax";
+                console.log('[JS] Token localStorage ve cookie\'ye kaydedildi');
+            },
+            getToken: function() {
+                return localStorage.getItem('jwtToken') || '';
+            },
+            removeToken: function() {
+                localStorage.removeItem('jwtToken');
+                // Cookie'yi de temizle
+                document.cookie = "JwtToken=; path=/; max-age=0; SameSite=Lax";
+                console.log('[JS] Token localStorage ve cookie\'den silindi');
+            },
+            logout: function() {
+                // localStorage ve cookie'yi temizle
+                localStorage.removeItem('jwtToken');
+                document.cookie = "JwtToken=; path=/; max-age=0; SameSite=Lax";
+                console.log('[JS] Logout: Token temizlendi, yönlendiriliyor...');
+                // Sunucu tarafında da session temizlensin ve ana sayfaya dön
+                window.location.href = '/api/auth/signout';
+            }
+        };
+    </script>
 </body>
 </html>

@@ -1,4 +1,78 @@
 @inherits LayoutComponentBase
+@inject HttpClient Http
+@inject AuthenticationStateProvider AuthStateProvider
+@inject IHttpContextAccessor HttpContextAccessor
+@inject ILogger<MainLayout> Logger
+
+@code {
+    private Giydir.Core.DTOs.UserDto? currentUser;
+    private bool isLoading = true;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Authentication state değişikliklerini dinle
+        AuthStateProvider.AuthenticationStateChanged += OnAuthenticationStateChanged;
+        
+        // Cookie var mı kontrol et → varsa kullanıcı bilgilerini yükle
+        // Token ekleme işini AuthTokenHandler otomatik yapıyor
+        var hasToken = HttpContextAccessor.HttpContext?.Request.Cookies.ContainsKey("JwtToken") == true;
+        
+        if (hasToken)
+        {
+            await LoadUserAsync();
+        }
+        else
+        {
+            isLoading = false;
+        }
+    }
+
+    private async void OnAuthenticationStateChanged(Task<AuthenticationState> authStateTask)
+    {
+        var authState = await authStateTask;
+        
+        if (authState.User.Identity?.IsAuthenticated == true)
+        {
+            await LoadUserAsync();
+        }
+        else
+        {
+            currentUser = null;
+            StateHasChanged();
+        }
+    }
+
+    private async Task LoadUserAsync()
+    {
+        try
+        {
+            isLoading = true;
+            StateHasChanged();
+            
+            // AuthTokenHandler token'ı otomatik ekler (cookie/session'dan)
+            var response = await Http.GetFromJsonAsync<Giydir.Core.DTOs.AuthResponseDto>("api/auth/me");
+            
+            if (response?.Success == true && response.User != null)
+            {
+                currentUser = response.User;
+            }
+            else
+            {
+                currentUser = null;
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "[MainLayout] LoadUserAsync ERROR: {Message}", ex.Message);
+            currentUser = null;
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+}
 
 <!-- Navigation -->
 <nav class="sticky top-0 w-full z-50 backdrop-blur-xl bg-background-light/80 dark:bg-background-dark/80 border-b border-primary/10">
@@ -20,24 +94,57 @@
             </div>
             <!-- Right Side -->
             <div class="flex items-center gap-4">
-                <!-- Credits Pill -->
-                <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20">
-                    <span class="material-icons-outlined text-primary text-sm">bolt</span>
-                    <span class="text-sm font-bold text-primary">50 Kredi</span>
-                    <a href="/settings" class="ml-1 w-5 h-5 rounded-full bg-primary text-background-dark flex items-center justify-center hover:bg-white transition-colors no-underline">
-                        <span class="material-icons-outlined text-xs font-bold">add</span>
-                    </a>
-                </div>
-                <!-- Profile Dropdown -->
-                <div class="flex items-center gap-3 pl-4 border-l border-slate-200 dark:border-slate-800">
-                    <div class="text-right hidden sm:block">
-                        <p class="text-xs font-medium text-slate-500 dark:text-slate-400 m-0">Pro Plan</p>
-                        <p class="text-sm font-bold text-slate-900 dark:text-white m-0">Demo Kullanıcı</p>
-                    </div>
-                    <a href="/settings" class="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden border-2 border-primary/30 flex items-center justify-center no-underline">
-                        <span class="material-icons-outlined text-primary">person</span>
-                    </a>
-                </div>
+                <AuthorizeView>
+                    <Authorized Context="authContext">
+                        @if (isLoading)
+                        {
+                            <div class="flex items-center gap-2">
+                                <div class="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                            </div>
+                        }
+                        else
+                        {
+                            <!-- Credits Pill -->
+                            <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20">
+                                <span class="material-icons-outlined text-primary text-sm">bolt</span>
+                                <span class="text-sm font-bold text-primary">@(currentUser?.Credits ?? 0) Kredi</span>
+                                <a href="/settings" class="ml-1 w-5 h-5 rounded-full bg-primary text-background-dark flex items-center justify-center hover:bg-white transition-colors no-underline">
+                                    <span class="material-icons-outlined text-xs font-bold">add</span>
+                                </a>
+                            </div>
+                            <!-- Profile Dropdown -->
+                            <div class="flex items-center gap-3 pl-4 border-l border-slate-200 dark:border-slate-800">
+                                <div class="text-right hidden sm:block">
+                                    <p class="text-xs font-medium text-slate-500 dark:text-slate-400 m-0">Pro Plan</p>
+                                    <p class="text-sm font-bold text-slate-900 dark:text-white m-0">@(!string.IsNullOrEmpty(currentUser?.Name) ? currentUser.Name : currentUser?.Email?.Split('@')[0] ?? "Kullanıcı")</p>
+                                </div>
+                                <div class="relative group">
+                                    <a href="/profile" class="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden border-2 border-primary/30 hover:border-primary transition-colors no-underline flex items-center justify-center">
+                                        <span class="material-icons-outlined text-primary">person</span>
+                                    </a>
+                                    <!-- Dropdown Menu -->
+                                    <div class="absolute right-0 mt-2 w-48 rounded-lg shadow-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                                        <div class="py-1">
+                                            <a href="/profile" class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 no-underline">Profil</a>
+                                            <a href="/settings" class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 no-underline">Ayarlar</a>
+                                            <hr class="my-1 border-slate-200 dark:border-slate-700">
+                                            <button onclick="tokenStorage.logout()" class="w-full text-left block px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-slate-100 dark:hover:bg-slate-700">
+                                                Çıkış Yap
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </Authorized>
+                    <NotAuthorized>
+                        <!-- Login/Register Buttons -->
+                        <div class="flex items-center gap-3">
+                            <a href="/login" class="px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-primary transition-colors no-underline">Giriş Yap</a>
+                            <a href="/register" class="px-4 py-2 text-sm font-medium bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors no-underline">Kayıt Ol</a>
+                        </div>
+                    </NotAuthorized>
+                </AuthorizeView>
             </div>
         </div>
     </div>
@@ -59,3 +166,4 @@
         </div>
     </div>
 </footer>
+

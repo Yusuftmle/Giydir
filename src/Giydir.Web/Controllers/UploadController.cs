@@ -1,11 +1,12 @@
 using Giydir.Core.DTOs;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Giydir.Web.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class UploadController : ControllerBase
+public class UploadController : BaseController
 {
     private readonly IWebHostEnvironment _env;
     private readonly ILogger<UploadController> _logger;
@@ -20,6 +21,7 @@ public class UploadController : ControllerBase
     }
 
     [HttpPost("clothing")]
+    [Authorize]
     public async Task<ActionResult<UploadResponseDto>> UploadClothing(IFormFile file)
     {
         if (file == null || file.Length == 0)

@@ -18,6 +18,7 @@ public class GeneratedImageRepository : IGeneratedImageRepository
     {
         return await _context.GeneratedImages
             .Include(g => g.ModelAsset)
+            .Include(g => g.Project)
             .FirstOrDefaultAsync(g => g.Id == id);
     }
 

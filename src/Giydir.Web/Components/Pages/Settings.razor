@@ -5,7 +5,7 @@
     <!-- Sidebar Navigation -->
     <aside class="w-64 hidden lg:flex flex-col border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-surface-dark">
         <nav class="flex-1 px-4 py-6 space-y-1">
-            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white transition-colors group no-underline" href="#">
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white transition-colors group no-underline" href="/profile">
                 <span class="material-icons-outlined text-[20px] group-hover:text-primary transition-colors">person</span>
                 <span class="font-medium text-sm">Profil</span>
             </a>
@@ -17,7 +17,7 @@
                 <span class="material-icons-outlined text-[20px] group-hover:text-primary transition-colors">vpn_key</span>
                 <span class="font-medium text-sm">API Anahtarları</span>
             </a>
-            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white transition-colors group no-underline" href="#">
+            <a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white transition-colors group no-underline" href="/notifications">
                 <div class="relative">
                     <span class="material-icons-outlined text-[20px] group-hover:text-primary transition-colors">notifications</span>
                     <span class="absolute top-0 right-0 w-2 h-2 bg-primary rounded-full"></span>
@@ -35,8 +35,10 @@
         <!-- User Info -->
         <div class="p-4 border-t border-slate-200 dark:border-slate-800">
             <div class="flex items-center gap-3 p-2 rounded-lg">
-                <div class="w-10 h-10 rounded-full bg-primary/20 border-2 border-primary/30 flex items-center justify-center">
-                    <span class="text-primary font-bold text-sm">DK</span>
+                <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary/30 bg-primary/20 flex items-center justify-center">
+                    <img alt="User Profile" class="w-full h-full object-cover" 
+                         src="https://lh3.googleusercontent.com/aida-public/AB6AXuAoKjXKuuit50ZbVTUrL_M231n53Sx-hdpx7tQdJw3Ajc4O40ndep8m-TVutfPx_7VwADo1n10H5KYUyMsvyszoIxcwXpzz2DEk_hvs6z6YNWm6waZ3RChj75si5U_kA7-5XuGQUf1nC0TNW23Bkm397XVb4_Ya_LmPV8ehYDvL3FHx_vtfjH20Lp_w9SRfJzTshnhnohOI2nQz-di5b6jQd-TUgieUtEsXum48pApPc8ECl_SFRlL1yPNQWvSH03S-5dYJgE584l70"
+                         onerror="this.style.display='none'; this.parentElement.innerHTML='<span class=\\'text-primary font-bold text-sm\\'>DK</span>';" />
                 </div>
                 <div class="flex-1 min-w-0">
                     <p class="text-sm font-semibold text-slate-900 dark:text-white truncate m-0">Demo Kullanıcı</p>

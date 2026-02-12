@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NanoBanana Profile and Account Settings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13c8ec",
+                        "background-light": "#f6f8f8",
+                        "background-dark": "#101f22",
+                        "surface-dark": "#162a2e",
+                        "surface-light": "#ffffff",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.5rem", "lg": "1rem", "xl": "1.5rem", "2xl": "2rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200 font-display min-h-screen flex antialiased selection:bg-primary selection:text-white">
+<aside class="w-64 hidden lg:flex flex-col border-r border-slate-200 dark:border-slate-800 bg-white dark:bg-surface-dark fixed h-full z-20">
+<div class="p-6 flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center text-white font-bold text-lg">
+                N
+            </div>
+<span class="font-bold text-xl tracking-tight dark:text-white">NanoBanana</span>
+</div>
+<nav class="flex-1 px-4 py-4 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg bg-primary/10 text-primary dark:bg-primary/20 dark:text-primary transition-colors group" href="#">
+<span class="material-icons text-[20px]">person</span>
+<span class="font-medium text-sm">Profile</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white transition-colors" href="#">
+<span class="material-icons text-[20px]">credit_card</span>
+<span class="font-medium text-sm">Billing &amp; Plans</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white transition-colors group" href="#">
+<span class="material-icons text-[20px] group-hover:text-primary transition-colors">vpn_key</span>
+<span class="font-medium text-sm">API Keys</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded-lg text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white transition-colors group" href="#">
+<div class="relative">
+<span class="material-icons text-[20px] group-hover:text-primary transition-colors">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-primary rounded-full"></span>
+</div>
+<span class="font-medium text-sm">Notifications</span>
+</a>
+<div class="pt-4 mt-4 border-t border-slate-200 dark:border-slate-700">
+<p class="px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Team</p>
+<a class="flex items-center gap-3 px-4 py-2 rounded-lg text-slate-500 hover:bg-slate-50 hover:text-slate-900 dark:text-slate-400 dark:hover:bg-slate-800 dark:hover:text-white transition-colors" href="#">
+<span class="material-icons text-[20px]">groups</span>
+<span class="font-medium text-sm">Members</span>
+</a>
+</div>
+</nav>
+<div class="p-4 border-t border-slate-200 dark:border-slate-800">
+<div class="flex items-center gap-3 p-2 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 cursor-pointer transition-colors">
+<img alt="Professional woman avatar" class="w-10 h-10 rounded-full object-cover border-2 border-slate-200 dark:border-slate-600" data-alt="Professional woman portrait avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjwIlrFXpgJsuVkHowIbU7SFlMjaZdul9QdPT1fRcsB85hNJwuL6ZNRpbvptGsyJBn04A10mOAfpXbSXVyixRAKFbLhWhO9hpDkEwHttC0R72L7UOb4YrDfONaAdlBgiLJMnKGDmgcCTt8b8LuzCryHKfYbdrEiKunxSolGIYuw_qnu26W8XoIj4ePPu4pb4Pr7rh5CpES57dbNUzvZyWK21aQQhTXEE6R4VEq_bh40nfAnvB0qUqr_oV3EBgMhqLE24EcZ2cMdVBL"/>
+<div class="flex-1 min-w-0">
+<p class="text-sm font-semibold text-slate-900 dark:text-white truncate">Sarah Jenkins</p>
+<p class="text-xs text-slate-500 dark:text-slate-400 truncate">sarah@boutique.co</p>
+</div>
+<span class="material-icons text-slate-400 text-sm">more_vert</span>
+</div>
+</div>
+</aside>
+<main class="flex-1 lg:pl-64 flex flex-col min-h-screen">
+<header class="lg:hidden flex items-center justify-between p-4 bg-white dark:bg-surface-dark border-b border-slate-200 dark:border-slate-800 sticky top-0 z-10">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 rounded-lg bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center text-white font-bold">N</div>
+<span class="font-bold text-lg dark:text-white">NanoBanana</span>
+</div>
+<button class="text-slate-500 dark:text-slate-300">
+<span class="material-icons">menu</span>
+</button>
+</header>
+<div class="p-6 lg:p-10 max-w-7xl mx-auto w-full space-y-12">
+<div>
+<h1 class="text-3xl font-bold text-slate-900 dark:text-white mb-2">User Profile</h1>
+<p class="text-slate-500 dark:text-slate-400">Manage your personal information and boutique details.</p>
+</div>
+<div class="bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-700/50 rounded-xl shadow-sm overflow-hidden">
+<div class="p-8 border-b border-slate-200 dark:border-slate-700/50">
+<div class="flex flex-col md:flex-row gap-8">
+<div class="flex-shrink-0">
+<div class="relative group cursor-pointer">
+<div class="w-32 h-32 rounded-full overflow-hidden border-4 border-white dark:border-surface-dark shadow-lg ring-2 ring-slate-200 dark:ring-slate-700">
+<img alt="Large avatar" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBjwIlrFXpgJsuVkHowIbU7SFlMjaZdul9QdPT1fRcsB85hNJwuL6ZNRpbvptGsyJBn04A10mOAfpXbSXVyixRAKFbLhWhO9hpDkEwHttC0R72L7UOb4YrDfONaAdlBgiLJMnKGDmgcCTt8b8LuzCryHKfYbdrEiKunxSolGIYuw_qnu26W8XoIj4ePPu4pb4Pr7rh5CpES57dbNUzvZyWK21aQQhTXEE6R4VEq_bh40nfAnvB0qUqr_oV3EBgMhqLE24EcZ2cMdVBL"/>
+</div>
+<div class="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="material-icons text-white">camera_alt</span>
+</div>
+<button class="absolute bottom-0 right-0 p-2 bg-primary text-white rounded-full shadow-lg border-2 border-white dark:border-surface-dark hover:bg-primary/90 transition-colors">
+<span class="material-icons text-sm">edit</span>
+</button>
+</div>
+<p class="mt-3 text-center text-xs font-medium text-slate-500 dark:text-slate-400">Allowed *.jpeg, *.jpg, *.png, *.gif <br/> max size of 3 MB</p>
+</div>
+<div class="flex-1 space-y-8">
+<div>
+<h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+<span class="material-icons text-primary">person</span>
+                                        Personal Information
+                                    </h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Full Name</label>
+<input class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-slate-900 dark:text-white text-sm" type="text" value="Sarah Jenkins"/>
+</div>
+<div>
+<label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Professional Title</label>
+<input class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-slate-900 dark:text-white text-sm" type="text" value="Fashion Boutique Owner"/>
+</div>
+<div class="md:col-span-2">
+<label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Email Address</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-icons text-slate-400 text-sm">email</span>
+</span>
+<input class="w-full pl-10 px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-slate-900 dark:text-white text-sm" type="email" value="sarah@boutique.co"/>
+</div>
+</div>
+</div>
+</div>
+<div class="pt-6 border-t border-slate-200 dark:border-slate-700/50">
+<h3 class="text-lg font-bold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
+<span class="material-icons text-primary">storefront</span>
+                                        Boutique Details
+                                    </h3>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+<div>
+<label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Boutique Name</label>
+<input class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-slate-900 dark:text-white text-sm" type="text" value="La Chic Parisienne"/>
+</div>
+<div>
+<label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Industry</label>
+<select class="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-slate-900 dark:text-white text-sm">
+<option>Women's Fashion</option>
+<option>Men's Fashion</option>
+<option>Luxury Goods</option>
+<option>Vintage &amp; Thrift</option>
+</select>
+</div>
+<div class="md:col-span-2">
+<label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Website URL</label>
+<div class="relative">
+<span class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-icons text-slate-400 text-sm">link</span>
+</span>
+<input class="w-full pl-10 px-4 py-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary text-slate-900 dark:text-white text-sm" type="url" value="https://lachicparisienne.com"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="px-8 py-5 bg-slate-50 dark:bg-slate-900/50 flex items-center justify-end gap-3 border-t border-slate-200 dark:border-slate-700/50">
+<button class="px-6 py-2.5 text-sm font-semibold text-slate-700 dark:text-slate-300 bg-white dark:bg-surface-dark border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
+                            Cancel
+                        </button>
+<button class="px-6 py-2.5 text-sm font-bold text-background-dark bg-primary rounded-lg hover:bg-primary/90 transition-all shadow-lg shadow-primary/20">
+                            Save Changes
+                        </button>
+</div>
+</div>
+<div class="pt-8 border-t border-slate-200 dark:border-slate-700/50">
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<h2 class="text-2xl font-bold text-slate-900 dark:text-white mb-2">Billing &amp; Plans</h2>
+<p class="text-slate-500 dark:text-slate-400">Manage your subscription, payment methods, and download your invoices.</p>
+</div>
+<div class="flex gap-3">
+<button class="px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-300 bg-white dark:bg-surface-dark border border-slate-300 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+                           Payment Methods
+                       </button>
+</div>
+</div>
+</div>
+<div class="bg-gradient-to-r from-surface-dark to-[#1a353b] dark:from-surface-dark dark:to-[#14262b] rounded-xl p-8 border border-slate-200 dark:border-slate-700/50 shadow-sm relative overflow-hidden group">
+<div class="absolute right-0 top-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl -translate-y-1/2 translate-x-1/4"></div>
+<div class="relative z-10 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+<div>
+<div class="text-sm font-medium text-primary mb-1 uppercase tracking-wider">Current Balance</div>
+<div class="flex items-baseline gap-2">
+<h2 class="text-5xl font-bold text-white">450</h2>
+<span class="text-xl text-slate-400">credits</span>
+</div>
+<p class="text-slate-400 mt-2 text-sm">Renews on <span class="text-white font-medium">October 24, 2023</span>. You have used 65% of your monthly allowance.</p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+<button class="px-6 py-3 bg-white/5 hover:bg-white/10 text-white border border-white/10 rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 backdrop-blur-sm">
+<span class="material-icons text-sm">history</span>
+                            Usage History
+                        </button>
+<button class="px-6 py-3 bg-primary hover:bg-primary/90 text-background-dark rounded-lg font-bold shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2 transform hover:-translate-y-0.5">
+<span class="material-icons text-sm">add_circle</span>
+                            Buy Credits
+                        </button>
+</div>
+</div>
+<div class="mt-8 relative h-2 bg-slate-700 rounded-full overflow-hidden w-full max-w-lg">
+<div class="absolute top-0 left-0 h-full bg-primary rounded-full" style="width: 65%"></div>
+</div>
+</div>
+<div>
+<h3 class="text-xl font-bold text-slate-900 dark:text-white mb-6">Available Plans</h3>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<div class="bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-700 rounded-xl p-6 flex flex-col hover:border-slate-300 dark:hover:border-slate-600 transition-colors">
+<div class="mb-4">
+<h4 class="text-lg font-semibold text-slate-900 dark:text-white">Starter</h4>
+<p class="text-sm text-slate-500 dark:text-slate-400 mt-1">Perfect for trying out the tech.</p>
+</div>
+<div class="flex items-baseline gap-1 mb-6">
+<span class="text-3xl font-bold text-slate-900 dark:text-white">$0</span>
+<span class="text-slate-500 dark:text-slate-400">/mo</span>
+</div>
+<ul class="space-y-3 mb-8 flex-1">
+<li class="flex items-start gap-3 text-sm text-slate-600 dark:text-slate-300">
+<span class="material-icons text-green-500 text-sm mt-0.5">check</span>
+                                50 Credits / month
+                            </li>
+<li class="flex items-start gap-3 text-sm text-slate-600 dark:text-slate-300">
+<span class="material-icons text-green-500 text-sm mt-0.5">check</span>
+                                Standard Generation Speed
+                            </li>
+<li class="flex items-start gap-3 text-sm text-slate-600 dark:text-slate-300">
+<span class="material-icons text-green-500 text-sm mt-0.5">check</span>
+                                Watermarked Results
+                            </li>
+</ul>
+<button class="w-full py-2.5 px-4 bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white font-semibold rounded-lg hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
+                            Current Plan
+                        </button>
+</div>
+<div class="bg-slate-900 dark:bg-surface-dark border-2 border-primary rounded-xl p-6 flex flex-col relative shadow-2xl shadow-primary/10 scale-[1.02] transform z-10">
+<div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-background-dark text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wide">
+                            Most Popular
+                        </div>
+<div class="mb-4">
+<h4 class="text-lg font-semibold text-white">Pro Boutique</h4>
+<p class="text-sm text-slate-400 mt-1">For growing businesses.</p>
+</div>
+<div class="flex items-baseline gap-1 mb-6">
+<span class="text-3xl font-bold text-white">$49</span>
+<span class="text-slate-400">/mo</span>
+</div>
+<ul class="space-y-3 mb-8 flex-1">
+<li class="flex items-start gap-3 text-sm text-white">
+<span class="material-icons text-primary text-sm mt-0.5">check</span>
+                                1,000 Credits / month
+                            </li>
+<li class="flex items-start gap-3 text-sm text-white">
+<span class="material-icons text-primary text-sm mt-0.5">check</span>
+                                High-Res Downloads
+                            </li>
+<li class="flex items-start gap-3 text-sm text-white">
+<span class="material-icons text-primary text-sm mt-0.5">check</span>
+                                No Watermark
+                            </li>
+<li class="flex items-start gap-3 text-sm text-white">
+<span class="material-icons text-primary text-sm mt-0.5">check</span>
+                                Priority Email Support
+                            </li>
+</ul>
+<button class="w-full py-2.5 px-4 bg-primary text-background-dark font-bold rounded-lg hover:bg-primary/90 transition-colors shadow-lg shadow-primary/25">
+                            Upgrade to Pro
+                        </button>
+</div>
+<div class="bg-white dark:bg-surface-dark border border-slate-200 dark:border-slate-700 rounded-xl p-6 flex flex-col hover:border-slate-300 dark:hover:border-slate-600 transition-colors">
+<div class="mb-4">
+<h4 class="text-lg font-semibold text-slate-900 dark:text-white">Enterprise</h4>
+<p class="text-sm text-slate-500 dark:text-slate-400 mt-1">High volume needs.</p>
+</div>
+<div class="flex items-baseline gap-1 mb-6">
+<span class="text-3xl font-bold text-slate-900 dark:text-white">Custom</span>
+</div>
+<ul class="space-y-3 mb-8 flex-1">
+<li class="flex items-start gap-3 text-sm text-slate-600 dark:text-slate-300">
+<span class="material-icons text-green-500 text-sm mt-0.5">check</span>
+                                Unlimited Credits
+                            </li>
+<li class="flex items-start gap-3 text-sm text-slate-600 dark:text-slate-300">
+<span class="material-icons text-green-500 text-sm mt-0.5">check</span>
+                                API Access
+                            </li>
+<li class="flex items-start gap-3 text-sm text-slate-600 dark:text-slate-300">
+<span class="material-icons text-green-500 text-sm mt-0.5">check</span>
+                                Dedicated Account Manager
+                            </li>
+<li class="flex items-start gap-3 text-sm text-slate-600 dark:text-slate-300">
+<span class="material-icons text-green-500 text-sm mt-0.5">check</span>
+                                Custom Integrations
+                            </li>
+</ul>
+<button class="w-full py-2.5 px-4 bg-transparent border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-white font-semibold rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors">
+                            Contact Sales
+                        </button>
+</div>
+</div>
+</div>
+<div class="bg-white dark:bg-surface-dark rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+<div class="p-6 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+<h3 class="text-lg font-bold text-slate-900 dark:text-white">Transaction History</h3>
+<div class="flex gap-2">
+<button class="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
+<span class="material-icons text-[20px]">filter_list</span>
+</button>
+<button class="p-2 text-slate-500 hover:text-slate-700 dark:text-slate-400 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800">
+<span class="material-icons text-[20px]">download</span>
+</button>
+</div>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left text-sm">
+<thead class="bg-slate-50 dark:bg-black/20 text-slate-500 dark:text-slate-400 font-medium border-b border-slate-200 dark:border-slate-800">
+<tr>
+<th class="px-6 py-4">Date</th>
+<th class="px-6 py-4">Description</th>
+<th class="px-6 py-4">Amount</th>
+<th class="px-6 py-4">Status</th>
+<th class="px-6 py-4 text-right">Invoice</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-200 dark:divide-slate-800">
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+<td class="px-6 py-4 text-slate-900 dark:text-slate-300">Oct 24, 2023</td>
+<td class="px-6 py-4">
+<div class="font-medium text-slate-900 dark:text-white">Pro Plan Subscription</div>
+<div class="text-xs text-slate-500 dark:text-slate-500">Monthly renewal</div>
+</td>
+<td class="px-6 py-4 text-slate-900 dark:text-slate-300">$49.00</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border border-green-200 dark:border-green-800">
+                                        Paid
+                                    </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-primary hover:text-primary/80 font-medium text-sm">Download</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+<td class="px-6 py-4 text-slate-900 dark:text-slate-300">Oct 10, 2023</td>
+<td class="px-6 py-4">
+<div class="font-medium text-slate-900 dark:text-white">Credit Top-up</div>
+<div class="text-xs text-slate-500 dark:text-slate-500">500 extra credits</div>
+</td>
+<td class="px-6 py-4 text-slate-900 dark:text-slate-300">$25.00</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border border-green-200 dark:border-green-800">
+                                        Paid
+                                    </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-primary hover:text-primary/80 font-medium text-sm">Download</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+<td class="px-6 py-4 text-slate-900 dark:text-slate-300">Sep 24, 2023</td>
+<td class="px-6 py-4">
+<div class="font-medium text-slate-900 dark:text-white">Pro Plan Subscription</div>
+<div class="text-xs text-slate-500 dark:text-slate-500">Monthly renewal</div>
+</td>
+<td class="px-6 py-4 text-slate-900 dark:text-slate-300">$49.00</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400 border border-green-200 dark:border-green-800">
+                                        Paid
+                                    </span>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="text-primary hover:text-primary/80 font-medium text-sm">Download</button>
+</td>
+</tr>
+<tr class="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+<td class="px-6 py-4 text-slate-900 dark:text-slate-300">Sep 01, 2023</td>
+<td class="px-6 py-4">
+<div class="font-medium text-slate-900 dark:text-white">Image Generation Batch</div>
+<div class="text-xs text-slate-500 dark:text-slate-500">Failed transaction</div>
+</td>
+<td class="px-6 py-4 text-slate-900 dark:text-slate-300">$0.00</td>
+<td class="px-6 py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 border border-red-200 dark:border-red-800">
+                                        Failed
+                                    </span>
+</td>
+<td class="px-6 py-4 text-right">
+<span class="text-slate-400 text-sm">-</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="p-4 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
+<span class="text-sm text-slate-500 dark:text-slate-400">Showing <span class="font-medium">1-4</span> of <span class="font-medium">24</span> results</span>
+<div class="flex gap-2">
+<button class="px-3 py-1 text-sm border border-slate-200 dark:border-slate-700 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 disabled:opacity-50" disabled="">Previous</button>
+<button class="px-3 py-1 text-sm border border-slate-200 dark:border-slate-700 rounded-lg text-slate-500 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800">Next</button>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 pt-10 border-t border-slate-200 dark:border-slate-800/50">
+<div class="p-4">
+<h4 class="font-bold text-slate-900 dark:text-white mb-2">Need help with billing?</h4>
+<p class="text-sm text-slate-500 dark:text-slate-400 mb-4">Our support team is available 24/7 to help you with any issues regarding your payments.</p>
+<a class="text-primary text-sm font-semibold hover:underline" href="#">Contact Support →</a>
+</div>
+<div class="p-4 bg-primary/5 rounded-xl border border-primary/10">
+<div class="flex gap-3">
+<span class="material-icons text-primary">info</span>
+<div>
+<h4 class="font-bold text-slate-900 dark:text-white text-sm mb-1">Tax Information</h4>
+<p class="text-xs text-slate-500 dark:text-slate-400">If you need to update your VAT ID or company address for tax purposes, please go to your <a class="text-primary hover:underline" href="#">Profile Settings</a>.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+
+</body></html>

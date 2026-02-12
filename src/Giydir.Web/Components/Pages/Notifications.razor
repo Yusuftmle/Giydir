@@ -1,0 +1,250 @@
+@page "/notifications"
+@rendermode InteractiveServer
+
+<div class="min-h-[calc(100vh-5rem)]">
+    <!-- Navigation Bar -->
+    <nav class="bg-white dark:bg-[#15282c] border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <div class="flex items-center gap-2">
+                    <a href="/" class="flex items-center gap-2 no-underline">
+                        <div class="w-8 h-8 rounded bg-gradient-to-br from-primary to-blue-500 flex items-center justify-center text-white font-bold text-lg">G</div>
+                        <span class="font-bold text-xl tracking-tight text-slate-900 dark:text-white">Giydir</span>
+                    </a>
+                </div>
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center space-x-8">
+                    <a class="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors text-sm font-medium no-underline" href="/">Ana Sayfa</a>
+                    <a class="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors text-sm font-medium no-underline" href="/editor">Try-On Studio</a>
+                    <a class="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors text-sm font-medium no-underline" href="/projects">Projeler</a>
+                    <a class="text-gray-900 dark:text-white text-sm font-medium border-b-2 border-primary pb-1 no-underline" href="/notifications">Bildirimler</a>
+                </div>
+                <!-- Profile/Credits -->
+                <div class="flex items-center gap-4">
+                    <div class="hidden md:flex flex-col items-end mr-2">
+                        <span class="text-xs text-gray-400 uppercase font-semibold tracking-wider">Kredi</span>
+                        <span class="text-sm font-bold text-primary">12 kaldı</span>
+                    </div>
+                    <a href="/profile" class="h-9 w-9 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden border-2 border-transparent hover:border-primary transition-colors cursor-pointer relative no-underline flex items-center justify-center">
+                        <img alt="User Profile" class="w-full h-full object-cover" 
+                             src="https://lh3.googleusercontent.com/aida-public/AB6AXuAoKjXKuuit50ZbVTUrL_M231n53Sx-hdpx7tQdJw3Ajc4O40ndep8m-TVutfPx_7VwADo1n10H5KYUyMsvyszoIxcwXpzz2DEk_hvs6z6YNWm6waZ3RChj75si5U_kA7-5XuGQUf1nC0TNW23Bkm397XVb4_Ya_LmPV8ehYDvL3FHx_vtfjH20Lp_w9SRfJzTshnhnohOI2nQz-di5b6jQd-TUgieUtEsXum48pApPc8ECl_SFRlL1yPNQWvSH03S-5dYJgE584l70"
+                             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                        <span class="material-icons-outlined text-primary text-sm" style="display: none;">person</span>
+                        <div class="absolute top-0 right-0 h-2.5 w-2.5 bg-red-500 rounded-full border-2 border-white dark:border-[#15282c]"></div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-grow max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <!-- Left Column: Header & Preferences -->
+            <div class="lg:col-span-1 space-y-6">
+                <!-- Header -->
+                <div>
+                    <h1 class="text-3xl font-bold mb-2 text-slate-900 dark:text-white">Bildirimler</h1>
+                    <p class="text-gray-500 dark:text-gray-400 text-sm">Güncellemelerinizi ve uyarı tercihlerinizi yönetin.</p>
+                </div>
+
+                <!-- Preferences Card -->
+                <div class="bg-white dark:bg-[#15282c] rounded-xl border border-gray-200 dark:border-gray-800 p-6 shadow-sm">
+                    <h2 class="text-lg font-semibold mb-4 flex items-center gap-2 text-slate-900 dark:text-white">
+                        <span class="material-icons-outlined text-primary">tune</span>
+                        Tercihler
+                    </h2>
+                    <div class="space-y-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex flex-col">
+                                <span class="font-medium text-sm text-slate-900 dark:text-white">E-posta Özetleri</span>
+                                <span class="text-xs text-gray-500 dark:text-gray-400">AI sonuçlarının günlük özeti</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input checked class="sr-only peer" type="checkbox" />
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+                            </label>
+                        </div>
+                        <div class="flex items-center justify-between">
+                            <div class="flex flex-col">
+                                <span class="font-medium text-sm text-slate-900 dark:text-white">Uygulama İçi Uyarılar</span>
+                                <span class="text-xs text-gray-500 dark:text-gray-400">Gerçek zamanlı kredi & iş güncellemeleri</span>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input checked class="sr-only peer" type="checkbox" />
+                                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none rounded-full dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+                            </label>
+                        </div>
+                        <div class="flex items-center justify-between opacity-50 cursor-not-allowed">
+                            <div class="flex flex-col">
+                                <span class="font-medium text-sm text-slate-900 dark:text-white">SMS Uyarıları</span>
+                                <span class="text-xs text-gray-500 dark:text-gray-400">Pro plana özel</span>
+                            </div>
+                            <span class="material-icons-outlined text-gray-500 text-sm">lock</span>
+                        </div>
+                    </div>
+                    <div class="mt-6 pt-6 border-t border-gray-100 dark:border-gray-700">
+                        <button class="text-xs font-medium text-primary hover:text-cyan-400 transition-colors flex items-center gap-1">
+                            Detaylı ayarları özelleştir
+                            <span class="material-icons-outlined text-sm">arrow_forward</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Quick Stats Widget -->
+                <div class="bg-gradient-to-br from-[#15282c] to-[#0d191b] rounded-xl border border-gray-800 p-6 relative overflow-hidden group">
+                    <div class="absolute -right-6 -top-6 h-24 w-24 rounded-full bg-primary/10 blur-xl group-hover:bg-primary/20 transition-all duration-500"></div>
+                    <div class="relative z-10">
+                        <span class="text-xs font-bold text-primary uppercase tracking-wider mb-2 block">Sistem Durumu</span>
+                        <div class="flex items-end gap-2">
+                            <h3 class="text-2xl font-bold text-white m-0">99.9%</h3>
+                            <span class="text-xs text-green-400 mb-1 flex items-center">
+                                <span class="material-icons-outlined text-sm mr-0.5">check_circle</span>
+                                Çalışıyor
+                            </span>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-2 m-0">Try-On Engine v2.4 optimal çalışıyor.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Notifications Feed -->
+            <div class="lg:col-span-2">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex gap-2">
+                        <button class="px-4 py-1.5 rounded-full bg-primary text-white text-sm font-semibold shadow-lg shadow-primary/20">Tümü</button>
+                        <button class="px-4 py-1.5 rounded-full bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 text-sm font-medium transition-colors">Uyarılar</button>
+                        <button class="px-4 py-1.5 rounded-full bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 text-sm font-medium transition-colors">Güncellemeler</button>
+                    </div>
+                    <button class="text-xs text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary transition-colors font-medium">Tümünü okundu işaretle</button>
+                </div>
+
+                <div class="space-y-8">
+                    <!-- Section: New -->
+                    <section class="space-y-4">
+                        <div class="flex items-center gap-3">
+                            <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider">Yeni</h3>
+                            <div class="h-[1px] flex-grow bg-gray-200 dark:bg-gray-800"></div>
+                        </div>
+
+                        <!-- Notification Item 1: Success -->
+                        <div class="group relative bg-white dark:bg-[#15282c] hover:bg-gray-50 dark:hover:bg-[#1a3136] rounded-xl p-4 border border-gray-200 dark:border-gray-800 transition-all duration-200 shadow-sm hover:shadow-md flex gap-4 items-start">
+                            <div class="flex-shrink-0">
+                                <div class="h-10 w-10 rounded-full bg-green-500/10 flex items-center justify-center text-green-500">
+                                    <span class="material-icons-outlined">check_circle_outline</span>
+                                </div>
+                            </div>
+                            <div class="flex-grow">
+                                <div class="flex justify-between items-start">
+                                    <h4 class="font-semibold text-gray-900 dark:text-white group-hover:text-primary transition-colors m-0">AI Üretimi Tamamlandı</h4>
+                                    <span class="text-xs text-gray-400 whitespace-nowrap">2 dk önce</span>
+                                </div>
+                                <p class="text-sm text-gray-600 dark:text-gray-300 mt-1 m-0">Toplu işlem <span class="font-mono text-xs bg-gray-100 dark:bg-gray-800 px-1 py-0.5 rounded">#402</span> (Yaz Koleksiyonu) inceleme için hazır.</p>
+                                <div class="mt-3 flex gap-3">
+                                    <button class="text-xs bg-primary hover:bg-cyan-400 text-white px-3 py-1.5 rounded font-medium transition-colors">Sonuçları Görüntüle</button>
+                                </div>
+                            </div>
+                            <button class="absolute top-4 right-4 opacity-0 group-hover:opacity-100 text-gray-400 hover:text-primary transition-all p-1" title="Okundu işaretle">
+                                <span class="material-icons-outlined text-sm">circle</span>
+                            </button>
+                            <!-- Unread indicator -->
+                            <div class="absolute top-1/2 -left-1 transform -translate-y-1/2 h-8 w-1 bg-primary rounded-r-full"></div>
+                        </div>
+
+                        <!-- Notification Item 2: Alert -->
+                        <div class="group relative bg-white dark:bg-[#15282c] hover:bg-gray-50 dark:hover:bg-[#1a3136] rounded-xl p-4 border border-orange-200 dark:border-orange-900/30 transition-all duration-200 shadow-sm hover:shadow-md flex gap-4 items-start">
+                            <div class="flex-shrink-0">
+                                <div class="h-10 w-10 rounded-full bg-orange-500/10 flex items-center justify-center text-orange-500 animate-pulse">
+                                    <span class="material-icons-outlined">bolt</span>
+                                </div>
+                            </div>
+                            <div class="flex-grow">
+                                <div class="flex justify-between items-start">
+                                    <h4 class="font-semibold text-orange-600 dark:text-orange-400 m-0">Düşük Kredi Uyarısı</h4>
+                                    <span class="text-xs text-gray-400 whitespace-nowrap">45 dk önce</span>
+                                </div>
+                                <p class="text-sm text-gray-600 dark:text-gray-300 mt-1 m-0">Kalan <strong class="text-gray-900 dark:text-white">12 krediniz</strong> var. Bir sonraki toplu işlem için kesintisiz işlem sağlamak üzere şimdi yükleyin.</p>
+                                <div class="mt-3">
+                                    <button class="text-xs border border-orange-500/30 hover:bg-orange-500/10 text-orange-600 dark:text-orange-400 px-3 py-1.5 rounded font-medium transition-colors">Kredi Ekle</button>
+                                </div>
+                            </div>
+                            <div class="absolute top-1/2 -left-1 transform -translate-y-1/2 h-8 w-1 bg-orange-500 rounded-r-full"></div>
+                        </div>
+                    </section>
+
+                    <!-- Section: Earlier -->
+                    <section class="space-y-4">
+                        <div class="flex items-center gap-3">
+                            <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider">Daha Önce</h3>
+                            <div class="h-[1px] flex-grow bg-gray-200 dark:bg-gray-800"></div>
+                        </div>
+
+                        <!-- Notification Item 3: Feature -->
+                        <div class="group relative bg-white/50 dark:bg-[#15282c]/50 hover:bg-white dark:hover:bg-[#15282c] rounded-xl p-4 border border-gray-200 dark:border-gray-800 transition-all duration-200 flex gap-4 items-center">
+                            <div class="flex-shrink-0">
+                                <div class="h-10 w-10 rounded-full bg-purple-500/10 flex items-center justify-center text-purple-500">
+                                    <span class="material-icons-outlined">auto_awesome</span>
+                                </div>
+                            </div>
+                            <div class="flex-grow">
+                                <div class="flex justify-between items-start">
+                                    <h4 class="font-semibold text-gray-700 dark:text-gray-200 m-0">Yeni Model Pozları Mevcut</h4>
+                                    <span class="text-xs text-gray-400 whitespace-nowrap">5 saat önce</span>
+                                </div>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5 m-0">Kütüphaneye özellikle resmi kıyafetler için 5 yeni stüdyo pozu ekledik.</p>
+                            </div>
+                            <button class="opacity-0 group-hover:opacity-100 text-gray-300 hover:text-primary transition-all p-2">
+                                <span class="material-icons-outlined text-lg">check</span>
+                            </button>
+                        </div>
+
+                        <!-- Notification Item 4: Billing -->
+                        <div class="group relative bg-white/50 dark:bg-[#15282c]/50 hover:bg-white dark:hover:bg-[#15282c] rounded-xl p-4 border border-gray-200 dark:border-gray-800 transition-all duration-200 flex gap-4 items-center">
+                            <div class="flex-shrink-0">
+                                <div class="h-10 w-10 rounded-full bg-blue-500/10 flex items-center justify-center text-blue-500">
+                                    <span class="material-icons-outlined">receipt_long</span>
+                                </div>
+                            </div>
+                            <div class="flex-grow">
+                                <div class="flex justify-between items-start">
+                                    <h4 class="font-semibold text-gray-700 dark:text-gray-200 m-0">Faturalandırma Başarılı</h4>
+                                    <span class="text-xs text-gray-400 whitespace-nowrap">Dün</span>
+                                </div>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5 m-0">Fatura #INV-2024-001 başarıyla ödendi.</p>
+                            </div>
+                            <button class="opacity-0 group-hover:opacity-100 text-gray-300 hover:text-primary transition-all p-2">
+                                <span class="material-icons-outlined text-lg">download</span>
+                            </button>
+                        </div>
+                    </section>
+
+                    <!-- Section: System -->
+                    <section class="space-y-4">
+                        <div class="flex items-center gap-3">
+                            <h3 class="text-sm font-bold text-gray-400 uppercase tracking-wider">Sistem</h3>
+                            <div class="h-[1px] flex-grow bg-gray-200 dark:bg-gray-800"></div>
+                        </div>
+
+                        <!-- Notification Item 5: Maintenance -->
+                        <div class="group relative bg-white/30 dark:bg-[#15282c]/30 hover:bg-white dark:hover:bg-[#15282c] rounded-xl p-4 border border-gray-200 dark:border-gray-800 transition-all duration-200 flex gap-4 items-center opacity-75 hover:opacity-100">
+                            <div class="flex-shrink-0">
+                                <div class="h-10 w-10 rounded-full bg-gray-500/10 flex items-center justify-center text-gray-500">
+                                    <span class="material-icons-outlined">dns</span>
+                                </div>
+                            </div>
+                            <div class="flex-grow">
+                                <div class="flex justify-between items-start">
+                                    <h4 class="font-semibold text-gray-600 dark:text-gray-300 m-0">Bakım Planlandı</h4>
+                                    <span class="text-xs text-gray-400 whitespace-nowrap">20 Eki</span>
+                                </div>
+                                <p class="text-sm text-gray-500 dark:text-gray-400 mt-0.5 m-0">24 Ekim, 02:00 EST için sistem güncellemesi planlandı. Yaklaşık 30 dakika kesinti.</p>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+

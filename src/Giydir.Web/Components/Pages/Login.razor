@@ -1,5 +1,73 @@
 @page "/login"
 @layout AuthLayout
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
+@inject ILogger<Login> Logger
+@rendermode InteractiveServer
+
+@code {
+    private string email = string.Empty;
+    private string password = string.Empty;
+    private bool rememberMe = false;
+    private bool isLoading = false;
+    private string? errorMessage;
+
+    private async Task HandleLogin()
+    {
+        if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+        {
+            errorMessage = "E-posta ve şifre gereklidir.";
+            return;
+        }
+
+        isLoading = true;
+        errorMessage = null;
+
+        try
+        {
+            var loginDto = new LoginDto { Email = email, Password = password };
+            var response = await Http.PostAsJsonAsync("api/auth/login", loginDto);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var result = await response.Content.ReadFromJsonAsync<AuthResponseDto>();
+                if (result?.Success == true && !string.IsNullOrEmpty(result.Token))
+                {
+                    // Token'ı tarayıcıda localStorage + cookie'ye kaydet
+                    await JSRuntime.InvokeVoidAsync("tokenStorage.setToken", result.Token);
+                    
+                    // forceLoad: true → tam sayfa yenilemesi, tarayıcı cookie'yi gönderir
+                    Navigation.NavigateTo("/", forceLoad: true);
+                }
+                else
+                {
+                    errorMessage = result?.Error ?? "Giriş başarısız oldu.";
+                }
+            }
+            else
+            {
+                try
+                {
+                    var error = await response.Content.ReadFromJsonAsync<AuthResponseDto>();
+                    errorMessage = error?.Error ?? "Giriş başarısız oldu. Lütfen tekrar deneyin.";
+                }
+                catch
+                {
+                    errorMessage = $"Giriş başarısız oldu. Status: {response.StatusCode}";
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Bir hata oluştu: {ex.Message}";
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}
 
 <div class="min-h-screen flex items-center justify-center bg-background-dark relative overflow-hidden">
     <!-- Background decorations -->
@@ -20,13 +88,20 @@
 
         <!-- Login Card -->
         <div class="glass rounded-2xl p-8 border border-white/5 shadow-2xl">
-            <form>
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
+                    @errorMessage
+                </div>
+            }
+
+            <form @onsubmit="HandleLogin" @onsubmit:preventDefault="true">
                 <!-- Email -->
                 <div class="mb-5">
                     <label class="block text-sm font-medium text-gray-300 mb-2">E-posta Adresi</label>
                     <div class="relative">
                         <span class="material-icons-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-lg">mail</span>
-                        <input type="email" placeholder="ornek@butik.com"
+                        <input @bind="email" @bind:event="oninput" type="email" placeholder="ornek@butik.com"
                                class="w-full pl-10 pr-4 py-3 bg-background-dark/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-primary focus:border-primary transition-all" />
                     </div>
                 </div>
@@ -39,21 +114,29 @@
                     </div>
                     <div class="relative">
                         <span class="material-icons-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-lg">lock</span>
-                        <input type="password" placeholder="••••••••"
+                        <input @bind="password" @bind:event="oninput" type="password" placeholder="••••••••"
                                class="w-full pl-10 pr-4 py-3 bg-background-dark/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-primary focus:border-primary transition-all" />
                     </div>
                 </div>
 
                 <!-- Remember Me -->
                 <div class="flex items-center gap-2 mb-6">
-                    <input type="checkbox" id="remember" class="w-4 h-4 rounded border-gray-600 bg-background-dark text-primary focus:ring-primary" />
+                    <input @bind="rememberMe" type="checkbox" id="remember" class="w-4 h-4 rounded border-gray-600 bg-background-dark text-primary focus:ring-primary" />
                     <label for="remember" class="text-sm text-gray-400">Beni hatırla</label>
                 </div>
 
                 <!-- Submit -->
-                <button type="submit" class="w-full py-3.5 bg-primary hover:bg-blue-500 text-background-dark font-bold rounded-xl shadow-lg shadow-primary/25 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2">
-                    <span class="material-icons-outlined text-lg">login</span>
-                    Giriş Yap
+                <button type="submit" disabled="@isLoading" class="w-full py-3.5 bg-primary hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-background-dark font-bold rounded-xl shadow-lg shadow-primary/25 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2">
+                    @if (isLoading)
+                    {
+                        <div class="w-5 h-5 border-2 border-background-dark border-t-transparent rounded-full animate-spin"></div>
+                        <span>Giriş yapılıyor...</span>
+                    }
+                    else
+                    {
+                        <span class="material-icons-outlined text-lg">login</span>
+                        <span>Giriş Yap</span>
+                    }
                 </button>
             </form>
 

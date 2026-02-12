@@ -10,15 +10,18 @@ public class ReplicateVirtualTryOnService : IVirtualTryOnService
 {
     private readonly HttpClient _httpClient;
     private readonly IConfiguration _config;
+    private readonly IModelAssetRepository _modelAssetRepository;
     private readonly ILogger<ReplicateVirtualTryOnService> _logger;
 
     public ReplicateVirtualTryOnService(
         HttpClient httpClient,
         IConfiguration config,
+        IModelAssetRepository modelAssetRepository,
         ILogger<ReplicateVirtualTryOnService> logger)
     {
         _httpClient = httpClient;
         _config = config;
+        _modelAssetRepository = modelAssetRepository;
         _logger = logger;
 
         _httpClient.BaseAddress = new Uri("https://api.replicate.com/v1/");
@@ -30,7 +33,8 @@ public class ReplicateVirtualTryOnService : IVirtualTryOnService
 
     public async Task<string> GenerateTryOnImageAsync(string clothingImageUrl, string modelAssetId, string category = "upper_body")
     {
-        var modelImageUrl = GetModelImageUrl(modelAssetId);
+        // Model asset'inden gerçek URL'yi al (veritabanından)
+        var modelImageUrl = await GetModelImageUrlAsync(modelAssetId);
         var baseUrl = _config["BaseUrl"] ?? "http://localhost:5000";
 
         // Eğer relative path ise full URL yap
@@ -103,8 +107,16 @@ public class ReplicateVirtualTryOnService : IVirtualTryOnService
         };
     }
 
-    private string GetModelImageUrl(string modelAssetId)
+    private async Task<string> GetModelImageUrlAsync(string modelAssetId)
     {
+        var modelAsset = await _modelAssetRepository.GetByIdAsync(modelAssetId);
+        if (modelAsset != null && !string.IsNullOrEmpty(modelAsset.FullImagePath))
+        {
+            return modelAsset.FullImagePath;
+        }
+
+        // Fallback: eski yöntem
+        _logger.LogWarning("Model asset bulunamadı veya FullImagePath boş: {ModelAssetId}", modelAssetId);
         return $"/assets/models/{modelAssetId}.jpg";
     }
 }
@@ -116,4 +128,3 @@ internal class ReplicatePredictionResponse
     public List<string>? Output { get; set; }
     public string? Error { get; set; }
 }
-
