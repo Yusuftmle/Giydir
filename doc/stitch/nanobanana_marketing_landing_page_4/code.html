@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NanoBanana - Forgot Password</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#135bec",
+                        "primary-hover": "#0e4ac5",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+<style>.glass {
+            background: rgba(16, 22, 34, 0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05)
+        }
+        .bg-grid-pattern {
+            background-size: 40px 40px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+        }
+    </style>
+</head>
+<body class="font-display bg-background-dark text-gray-100 antialiased selection:bg-primary selection:text-white min-h-screen flex flex-col relative overflow-hidden">
+<div class="absolute inset-0 bg-grid-pattern z-0 pointer-events-none"></div>
+<div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-primary/10 blur-[120px] rounded-full pointer-events-none z-0"></div>
+<nav class="w-full z-50 py-6 absolute top-0">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex items-center justify-center lg:justify-start">
+<a class="flex items-center gap-2 group" href="#">
+<div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center group-hover:bg-primary-hover transition-colors">
+<span class="text-white font-bold text-xl">N</span>
+</div>
+<span class="font-bold text-xl tracking-tight text-white">NanoBanana</span>
+</a>
+</div>
+</div>
+</nav>
+<main class="flex-grow flex items-center justify-center p-4 relative z-10">
+<div class="w-full max-w-md">
+<div class="glass rounded-2xl p-8 shadow-2xl border border-white/10 relative overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary to-transparent opacity-50"></div>
+<div class="text-center mb-8">
+<div class="w-16 h-16 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-6">
+<span class="material-symbols-outlined text-primary text-3xl">lock_reset</span>
+</div>
+<h1 class="text-2xl font-bold text-white mb-2">Forgot password?</h1>
+<p class="text-gray-400 text-sm leading-relaxed">
+                        No worries, we'll send you reset instructions.
+                    </p>
+</div>
+<form class="space-y-6" onsubmit="event.preventDefault(); document.getElementById('success-message').classList.remove('hidden'); this.classList.add('hidden');">
+<div>
+<label class="block text-sm font-medium text-gray-300 mb-2" for="email">Email Address</label>
+<div class="relative">
+<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+<span class="material-icons text-gray-500 text-lg">mail_outline</span>
+</div>
+<input class="block w-full pl-10 pr-3 py-3 border border-white/10 rounded-xl leading-5 bg-white/5 text-gray-100 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary sm:text-sm transition-all hover:bg-white/10" id="email" name="email" placeholder="name@company.com" required="" type="email"/>
+</div>
+</div>
+<button class="w-full flex justify-center py-3 px-4 border border-transparent rounded-xl shadow-sm text-sm font-semibold text-white bg-primary hover:bg-primary-hover focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-900 focus:ring-primary transition-all transform hover:scale-[1.02]" type="submit">
+                        Send Reset Link
+                    </button>
+</form>
+<div class="hidden text-center py-4 animate-fade-in" id="success-message">
+<div class="w-12 h-12 rounded-full bg-green-500/20 border border-green-500/30 flex items-center justify-center mx-auto mb-4">
+<span class="material-icons text-green-400">check</span>
+</div>
+<h3 class="text-lg font-medium text-white mb-2">Check your email</h3>
+<p class="text-gray-400 text-sm mb-6">
+                        We've sent instructions to reset your password to your email address.
+                    </p>
+<button class="text-primary hover:text-primary-hover text-sm font-medium transition-colors" onclick="document.getElementById('success-message').classList.add('hidden'); document.querySelector('form').classList.remove('hidden');">
+                        Try another email
+                    </button>
+</div>
+<div class="mt-8 pt-6 border-t border-white/5 text-center">
+<a class="inline-flex items-center gap-2 text-sm font-medium text-gray-400 hover:text-white transition-colors group" href="#">
+<span class="material-icons text-base group-hover:-translate-x-1 transition-transform">arrow_back</span>
+                        Back to Login
+                    </a>
+</div>
+</div>
+<div class="mt-8 text-center text-xs text-gray-500 flex justify-center gap-6">
+<a class="hover:text-gray-300 transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-gray-300 transition-colors" href="#">Terms of Service</a>
+<a class="hover:text-gray-300 transition-colors" href="#">Contact Support</a>
+</div>
+</div>
+</main>
+
+</body></html>

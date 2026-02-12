@@ -1,7 +1,7 @@
 @page "/"
 
 <!-- Hero Section -->
-<section class="relative pt-16 pb-20 lg:pt-28 lg:pb-32 overflow-hidden">
+<section class="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
     <!-- Background Gradient Glow -->
     <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[500px] bg-primary/20 blur-[120px] rounded-full pointer-events-none"></div>
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -10,28 +10,28 @@
             <div class="text-center lg:text-left">
                 <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 mb-6">
                     <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-                    <span class="text-xs font-semibold text-primary uppercase tracking-wider">AI Destekli Sanal Giyim</span>
+                    <span class="text-xs font-semibold text-primary uppercase tracking-wider">Yeni AI Model V2.0</span>
                 </div>
-                <h1 class="text-4xl lg:text-6xl font-bold tracking-tight text-white mb-6 leading-tight">
+                <h1 class="text-5xl lg:text-7xl font-bold tracking-tight text-white mb-6 leading-tight">
                     Butiğinizi <span class="text-transparent bg-clip-text bg-gradient-to-r from-primary to-blue-400">AI Modeller</span> ile Dönüştürün
                 </h1>
                 <p class="text-lg text-gray-400 mb-8 max-w-2xl mx-auto lg:mx-0 leading-relaxed">
                     Fotoğraf çekimlerine binlerce lira harcamayı bırakın. Düz kıyafet fotoğraflarınızı saniyeler içinde profesyonel model fotoğraflarına dönüştürün.
                 </p>
                 <div class="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
-                    <a href="/editor" class="inline-flex justify-center items-center px-8 py-4 border border-transparent text-base font-semibold rounded-xl text-background-dark bg-primary hover:bg-primary/90 transition-all shadow-lg shadow-primary/25 no-underline">
-                        Hemen Başla
+                    <a href="/editor" class="inline-flex justify-center items-center px-8 py-4 border border-transparent text-base font-semibold rounded-xl text-white bg-primary hover:bg-blue-500 transition-all shadow-lg shadow-primary/25 no-underline">
+                        Ücretsiz Başla
                         <span class="material-icons-outlined ml-2 text-sm">arrow_forward</span>
                     </a>
                     <a href="/projects" class="inline-flex justify-center items-center px-8 py-4 border border-white/10 text-base font-semibold rounded-xl text-white bg-white/5 hover:bg-white/10 transition-all backdrop-blur-sm no-underline">
-                        Galeriyi Gör
+                        Demo Galeriyi Gör
                     </a>
                 </div>
                 <div class="mt-10 flex items-center justify-center lg:justify-start gap-4 text-sm text-gray-500">
                     <div class="flex -space-x-2">
-                        <div class="inline-block h-8 w-8 rounded-full ring-2 ring-background-dark bg-primary/30 flex items-center justify-center text-xs font-bold text-primary">A</div>
-                        <div class="inline-block h-8 w-8 rounded-full ring-2 ring-background-dark bg-blue-500/30 flex items-center justify-center text-xs font-bold text-blue-400">B</div>
-                        <div class="inline-block h-8 w-8 rounded-full ring-2 ring-background-dark bg-purple-500/30 flex items-center justify-center text-xs font-bold text-purple-400">C</div>
+                        <div class="inline-flex h-8 w-8 rounded-full ring-2 ring-background-dark bg-primary/30 items-center justify-center text-xs font-bold text-primary">AY</div>
+                        <div class="inline-flex h-8 w-8 rounded-full ring-2 ring-background-dark bg-blue-500/30 items-center justify-center text-xs font-bold text-blue-400">MK</div>
+                        <div class="inline-flex h-8 w-8 rounded-full ring-2 ring-background-dark bg-purple-500/30 items-center justify-center text-xs font-bold text-purple-400">SZ</div>
                     </div>
                     <p class="m-0">2,000+ Butik Sahibi Güveniyor</p>
                 </div>
@@ -39,14 +39,45 @@
             <!-- Interactive Visual -->
             <div class="relative group">
                 <div class="absolute -inset-1 bg-gradient-to-r from-primary to-purple-600 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-1000"></div>
-                <div class="relative rounded-2xl overflow-hidden aspect-[4/5] shadow-2xl border border-white/10 bg-background-dark flex items-center justify-center">
-                    <div class="text-center p-8">
-                        <span class="material-icons-outlined text-6xl text-primary/50 mb-4">auto_awesome</span>
-                        <h3 class="text-xl font-bold text-white mb-2">AI Virtual Try-On</h3>
-                        <p class="text-sm text-gray-500">Kıyafetinizi yükleyin, modeli seçin ve sihri izleyin</p>
+                <div class="relative rounded-2xl overflow-hidden aspect-[4/5] shadow-2xl border border-white/10 bg-background-dark">
+                    <!-- Label -->
+                    <div class="absolute top-4 left-4 z-30 bg-black/60 backdrop-blur-md text-white text-xs font-bold px-3 py-1.5 rounded-full border border-white/10">
+                        Karşılaştırmak için sürükle
+                    </div>
+                    <!-- Comparison Slider -->
+                    <div class="comparison-slider">
+                        <div class="comparison-after flex items-center justify-center bg-gradient-to-br from-surface-dark to-background-dark">
+                            <div class="text-center">
+                                <span class="material-icons-outlined text-7xl text-primary/30">person</span>
+                                <p class="text-xs text-primary/50 mt-2">AI Model Sonucu</p>
+                            </div>
+                        </div>
+                        <div class="comparison-before flex items-center justify-center bg-gradient-to-br from-gray-800 to-gray-900">
+                            <div class="text-center">
+                                <span class="material-icons-outlined text-7xl text-gray-600">checkroom</span>
+                                <p class="text-xs text-gray-600 mt-2">Düz Kıyafet</p>
+                            </div>
+                            <div class="slider-handle">
+                                <span class="material-icons-outlined text-white text-sm">code</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</section>
+
+<!-- Social Proof -->
+<section class="py-10 border-y border-white/5 bg-white/5 relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <p class="text-center text-sm font-semibold text-gray-500 uppercase tracking-widest mb-8">Yeni nesil moda ticaretinin gücü</p>
+        <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8 items-center opacity-60 grayscale hover:grayscale-0 transition-all duration-500">
+            <div class="flex justify-center"><h3 class="text-xl font-bold text-white tracking-tighter">VOGUE<span class="font-light">style</span></h3></div>
+            <div class="flex justify-center"><h3 class="text-xl font-serif font-bold text-white">LUMIÈRE</h3></div>
+            <div class="flex justify-center"><h3 class="text-xl font-mono font-bold text-white">MODA.AI</h3></div>
+            <div class="flex justify-center"><h3 class="text-xl font-bold italic text-white">FashionWeek</h3></div>
+            <div class="hidden lg:flex justify-center"><h3 class="text-xl font-bold text-white tracking-widest">BOUTIQUE</h3></div>
         </div>
     </div>
 </section>
@@ -59,7 +90,7 @@
             <p class="text-gray-400 max-w-2xl mx-auto">Yapay zekamız kumaş fiziğini ve aydınlatmayı anlayarak kıyafetlerinizi her vücut tipinde doğal gösterir.</p>
         </div>
         <div class="grid md:grid-cols-3 gap-8 relative">
-            <!-- Connecting Line -->
+            <!-- Connecting Line (Desktop) -->
             <div class="hidden md:block absolute top-12 left-[16%] right-[16%] h-0.5 bg-gradient-to-r from-transparent via-primary/30 to-transparent z-0"></div>
             <!-- Step 1 -->
             <div class="relative z-10 group">
@@ -101,16 +132,170 @@
     </div>
 </section>
 
-<!-- CTA Section -->
-<section class="py-20 relative border-t border-white/5">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <span class="material-icons-outlined text-primary text-5xl mb-6 opacity-50">auto_awesome</span>
-        <h2 class="text-2xl md:text-3xl font-bold text-white mb-4 leading-relaxed">
-            Profesyonel fotoğraf çekimlerine binlerce lira harcamayı bırakın. AI ile dakikalar içinde ürün fotoğrafları oluşturun.
-        </h2>
-        <a href="/editor" class="inline-flex justify-center items-center mt-6 px-10 py-4 bg-primary hover:bg-primary/90 text-background-dark font-bold rounded-xl shadow-lg shadow-primary/25 transition-all transform hover:scale-105 no-underline">
-            <span class="material-icons-outlined mr-2">rocket_launch</span>
-            Ücretsiz Deneyin
-        </a>
+<!-- Pricing Section -->
+<section class="py-24 bg-background-dark relative overflow-hidden">
+    <!-- Decoration -->
+    <div class="absolute right-0 top-1/4 w-96 h-96 bg-primary/10 blur-[100px] rounded-full pointer-events-none"></div>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Büyüyen Markalar İçin Basit Fiyatlandırma</h2>
+            <p class="text-gray-400 max-w-2xl mx-auto">Envanter hacminize uygun planı seçin.</p>
+        </div>
+        <div class="grid lg:grid-cols-3 gap-8 max-w-5xl mx-auto items-start">
+            <!-- Starter Tier -->
+            <div class="glass p-8 rounded-2xl border border-white/5 hover:border-white/20 transition-all">
+                <h3 class="text-lg font-medium text-gray-300 mb-2">Başlangıç</h3>
+                <div class="flex items-baseline gap-1 mb-6">
+                    <span class="text-4xl font-bold text-white">₺0</span>
+                    <span class="text-gray-500">/ay</span>
+                </div>
+                <p class="text-sm text-gray-400 mb-6">Platformu test etmek isteyenler için ideal.</p>
+                <a href="/register" class="block w-full py-3 px-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-center text-white font-semibold transition-colors mb-8 no-underline">Ücretsiz Dene</a>
+                <ul class="space-y-4 text-sm text-gray-300 list-none p-0 m-0">
+                    <li class="flex items-center gap-3">
+                        <span class="material-icons-outlined text-primary text-sm">check</span>
+                        Ayda 5 AI Görsel
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="material-icons-outlined text-primary text-sm">check</span>
+                        Standart Çözünürlük
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="material-icons-outlined text-primary text-sm">check</span>
+                        1 Model Seçimi
+                    </li>
+                </ul>
+            </div>
+            <!-- Boutique Tier (Highlighted) -->
+            <div class="relative bg-gradient-to-b from-primary/20 to-background-dark p-8 rounded-2xl border border-primary/50 shadow-2xl shadow-primary/10 transform lg:-translate-y-4">
+                <div class="absolute top-0 right-0 bg-primary text-background-dark text-xs font-bold px-3 py-1 rounded-bl-lg rounded-tr-2xl">POPÜLER</div>
+                <h3 class="text-lg font-medium text-primary mb-2">Butik</h3>
+                <div class="flex items-baseline gap-1 mb-6">
+                    <span class="text-4xl font-bold text-white">₺1.499</span>
+                    <span class="text-gray-500">/ay</span>
+                </div>
+                <p class="text-sm text-gray-300 mb-6">Haftalık envanter güncelleyen aktif satıcılar için.</p>
+                <a href="/register" class="block w-full py-3 px-4 bg-primary hover:bg-blue-500 rounded-lg text-center text-white font-semibold transition-colors mb-8 shadow-lg shadow-primary/25 no-underline">Hemen Başla</a>
+                <ul class="space-y-4 text-sm text-white list-none p-0 m-0">
+                    <li class="flex items-center gap-3">
+                        <span class="material-icons-outlined text-primary text-sm">check_circle</span>
+                        <span class="font-medium">Ayda 50 AI Görsel</span>
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="material-icons-outlined text-primary text-sm">check_circle</span>
+                        4K Yüksek Çözünürlük
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="material-icons-outlined text-primary text-sm">check_circle</span>
+                        Tüm Model Kütüphanesi
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="material-icons-outlined text-primary text-sm">check_circle</span>
+                        Öncelikli Destek
+                    </li>
+                </ul>
+            </div>
+            <!-- Agency Tier -->
+            <div class="glass p-8 rounded-2xl border border-white/5 hover:border-white/20 transition-all">
+                <h3 class="text-lg font-medium text-gray-300 mb-2">Ajans</h3>
+                <div class="flex items-baseline gap-1 mb-6">
+                    <span class="text-4xl font-bold text-white">₺5.999</span>
+                    <span class="text-gray-500">/ay</span>
+                </div>
+                <p class="text-sm text-gray-400 mb-6">Birden fazla marka için yüksek hacimli üretim.</p>
+                <a href="#" class="block w-full py-3 px-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-lg text-center text-white font-semibold transition-colors mb-8 no-underline">İletişime Geç</a>
+                <ul class="space-y-4 text-sm text-gray-300 list-none p-0 m-0">
+                    <li class="flex items-center gap-3">
+                        <span class="material-icons-outlined text-primary text-sm">check</span>
+                        Sınırsız Görsel
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="material-icons-outlined text-primary text-sm">check</span>
+                        Özel Model Eğitimi
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="material-icons-outlined text-primary text-sm">check</span>
+                        API Erişimi
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="material-icons-outlined text-primary text-sm">check</span>
+                        Özel Hesap Yöneticisi
+                    </li>
+                </ul>
+            </div>
+        </div>
     </div>
 </section>
+
+<!-- Testimonial Section -->
+<section class="py-20 relative border-t border-white/5">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <span class="material-icons-outlined text-primary text-5xl mb-6 opacity-50">format_quote</span>
+        <blockquote class="text-2xl md:text-3xl font-medium text-white mb-8 leading-relaxed">
+            "Giydir, koleksiyonlarımızı nasıl yayınladığımızı tamamen değiştirdi. Çekim başına 15.000₺ harcamaktan ayda 1.499₺'ye geçtik ve Instagram etkileşimimiz ikiye katlandı."
+        </blockquote>
+        <div class="flex items-center justify-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-primary/20 border-2 border-primary flex items-center justify-center">
+                <span class="text-primary font-bold">AY</span>
+            </div>
+            <div class="text-left">
+                <div class="text-white font-bold">Ayşe Yılmaz</div>
+                <div class="text-primary text-sm">Sahibe, Velvet Loft Butik</div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Full Footer -->
+<footer class="bg-black py-12 border-t border-white/10">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+            <div class="col-span-2 md:col-span-1">
+                <div class="flex items-center gap-2 mb-4">
+                    <div class="w-6 h-6 rounded bg-primary flex items-center justify-center">
+                        <span class="text-background-dark font-bold text-xs">G</span>
+                    </div>
+                    <span class="font-bold text-lg text-white">Giydir</span>
+                </div>
+                <p class="text-gray-500 text-sm mb-6">Yeni nesil AI görselleştirme araçlarıyla moda ticaretini güçlendiriyoruz.</p>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-4">Ürün</h4>
+                <ul class="space-y-2 text-sm text-gray-400 list-none p-0 m-0">
+                    <li><a class="hover:text-primary transition-colors no-underline" href="/editor">Sanal Deneme</a></li>
+                    <li><a class="hover:text-primary transition-colors no-underline" href="/editor">Model Kütüphanesi</a></li>
+                    <li><a class="hover:text-primary transition-colors no-underline" href="#">Fiyatlandırma</a></li>
+                    <li><a class="hover:text-primary transition-colors no-underline" href="#">API</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-4">Şirket</h4>
+                <ul class="space-y-2 text-sm text-gray-400 list-none p-0 m-0">
+                    <li><a class="hover:text-primary transition-colors no-underline" href="#">Hakkımızda</a></li>
+                    <li><a class="hover:text-primary transition-colors no-underline" href="#">Blog</a></li>
+                    <li><a class="hover:text-primary transition-colors no-underline" href="#">Kariyer</a></li>
+                    <li><a class="hover:text-primary transition-colors no-underline" href="#">İletişim</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-4">Yasal</h4>
+                <ul class="space-y-2 text-sm text-gray-400 list-none p-0 m-0">
+                    <li><a class="hover:text-primary transition-colors no-underline" href="#">Gizlilik Politikası</a></li>
+                    <li><a class="hover:text-primary transition-colors no-underline" href="#">Kullanım Şartları</a></li>
+                    <li><a class="hover:text-primary transition-colors no-underline" href="#">Çerez Politikası</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p class="text-gray-600 text-sm">© 2026 Giydir AI. Tüm hakları saklıdır.</p>
+            <div class="flex space-x-6">
+                <a class="text-gray-500 hover:text-white transition-colors no-underline" href="#">
+                    <span class="material-icons-outlined">share</span>
+                </a>
+                <a class="text-gray-500 hover:text-white transition-colors no-underline" href="#">
+                    <span class="material-icons-outlined">camera_alt</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</footer>
