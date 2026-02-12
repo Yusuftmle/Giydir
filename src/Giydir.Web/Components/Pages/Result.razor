@@ -1,0 +1,259 @@
+@page "/result/{ImageId:int}"
+@using Giydir.Core.Interfaces
+@inject IGeneratedImageRepository ImageRepository
+@inject NavigationManager Nav
+@rendermode InteractiveServer
+
+<!-- Header Navigation -->
+<header class="h-16 border-b border-slate-200 dark:border-slate-800 bg-background-light/90 dark:bg-background-dark/90 backdrop-blur-md z-50 flex items-center justify-between px-6 sticky top-0">
+    <div class="flex items-center gap-4">
+        <button class="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors text-slate-500 dark:text-slate-400" @onclick="GoBack">
+            <span class="material-icons-outlined">arrow_back</span>
+        </button>
+        <nav class="flex items-center text-sm font-medium">
+            <a class="text-slate-500 hover:text-primary transition-colors no-underline" href="/projects">Projeler</a>
+            <span class="material-icons-outlined text-base mx-2 text-slate-600">chevron_right</span>
+            <a class="text-slate-500 hover:text-primary transition-colors no-underline" href="/editor">Editör</a>
+            <span class="material-icons-outlined text-base mx-2 text-slate-600">chevron_right</span>
+            <span class="text-primary">Görsel #@ImageId</span>
+        </nav>
+    </div>
+    <div class="flex items-center gap-3">
+        <button class="px-4 py-2 text-sm font-medium rounded-lg border border-slate-200 dark:border-slate-700 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors">
+            Kütüphaneye Kaydet
+        </button>
+        <button class="px-4 py-2 text-sm font-medium rounded-lg bg-primary text-background-dark hover:bg-primary/90 transition-colors shadow-[0_0_15px_rgba(19,200,236,0.3)]">
+            Final Dışa Aktar
+        </button>
+    </div>
+</header>
+
+<!-- Main Content Layout -->
+<main class="flex-1 flex overflow-hidden relative" style="height: calc(100vh - 4rem - 6rem - 5rem);">
+    <!-- Left Sidebar: Tools -->
+    <aside class="w-16 border-r border-slate-200 dark:border-slate-800 bg-background-light dark:bg-background-dark flex flex-col items-center py-6 gap-6 z-20">
+        <button class="p-3 rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors relative group">
+            <span class="material-icons-outlined">auto_fix_high</span>
+            <div class="absolute left-14 top-1/2 -translate-y-1/2 bg-slate-800 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap border border-slate-700 pointer-events-none z-50">Sihirli Düzenleme</div>
+        </button>
+        <button class="p-3 rounded-lg text-slate-400 hover:text-slate-100 hover:bg-slate-800 transition-colors relative group">
+            <span class="material-icons-outlined">crop</span>
+            <div class="absolute left-14 top-1/2 -translate-y-1/2 bg-slate-800 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap border border-slate-700 pointer-events-none z-50">Kırp & Boyutlandır</div>
+        </button>
+        <button class="p-3 rounded-lg text-slate-400 hover:text-slate-100 hover:bg-slate-800 transition-colors relative group">
+            <span class="material-icons-outlined">compare</span>
+            <div class="absolute left-14 top-1/2 -translate-y-1/2 bg-slate-800 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap border border-slate-700 pointer-events-none z-50">Orijinal ile Karşılaştır</div>
+        </button>
+        <div class="mt-auto flex flex-col gap-4">
+            <button class="p-3 rounded-lg text-slate-400 hover:text-slate-100 hover:bg-slate-800 transition-colors relative group">
+                <span class="material-icons-outlined">history</span>
+                <div class="absolute left-14 top-1/2 -translate-y-1/2 bg-slate-800 text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap border border-slate-700 pointer-events-none z-50">Geçmiş</div>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Center: Main Canvas -->
+    <section class="flex-1 relative bg-[#0a1416] flex items-center justify-center overflow-hidden group">
+        <!-- Background Grid Pattern -->
+        <div class="absolute inset-0 opacity-10 pointer-events-none" style="background-image: radial-gradient(#13c8ec 1px, transparent 1px); background-size: 30px 30px;"></div>
+
+        @if (!string.IsNullOrEmpty(imageUrl))
+        {
+            <!-- Main Image -->
+            <div class="relative max-w-[90%] max-h-[85%] shadow-2xl rounded-lg overflow-hidden ring-1 ring-slate-800">
+                <img src="@imageUrl" alt="AI oluşturulmuş görsel" class="object-contain w-full h-full max-h-[70vh] cursor-zoom-in" />
+                <!-- On-Image Controls -->
+                <div class="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <button class="bg-black/60 backdrop-blur text-white p-2 rounded-lg hover:bg-primary hover:text-black transition-colors">
+                        <span class="material-icons-outlined text-sm">fullscreen</span>
+                    </button>
+                    <button class="bg-black/60 backdrop-blur text-white p-2 rounded-lg hover:bg-primary hover:text-black transition-colors">
+                        <span class="material-icons-outlined text-sm">zoom_in</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Bottom Floating Toolbar -->
+            <div class="absolute bottom-8 left-1/2 -translate-x-1/2 glass-panel px-6 py-3 rounded-xl flex items-center gap-6 shadow-2xl z-30 transition-transform duration-300 hover:-translate-y-1">
+                <div class="flex items-center gap-3 border-r border-slate-700 pr-6">
+                    <a href="@imageUrl" download class="flex flex-col items-center gap-1 group no-underline">
+                        <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center group-hover:bg-primary group-hover:text-background-dark transition-colors">
+                            <span class="material-icons-outlined text-xl">download</span>
+                        </div>
+                        <span class="text-[10px] text-slate-400 group-hover:text-primary transition-colors">İndir</span>
+                    </a>
+                    <button class="flex flex-col items-center gap-1 group">
+                        <div class="w-10 h-10 rounded-full bg-slate-800 flex items-center justify-center group-hover:bg-primary group-hover:text-background-dark transition-colors">
+                            <span class="material-icons-outlined text-xl">share</span>
+                        </div>
+                        <span class="text-[10px] text-slate-400 group-hover:text-primary transition-colors">Paylaş</span>
+                    </button>
+                </div>
+                <div class="flex items-center gap-4">
+                    <button class="flex items-center gap-2 text-sm text-slate-300 hover:text-white transition-colors">
+                        <span class="material-icons-outlined text-primary text-lg">wallpaper</span>
+                        Arka Plan Kaldır
+                    </button>
+                    <button class="flex items-center gap-2 text-sm text-slate-300 hover:text-white transition-colors">
+                        <span class="material-icons-outlined text-primary text-lg">hd</span>
+                        4x Büyüt
+                    </button>
+                    <button class="flex items-center gap-2 text-sm text-slate-300 hover:text-white transition-colors" @onclick="GoToEditor">
+                        <span class="material-icons-outlined text-primary text-lg">refresh</span>
+                        Yeniden Oluştur
+                    </button>
+                </div>
+            </div>
+        }
+        else
+        {
+            <!-- Placeholder -->
+            <div class="text-center">
+                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <span class="material-icons-outlined text-primary text-4xl">image</span>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2">Görsel Yükleniyor...</h3>
+                <p class="text-sm text-gray-500">Lütfen bekleyin</p>
+            </div>
+        }
+    </section>
+
+    <!-- Right Sidebar: Details Panel -->
+    <aside class="w-80 border-l border-slate-200 dark:border-slate-800 bg-background-light dark:bg-background-dark overflow-y-auto z-20">
+        <div class="p-6">
+            <h2 class="text-xl font-bold mb-6 flex items-center gap-2 m-0">
+                <span class="w-2 h-6 bg-primary rounded-full"></span>
+                Oluşturma Detayları
+            </h2>
+
+            <!-- Input Thumbnails -->
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                <div class="space-y-2">
+                    <p class="text-xs font-medium text-slate-500 uppercase tracking-wider m-0">Kıyafet</p>
+                    <div class="aspect-[3/4] rounded-lg overflow-hidden border border-slate-700 relative group cursor-pointer bg-slate-800 flex items-center justify-center">
+                        @if (!string.IsNullOrEmpty(clothingPath))
+                        {
+                            <img src="@clothingPath" alt="Kıyafet" class="w-full h-full object-cover" />
+                        }
+                        else
+                        {
+                            <span class="material-icons-outlined text-3xl text-slate-600">checkroom</span>
+                        }
+                    </div>
+                </div>
+                <div class="space-y-2">
+                    <p class="text-xs font-medium text-slate-500 uppercase tracking-wider m-0">Model</p>
+                    <div class="aspect-[3/4] rounded-lg overflow-hidden border border-slate-700 relative group cursor-pointer bg-slate-800 flex items-center justify-center">
+                        <span class="material-icons-outlined text-3xl text-slate-600">person</span>
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-2">
+                            <span class="text-xs text-white font-medium">@modelAssetId</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Technical Specs -->
+            <div class="space-y-6">
+                <div class="border-t border-slate-800 pt-6">
+                    <h3 class="text-sm font-semibold text-slate-300 mb-4">Teknik Detaylar</h3>
+                    <div class="grid grid-cols-2 gap-y-4 gap-x-2 text-sm">
+                        <div class="text-slate-500">Çözünürlük</div>
+                        <div class="text-right font-mono text-slate-200">2048 x 3072 px</div>
+                        <div class="text-slate-500">En-Boy Oranı</div>
+                        <div class="text-right font-mono text-slate-200">2:3 (Dikey)</div>
+                        <div class="text-slate-500">Model</div>
+                        <div class="text-right font-mono text-slate-200">IDM-VTON</div>
+                        <div class="text-slate-500">Durum</div>
+                        <div class="text-right font-mono text-slate-200">@status</div>
+                    </div>
+                </div>
+
+                <!-- Performance -->
+                <div class="bg-slate-800/40 rounded-lg p-4 flex items-center justify-between border border-slate-800">
+                    <div class="flex items-center gap-3">
+                        <span class="material-icons-outlined text-green-400 text-lg">check_circle</span>
+                        <div>
+                            <div class="text-xs text-slate-400">Oluşturma Süresi</div>
+                            <div class="text-sm font-medium text-slate-200">~30 saniye</div>
+                        </div>
+                    </div>
+                    <div class="h-8 w-px bg-slate-700 mx-2"></div>
+                    <div>
+                        <div class="text-xs text-slate-400">Maliyet</div>
+                        <div class="text-sm font-medium text-slate-200">2 kredi</div>
+                    </div>
+                </div>
+
+                <!-- Export Options -->
+                <div class="mt-8 pt-6 border-t border-slate-800">
+                    <label class="text-xs font-medium text-slate-500 uppercase tracking-wider mb-3 block">Hızlı Dışa Aktarma</label>
+                    <div class="relative">
+                        <select class="w-full bg-slate-800 border border-slate-700 text-slate-200 text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 appearance-none">
+                            <option>JPG - Yüksek Kalite (100%)</option>
+                            <option>PNG - Kayıpsız</option>
+                            <option>WEBP - Web Optimized</option>
+                        </select>
+                        <span class="material-icons-outlined absolute right-3 top-2.5 text-slate-400 pointer-events-none">expand_more</span>
+                    </div>
+                    <button class="w-full mt-3 py-2.5 bg-slate-800 hover:bg-slate-700 text-slate-300 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 border border-slate-700">
+                        <span class="material-icons-outlined text-base">folder_open</span>
+                        Proje Klasörüne Kaydet
+                    </button>
+                </div>
+            </div>
+        </div>
+    </aside>
+</main>
+
+<!-- Version History Strip (Bottom) -->
+<div class="h-24 bg-background-dark border-t border-slate-800 flex items-center px-6 gap-4 z-40 overflow-x-auto">
+    <span class="text-xs font-medium text-slate-500 uppercase tracking-wider sticky left-0 bg-background-dark pr-4">Geçmiş</span>
+    <!-- Current -->
+    <div class="relative min-w-[60px] h-[60px] rounded-lg border-2 border-primary cursor-pointer p-0.5 bg-slate-800 flex items-center justify-center">
+        <span class="material-icons-outlined text-primary text-xl">auto_awesome</span>
+        <div class="absolute -top-2 -right-2 w-5 h-5 bg-primary text-background-dark rounded-full flex items-center justify-center text-[10px] font-bold">#1</div>
+    </div>
+    <!-- Add New -->
+    <div class="w-px h-10 bg-slate-800 mx-2"></div>
+    <button class="min-w-[60px] h-[60px] rounded-lg border border-slate-700 border-dashed flex flex-col items-center justify-center text-slate-500 hover:text-primary hover:border-primary hover:bg-slate-800 transition-all" @onclick="GoToEditor">
+        <span class="material-icons-outlined text-lg">add</span>
+        <span class="text-[9px]">Yeni</span>
+    </button>
+</div>
+
+@code {
+    [Parameter]
+    public int ImageId { get; set; }
+
+    private string? imageUrl;
+    private string? clothingPath;
+    private string? modelAssetId;
+    private string status = "Yükleniyor...";
+
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var image = await ImageRepository.GetByIdAsync(ImageId);
+            if (image != null)
+            {
+                imageUrl = image.GeneratedImagePath;
+                clothingPath = image.OriginalClothingPath;
+                modelAssetId = image.ModelAssetId;
+                status = image.Status;
+            }
+            else
+            {
+                status = "Bulunamadı";
+            }
+        }
+        catch
+        {
+            status = "Hata";
+        }
+    }
+
+    private void GoBack() => Nav.NavigateTo("/projects");
+    private void GoToEditor() => Nav.NavigateTo("/editor");
+}
+
