@@ -46,6 +46,13 @@ public class TemplatesController : BaseController
                 Color = t.Color,
                 Pattern = t.Pattern,
                 Material = t.Material,
+                // Sahne özellikleri
+                Background = t.Background,
+                Lighting = t.Lighting,
+                Pose = t.Pose,
+                CameraAngle = t.CameraAngle,
+                Mood = t.Mood,
+                RequiresModel = t.RequiresModel,
                 AdditionalAttributes = t.AdditionalAttributes,
                 PromptTemplate = t.PromptTemplate
             }).ToList();
@@ -79,6 +86,13 @@ public class TemplatesController : BaseController
                 Color = template.Color,
                 Pattern = template.Pattern,
                 Material = template.Material,
+                // Sahne özellikleri
+                Background = template.Background,
+                Lighting = template.Lighting,
+                Pose = template.Pose,
+                CameraAngle = template.CameraAngle,
+                Mood = template.Mood,
+                RequiresModel = template.RequiresModel,
                 AdditionalAttributes = template.AdditionalAttributes,
                 PromptTemplate = template.PromptTemplate
             };

@@ -47,68 +47,123 @@ public class TryOnController : BaseController
         _logger = logger;
     }
 
-    [HttpPost("generate")]
-    [Authorize]
-    public async Task<ActionResult<TryOnResponseDto>> Generate([FromBody] TryOnRequestDto request)
+   // src/Giydir.Web/Controllers/TryOnController.cs
+[HttpPost("generate")]
+[Authorize]
+public async Task<ActionResult<TryOnResponseDto>> Generate([FromBody] TryOnRequestDto request)
+{
+    try
     {
-        try
+        var userId = UserId ?? throw new UnauthorizedAccessException("Giriş yapmalısınız");
+
+        // Template kontrolü - Template varsa öncelikli
+        Template? template = null;
+        if (request.TemplateId.HasValue)
         {
-            // Current user kontrolü
-            var userId = UserId ?? throw new UnauthorizedAccessException("Giriş yapmalısınız");
+            template = await _templateRepository.GetByIdAsync(request.TemplateId.Value);
+            if (template == null || !template.IsActive)
+                return BadRequest(new { error = "Geçersiz template seçildi" });
+        }
 
-            // Project kontrolü - kullanıcının kendi projesi olmalı
-            if (request.ProjectId.HasValue)
-            {
-                var project = await _projectRepository.GetByIdAsync(request.ProjectId.Value);
-                if (project == null || project.UserId != userId)
-                    return Forbid("Bu projeye erişim yetkiniz yok");
-            }
+        // Project kontrolü
+        if (request.ProjectId.HasValue)
+        {
+            var project = await _projectRepository.GetByIdAsync(request.ProjectId.Value);
+            if (project == null || project.UserId != userId)
+                return Forbid("Bu projeye erişim yetkiniz yok");
+        }
 
-            // Kredi kontrolü (manuel mod: sadece kontrol, düşürme yok)
-            var creditCheck = await _creditService.CheckCreditsAsync(userId, 2);
-            if (!creditCheck.HasEnough)
-            {
-                return BadRequest(new { error = $"Yetersiz kredi. Mevcut: {creditCheck.CurrentCredits}, Gerekli: {creditCheck.Required}" });
-            }
+        // Kredi kontrolü
+        var creditCheck = await _creditService.CheckCreditsAsync(userId, 2);
+        if (!creditCheck.HasEnough)
+        {
+            return BadRequest(new { error = $"Yetersiz kredi. Mevcut: {creditCheck.CurrentCredits}, Gerekli: {creditCheck.Required}" });
+        }
 
-            // Model asset kontrolü
-            var modelAsset = await _modelAssetRepository.GetByIdAsync(request.ModelAssetId);
+        // Model asset kontrolü
+        ModelAsset? modelAsset = null;
+        if (!string.IsNullOrEmpty(request.ModelAssetId))
+        {
+            modelAsset = await _modelAssetRepository.GetByIdAsync(request.ModelAssetId);
             if (modelAsset == null)
                 return BadRequest(new { error = "Geçersiz model pozu seçildi" });
+        }
 
-            // ProjectId yoksa kullanıcının ilk projesini bul veya oluştur
-            int projectId;
-            if (request.ProjectId.HasValue)
+        // ProjectId yoksa kullanıcının ilk projesini bul veya oluştur
+        int projectId;
+        if (request.ProjectId.HasValue)
+        {
+            projectId = request.ProjectId.Value;
+        }
+        else
+        {
+            var userProjects = await _projectRepository.GetByUserIdAsync(userId);
+            if (userProjects.Any())
             {
-                projectId = request.ProjectId.Value;
+                projectId = userProjects.First().Id;
             }
             else
             {
-                var userProjects = await _projectRepository.GetByUserIdAsync(userId);
-                if (userProjects.Any())
+                var newProject = new Project
                 {
-                    projectId = userProjects.First().Id;
-                }
-                else
-                {
-                    // İlk projeyi oluştur
-                    var newProject = new Project
-                    {
-                        UserId = userId,
-                        Name = "İlk Projem"
-                    };
-                    var createdProject = await _projectRepository.CreateAsync(newProject);
-                    projectId = createdProject.Id;
-                }
+                    UserId = userId,
+                    Name = "İlk Projem"
+                };
+                var createdProject = await _projectRepository.CreateAsync(newProject);
+                projectId = createdProject.Id;
             }
+        }
 
-            // Replicate API'ye istek at
+        // Template varsa AI generation, yoksa virtual try-on
+        if (template != null)
+        {
+            // Template seçildiyse AI generation yap (template özellikleri kullanılacak)
+            var prompt = _promptService.GeneratePromptWithModelDefaults(
+                template,
+                modelAsset,
+                template.Style,
+                template.Color,
+                template.Pattern,
+                template.Material,
+                template.Category
+            );
+            
+            _logger.LogInformation("Template ile prompt oluşturuldu: {TemplateId} -> {Prompt}", template.Id, prompt);
+
+            var predictionId = await _aiImageService.GenerateImageFromPromptAsync(
+                prompt,
+                "4:3",
+                "jpg");
+
+            var generatedImage = new GeneratedImage
+            {
+                ProjectId = projectId,
+                OriginalClothingPath = request.ClothingImagePath,
+                ModelAssetId = modelAsset?.Id ?? "ai-generated",
+                ReplicatePredictionId = predictionId,
+                Status = "Processing"
+            };
+
+            await _imageRepository.CreateAsync(generatedImage);
+
+            return Ok(new TryOnResponseDto
+            {
+                ImageId = generatedImage.Id,
+                PredictionId = predictionId,
+                Status = "Processing"
+            });
+        }
+        else
+        {
+            // Template yoksa virtual try-on yap (model'in default özellikleri kullanılacak)
+            if (modelAsset == null)
+                return BadRequest(new { error = "Model veya template seçilmelidir" });
+
             var predictionId = await _tryOnService.GenerateTryOnImageAsync(
                 request.ClothingImagePath,
                 request.ModelAssetId,
                 request.Category);
 
-            // DB'ye kaydet
             var generatedImage = new GeneratedImage
             {
                 ProjectId = projectId,
@@ -127,20 +182,18 @@ public class TryOnController : BaseController
                 Status = "Processing"
             });
         }
-        catch (Exception ex)
-        {
-            _logger.LogError(ex, "Try-on oluşturma hatası: {Message}", ex.Message);
-            
-            // Kredi hatası gibi özel durumlar için daha açıklayıcı mesaj
-            var errorMessage = ex.Message;
-            if (errorMessage.Contains("yeterli kredi") || errorMessage.Contains("insufficient credit"))
-            {
-                return StatusCode(402, new { error = errorMessage });
-            }
-            
-            return StatusCode(500, new { error = $"Görsel oluşturulurken bir hata oluştu: {errorMessage}" });
-        }
     }
+    catch (Exception ex)
+    {
+        _logger.LogError(ex, "Try-on oluşturma hatası: {Message}", ex.Message);
+        var errorMessage = ex.Message;
+        if (errorMessage.Contains("yeterli kredi") || errorMessage.Contains("insufficient credit"))
+        {
+            return StatusCode(402, new { error = errorMessage });
+        }
+        return StatusCode(500, new { error = $"Görsel oluşturulurken bir hata oluştu: {errorMessage}" });
+    }
+}
 
     [HttpGet("status/{imageId:int}")]
     [Authorize]

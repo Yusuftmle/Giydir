@@ -8,8 +8,14 @@ public class ModelAsset
     public string FullImagePath { get; set; } = string.Empty;
     public string Gender { get; set; } = string.Empty; // Male, Female, Unisex
     public string Category { get; set; } = string.Empty; // upper_body, lower_body, dresses
+     public string? DefaultBackground { get; set; } // "white", "studio", "outdoor", etc.
+    public string? DefaultLighting { get; set; } // "studio", "natural", "soft", etc.
+    public string? DefaultPose { get; set; } // "standing", "casual", etc.
+    public string? DefaultCameraAngle { get; set; } // "front", "side", etc.
+    public string? DefaultMood { get; set; } // "professional", "casual", etc.
 
     public List<GeneratedImage> GeneratedImages { get; set; } = new();
 }
+
 
 

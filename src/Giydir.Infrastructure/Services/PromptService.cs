@@ -1,3 +1,4 @@
+// src/Giydir.Infrastructure/Services/PromptService.cs
 using Giydir.Core.Entities;
 using Giydir.Core.Interfaces;
 using System.Text.Json;
@@ -13,28 +14,75 @@ public class PromptService : IPromptService
             return customPrompt;
         }
 
-        // Template'den prompt oluştur
         if (!string.IsNullOrEmpty(template.PromptTemplate))
         {
             return template.PromptTemplate;
         }
 
-        // Eğer PromptTemplate yoksa JSON'dan oluştur
         return GeneratePromptFromJson(
             template.Style,
             template.Color,
             template.Pattern,
             template.Material,
             template.Category,
+            template.Background,
+            template.Lighting,
+            template.Pose,
+            template.CameraAngle,
+            template.Mood,
             template.AdditionalAttributes
         );
     }
 
-    public string GeneratePromptFromJson(string style, string color, string pattern, string material, string category, string? additionalAttributes = null)
+    // YENİ: Template + Model kombinasyonu için
+    public string GeneratePromptWithModelDefaults(
+        Template? template,
+        ModelAsset? model,
+        string style = "",
+        string color = "",
+        string pattern = "",
+        string material = "",
+        string category = "upper_body")
+    {
+        // Template varsa template özelliklerini kullan (öncelikli)
+        // Template yoksa model'in default özelliklerini kullan
+        
+        string? background = template?.Background ?? model?.DefaultBackground;
+        string? lighting = template?.Lighting ?? model?.DefaultLighting;
+        string? pose = template?.Pose ?? model?.DefaultPose;
+        string? cameraAngle = template?.CameraAngle ?? model?.DefaultCameraAngle;
+        string? mood = template?.Mood ?? model?.DefaultMood;
+
+        return GeneratePromptFromJson(
+            style,
+            color,
+            pattern,
+            material,
+            category,
+            background,
+            lighting,
+            pose,
+            cameraAngle,
+            mood,
+            template?.AdditionalAttributes
+        );
+    }
+
+    public string GeneratePromptFromJson(
+        string style, 
+        string color, 
+        string pattern, 
+        string material, 
+        string category, 
+        string? background = null,
+        string? lighting = null,
+        string? pose = null,
+        string? cameraAngle = null,
+        string? mood = null,
+        string? additionalAttributes = null)
     {
         var promptParts = new List<string>();
 
-        // Kategori bazlı başlangıç
         switch (category.ToLower())
         {
             case "upper_body":
@@ -48,31 +96,18 @@ public class PromptService : IPromptService
                 break;
         }
 
-        // Renk
         if (!string.IsNullOrEmpty(color))
-        {
             promptParts.Add(color);
-        }
 
-        // Materyal
         if (!string.IsNullOrEmpty(material))
-        {
             promptParts.Add(material);
-        }
 
-        // Stil
         if (!string.IsNullOrEmpty(style))
-        {
             promptParts.Add(style);
-        }
 
-        // Desen
         if (!string.IsNullOrEmpty(pattern) && pattern.ToLower() != "solid")
-        {
             promptParts.Add($"{pattern} pattern");
-        }
 
-        // Kategoriye göre ürün tipi
         switch (category.ToLower())
         {
             case "upper_body":
@@ -86,7 +121,26 @@ public class PromptService : IPromptService
                 break;
         }
 
-        // Ekstra özellikler
+        // Sahne özellikleri - Template varsa template, yoksa model default
+        if (!string.IsNullOrEmpty(background))
+            promptParts.Add($"{background} background");
+        else
+            promptParts.Add("clean white background");
+
+        if (!string.IsNullOrEmpty(lighting))
+            promptParts.Add($"{lighting} lighting");
+        else
+            promptParts.Add("studio lighting");
+
+        if (!string.IsNullOrEmpty(pose))
+            promptParts.Add($"{pose} pose");
+
+        if (!string.IsNullOrEmpty(cameraAngle))
+            promptParts.Add($"{cameraAngle} angle");
+
+        if (!string.IsNullOrEmpty(mood))
+            promptParts.Add($"{mood} mood");
+
         if (!string.IsNullOrEmpty(additionalAttributes))
         {
             try
@@ -100,19 +154,12 @@ public class PromptService : IPromptService
                     }
                 }
             }
-            catch
-            {
-                // JSON parse hatası - ignore
-            }
+            catch { }
         }
 
-        // Standart eklemeler
-        promptParts.Add("clean white background");
-        promptParts.Add("studio lighting");
         promptParts.Add("high quality fashion photography");
         promptParts.Add("professional product image");
 
         return string.Join(", ", promptParts);
     }
 }
-

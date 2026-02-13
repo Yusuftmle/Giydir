@@ -157,6 +157,16 @@ public class AppDbContext : DbContext
                 FullImagePath = "https://lh3.googleusercontent.com/aida-public/AB6AXuAtFeABsVMgskm3n1brapolfui2kgEyVi6Ve1O5N2NcVD_6-GJo9knrL1sk3sgwC7kvcumYtTqZkxDce8LhtxWBY-62Wp33k68sGgXqiYsj_q3O4tYZxYPawrImixcvc2a-tWQD93mxBnbBfm7Vt0sm3Muq_q3JbEcf-wEQUn5kSf3WahGfBz762URViP8xpM0F1hFL1KawI6bbGPNmyYgoHfOCttstNkd7tP_XpTIhlWY3yy-lR-oKQ7YDE4Ce4qgeGv95nzXbKow3",
                 Gender = "Female",
                 Category = "Artistic / Conceptual"
+            },
+            // AI Generated işlemleri için dummy model
+            new ModelAsset
+            {
+                Id = "ai-generated",
+                Name = "AI Generated",
+                ThumbnailPath = "/images/ai-placeholder.png",
+                FullImagePath = "/images/ai-placeholder.png",
+                Gender = "Unisex",
+                Category = "AI"
             }
         );
 

@@ -147,8 +147,8 @@
         </div>
     </aside>
 
-    <!-- Column 2: Select Model (Center) - Sadece upload modunda göster -->
-    @if (editorMode == "upload")
+    <!-- Column 2: Select Model (Center) -->
+    @if (editorMode == "upload" || (editorMode == "template" && selectedTemplateId.HasValue))
     {
         <section class="flex-1 flex flex-col bg-gray-50 dark:bg-background-dark min-w-0">
             <!-- Filter Bar -->
@@ -157,7 +157,7 @@
                     <div class="flex items-center gap-2">
                         <h2 class="text-sm uppercase tracking-wider text-primary font-bold">Adım 2</h2>
                         <div class="h-1 w-1 rounded-full bg-gray-400"></div>
-                        <h3 class="text-xl font-bold">Model Seç</h3>
+                        <h3 class="text-xl font-bold">Model Seç @(editorMode == "template" && selectedTemplate?.RequiresModel == false ? "(Opsiyonel)" : "")</h3>
                     </div>
                 </div>
             </div>
@@ -318,19 +318,33 @@
 
     private void SelectTemplate(int templateId)
     {
-        selectedTemplateId = selectedTemplateId == templateId ? null : templateId;
-        uploadedClothingUrl = null; // Template seçildiğinde upload'ı temizle
+        if (selectedTemplateId == templateId)
+        {
+            selectedTemplateId = null;
+            selectedTemplate = null;
+        }
+        else
+        {
+            selectedTemplateId = templateId;
+            selectedTemplate = templates.FirstOrDefault(t => t.Id == templateId);
+            uploadedClothingUrl = null; // Template seçildiğinde upload'ı temizle
+        }
     }
 
     private string editorMode = "upload"; // "upload" or "template"
     private List<TemplateDto> templates = new();
     private bool isLoadingTemplates = false;
     private int? selectedTemplateId;
+    private TemplateDto? selectedTemplate;
 
     private bool CanGenerate => 
-        ((editorMode == "upload" && !string.IsNullOrEmpty(uploadedClothingUrl) && !string.IsNullOrEmpty(selectedModelId))
-        || (editorMode == "template" && selectedTemplateId.HasValue))
-        && !isProcessing;
+        !isProcessing &&
+        (
+            (editorMode == "upload" && !string.IsNullOrEmpty(uploadedClothingUrl) && !string.IsNullOrEmpty(selectedModelId))
+            ||
+            (editorMode == "template" && selectedTemplateId.HasValue && 
+                (selectedTemplate?.RequiresModel != true || !string.IsNullOrEmpty(selectedModelId)))
+        );
 
     private void HandleDragOver() => isDragging = true;
     private void HandleDragLeave() => isDragging = false;
@@ -398,6 +412,7 @@
                 var request = new GenerateFromTemplateDto
                 {
                     TemplateId = selectedTemplateId.Value,
+                    ModelAssetId = selectedModelId, // Model ID eklendi
                     AspectRatio = "4:3",
                     OutputFormat = "jpg"
                 };

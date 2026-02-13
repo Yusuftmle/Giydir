@@ -68,16 +68,16 @@ public class TryOnStatusPollingService : BackgroundService
             {
                 _logger.LogInformation("Görsel kontrol ediliyor: ImageId={ImageId}, ModelAssetId={ModelAssetId}, PredictionId={PredictionId}, Status={Status}",
                     image.Id, image.ModelAssetId, image.ReplicatePredictionId, image.Status);
-                
+
                 // AI generation (template-based) veya Virtual Try-On kontrolü
                 if (image.ModelAssetId == "ai-generated")
                 {
                     // AI Image Generation (nano-banana)
                     _logger.LogInformation("AI görsel status kontrol ediliyor: ImageId={ImageId}, PredictionId={PredictionId}",
                         image.Id, image.ReplicatePredictionId);
-                    
+
                     var status = await aiImageService.CheckStatusAsync(image.ReplicatePredictionId!);
-                    
+
                     _logger.LogInformation("AI görsel status: ImageId={ImageId}, Status={Status}, OutputUrl={OutputUrl}",
                         image.Id, status.Status, status.OutputUrl ?? "YOK");
 
@@ -87,7 +87,7 @@ public class TryOnStatusPollingService : BackgroundService
                         {
                             _logger.LogInformation("AI görsel indiriliyor: ImageId={ImageId}, Url={Url}",
                                 image.Id, status.OutputUrl);
-                            
+
                             var localPath = await imageDownloadService.DownloadAndSaveAsync(
                                 status.OutputUrl,
                                 $"ai_gen_{image.Id}_{Guid.NewGuid():N}.png");
@@ -126,31 +126,54 @@ public class TryOnStatusPollingService : BackgroundService
                     // Virtual Try-On (IDM-VTON)
                     _logger.LogInformation("Virtual Try-On status kontrol ediliyor: ImageId={ImageId}, PredictionId={PredictionId}",
                         image.Id, image.ReplicatePredictionId);
-                    
+
                     var status = await tryOnService.CheckStatusAsync(image.ReplicatePredictionId!);
-                    
+
                     _logger.LogInformation("Virtual Try-On status: ImageId={ImageId}, Status={Status}, OutputUrl={OutputUrl}",
                         image.Id, status.Status, status.OutputUrl ?? "YOK");
 
                     if (status.Status == "succeeded" && !string.IsNullOrEmpty(status.OutputUrl))
                     {
-                        var localPath = await imageDownloadService.DownloadAndSaveAsync(
-                            status.OutputUrl,
-                            $"gen_{image.Id}_{Guid.NewGuid():N}.jpg");
+                        try
+                        {
+                            _logger.LogInformation("Virtual Try-On görseli indiriliyor: ImageId={ImageId}, Url={Url}",
+                                image.Id, status.OutputUrl);
 
-                        image.Status = "Completed";
-                        image.GeneratedImagePath = localPath;
+                            var localPath = await imageDownloadService.DownloadAndSaveAsync(
+                                status.OutputUrl,
+                                $"gen_{image.Id}_{Guid.NewGuid():N}.jpg");
 
-                        _logger.LogInformation("Görsel tamamlandı: ImageId={ImageId}, Path={Path}",
-                            image.Id, localPath);
+                            image.Status = "Completed";
+                            image.GeneratedImagePath = localPath;
+
+                            _logger.LogInformation("Virtual Try-On görseli tamamlandı: ImageId={ImageId}, Path={Path}",
+                                image.Id, localPath);
+                        }
+                        catch (Exception downloadEx)
+                        {
+                            _logger.LogError(downloadEx, "Virtual Try-On görsel indirme hatası: ImageId={ImageId}, Url={Url}",
+                                image.Id, status.OutputUrl);
+
+                            // İndirme başarısız olursa Failed durumuna al
+                            image.Status = "Failed";
+                            image.ErrorMessage = $"Görsel indirme hatası: {downloadEx.Message}";
+
+                            _logger.LogWarning("Virtual Try-On görseli Failed olarak işaretlendi: ImageId={ImageId}",
+                                image.Id);
+                        }
                     }
                     else if (status.Status == "failed")
                     {
                         image.Status = "Failed";
-                        image.ErrorMessage = status.Error ?? "AI görsel oluşturma başarısız oldu";
+                        image.ErrorMessage = status.Error ?? "Virtual Try-On başarısız oldu";
 
-                        _logger.LogWarning("Görsel başarısız: ImageId={ImageId}, Error={Error}",
+                        _logger.LogWarning("Virtual Try-On başarısız: ImageId={ImageId}, Error={Error}",
                             image.Id, image.ErrorMessage);
+                    }
+                    else if (status.Status == "processing" || status.Status == "starting")
+                    {
+                        _logger.LogInformation("Virtual Try-On hala işleniyor: ImageId={ImageId}, Status={Status}",
+                            image.Id, status.Status);
                     }
                 }
             }
@@ -163,4 +186,3 @@ public class TryOnStatusPollingService : BackgroundService
         await context.SaveChangesAsync(ct);
     }
 }
-

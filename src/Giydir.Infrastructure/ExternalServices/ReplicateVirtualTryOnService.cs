@@ -109,6 +109,8 @@ public class ReplicateVirtualTryOnService : IVirtualTryOnService
         return result.Id;
     }
 
+    // ReplicateVirtualTryOnService.cs içinde CheckStatusAsync metodunu BU ile değiştir
+
     public async Task<TryOnStatusResult> CheckStatusAsync(string predictionId)
     {
         var response = await _httpClient.GetAsync($"predictions/{predictionId}");
@@ -123,32 +125,52 @@ public class ReplicateVirtualTryOnService : IVirtualTryOnService
 
         var responseContent = await response.Content.ReadAsStringAsync();
         _logger.LogInformation("Replicate API response (raw): {Response}", responseContent);
-        
+
         var result = await response.Content.ReadFromJsonAsync<ReplicatePredictionResponse>();
 
         if (result == null)
             throw new Exception("Replicate API'den boş yanıt alındı");
 
-        // Output null ise urls.stream veya urls.get kullan
-        var outputUrl = result.Output?.FirstOrDefault();
-        if (string.IsNullOrEmpty(outputUrl))
+        // Output URL'yi al (string veya array olabilir)
+        string? outputUrl = null;
+
+        if (result.Output != null)
         {
-            // Önce urls.stream'i dene (dosya URL'si olabilir)
-            if (result.Urls?.Stream != null)
+            // JSON tipine göre işle
+            if (result.Output is System.Text.Json.JsonElement jsonElement)
             {
-                // urls.stream bir dosya URL'si olabilir, test et
-                outputUrl = result.Urls.Stream;
-                _logger.LogInformation("Output null, urls.stream kullanılıyor: {StreamUrl}", outputUrl);
+                if (jsonElement.ValueKind == System.Text.Json.JsonValueKind.String)
+                {
+                    // String ise direkt al
+                    outputUrl = jsonElement.GetString();
+                    _logger.LogInformation("Output string olarak alındı: {Url}", outputUrl);
+                }
+                else if (jsonElement.ValueKind == System.Text.Json.JsonValueKind.Array)
+                {
+                    // Array ise ilk elemanı al
+                    var firstElement = jsonElement.EnumerateArray().FirstOrDefault();
+                    if (firstElement.ValueKind == System.Text.Json.JsonValueKind.String)
+                    {
+                        outputUrl = firstElement.GetString();
+                        _logger.LogInformation("Output array'den ilk eleman alındı: {Url}", outputUrl);
+                    }
+                }
             }
-            // Eğer urls.stream de yoksa ve status succeeded ise, urls.get endpoint'ini kullan
-            else if (result.Status == "succeeded" && result.Urls?.Get != null)
+            else if (result.Output is string str)
             {
-                _logger.LogWarning("Output ve urls.stream null, urls.get endpoint'i mevcut ama kullanılamıyor: {GetUrl}", result.Urls.Get);
+                outputUrl = str;
             }
         }
 
-        _logger.LogInformation("Prediction status: {PredictionId} -> {Status}, OutputUrl: {OutputUrl}, OutputCount: {OutputCount}",
-            predictionId, result.Status, outputUrl ?? "YOK", result.Output?.Count ?? 0);
+        // Output null ise urls.stream kullan
+        if (string.IsNullOrEmpty(outputUrl) && result.Urls?.Stream != null)
+        {
+            outputUrl = result.Urls.Stream;
+            _logger.LogInformation("Output null, urls.stream kullanılıyor: {StreamUrl}", outputUrl);
+        }
+
+        _logger.LogInformation("Prediction status: {PredictionId} -> {Status}, OutputUrl: {OutputUrl}",
+            predictionId, result.Status, outputUrl ?? "YOK");
 
         return new TryOnStatusResult
         {
