@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Login | NanoBanana Premium AI Virtual Try-On</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Outfit:wght@300;400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "cream": "#F9F8F6",
+                        "charcoal": "#121212",
+                        "charcoal-light": "#1A1A1A",
+                        "border-muted": "rgba(18, 18, 18, 0.1)",
+                    },
+                    fontFamily: {
+                        "display": ["Outfit", "sans-serif"],
+                        "body": ["Inter", "sans-serif"]
+                    },
+                    letterSpacing: {
+                        "extra-wide": "0.15em",
+                        "ultra-wide": "0.25em",
+                    }
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer base {
+            body { @apply font-body bg-cream text-charcoal antialiased overflow-hidden; }
+        }
+        .glass-button {
+            background: rgba(18, 18, 18, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-button:hover {
+            background: rgba(18, 18, 18, 0.95);
+        }
+        .input-premium {
+            @apply w-full bg-transparent border-t-0 border-x-0 border-b border-border-muted py-4 px-0 focus:ring-0 focus:border-charcoal transition-colors duration-300 placeholder:text-gray-400 text-sm tracking-extra-wide;
+        }
+        .editorial-image {
+            filter: grayscale(15%) contrast(105%);
+        }
+    </style>
+</head>
+<body class="h-screen">
+<main class="flex h-full">
+<section class="hidden lg:block w-7/12 relative h-full overflow-hidden">
+<img alt="High-fashion editorial photography" class="w-full h-full object-cover editorial-image" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3Q1mFKQMY0CgZYaW2YlV0yBCfjgXUCiOAvMShPJmD367xDnSwpIHRRmMIr0fKPEZ6tcbnj1k-FmI3z_2M61yfmTMBN-TcaW3uzQRjsGIN04nOJvi_7QjjDPJrDsLTPCCNpyZ5i45nxRzTUwJsaseZpqYSwGIxYCxBl3YeYig5PqaTI1oBOHGhVWC24Kn8s6_EweorXwuyos4q6MopTVMFXr8eO3Gf2wQuwXV1Y5KG4hI7MDcH9Dcl-CW4Q6qp3_oQ9zZ__wRdGpSR"/>
+<div class="absolute inset-0 bg-gradient-to-r from-transparent to-black/10"></div>
+<div class="absolute bottom-12 left-12">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-charcoal flex items-center justify-center">
+<span class="text-cream font-bold text-[10px] tracking-tighter">NB</span>
+</div>
+<span class="text-cream text-xs font-medium tracking-ultra-wide uppercase">Private Collection</span>
+</div>
+</div>
+</section>
+<section class="w-full lg:w-5/12 flex flex-col justify-center px-12 xl:px-24 bg-cream">
+<div class="max-w-md w-full mx-auto">
+<div class="mb-16">
+<a class="inline-flex items-center text-[10px] font-medium tracking-ultra-wide uppercase text-gray-400 hover:text-charcoal transition-colors" href="#">
+<span class="material-symbols-outlined text-[14px] mr-2">west</span>
+                    Return to Studio
+                </a>
+</div>
+<header class="mb-12">
+<h1 class="text-3xl font-display font-light tracking-extra-wide mb-3 uppercase">Welcome Back</h1>
+<p class="text-sm text-gray-500 font-light tracking-wide leading-relaxed">
+                    Enter your credentials to access the NanoBanana <br/>Generative AI Dashboard.
+                </p>
+</header>
+<form action="#" class="space-y-8">
+<div class="space-y-6">
+<div class="group">
+<label class="block text-[10px] font-bold uppercase tracking-ultra-wide text-gray-400 mb-1 group-focus-within:text-charcoal transition-colors" for="email">
+                            Identity
+                        </label>
+<input class="input-premium" id="email" placeholder="Email address" required="" type="email"/>
+</div>
+<div class="group">
+<div class="flex justify-between items-end mb-1">
+<label class="block text-[10px] font-bold uppercase tracking-ultra-wide text-gray-400 group-focus-within:text-charcoal transition-colors" for="password">
+                                Security
+                            </label>
+<a class="text-[10px] font-medium uppercase tracking-widest text-gray-400 hover:text-charcoal transition-colors" href="#">Reset</a>
+</div>
+<input class="input-premium" id="password" placeholder="Password" required="" type="password"/>
+</div>
+</div>
+<div class="flex items-center gap-3 py-2">
+<input class="w-3.5 h-3.5 border-border-muted rounded-none focus:ring-0 checked:bg-charcoal text-charcoal" id="remember" type="checkbox"/>
+<label class="text-[10px] font-medium tracking-ultra-wide uppercase text-gray-500 cursor-pointer" for="remember">Stay authenticated</label>
+</div>
+<button class="glass-button w-full py-5 text-cream text-[11px] font-bold uppercase tracking-ultra-wide transition-all duration-500 hover:tracking-[0.35em] shadow-lg" type="submit">
+                    Initialize Access
+                </button>
+</form>
+<div class="mt-12 pt-10 border-t border-border-muted">
+<p class="text-[10px] font-bold uppercase tracking-ultra-wide text-center text-gray-400 mb-6">Enterprise SSO</p>
+<div class="grid grid-cols-2 gap-4">
+<button class="border border-border-muted py-3 px-4 flex items-center justify-center gap-2 hover:bg-white transition-colors">
+<span class="text-[10px] font-medium tracking-extra-wide uppercase">Google Cloud</span>
+</button>
+<button class="border border-border-muted py-3 px-4 flex items-center justify-center gap-2 hover:bg-white transition-colors">
+<span class="text-[10px] font-medium tracking-extra-wide uppercase">Azure AD</span>
+</button>
+</div>
+</div>
+<footer class="mt-20">
+<div class="flex justify-between items-center text-[9px] font-medium tracking-ultra-wide uppercase text-gray-400">
+<p>© 2024 NanoBanana Systems</p>
+<div class="flex gap-4">
+<a class="hover:text-charcoal transition-colors" href="#">Privacy</a>
+<a class="hover:text-charcoal transition-colors" href="#">Legal</a>
+</div>
+</div>
+</footer>
+</div>
+</section>
+</main>
+
+</body></html>

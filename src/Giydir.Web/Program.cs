@@ -44,6 +44,7 @@ builder.Services.AddScoped<IModelAssetRepository, ModelAssetRepository>();
 builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<IGeneratedImageRepository, GeneratedImageRepository>();
 builder.Services.AddScoped<ITemplateRepository, TemplateRepository>();
+builder.Services.AddScoped<ISavedPromptRepository, SavedPromptRepository>();
 
 // Services
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
@@ -97,32 +98,105 @@ using (var scope = app.Services.CreateScope())
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.EnsureCreated();
     
-        // Yeni profil sütunlarını ekle (EnsureCreated mevcut tablolara yeni sütun eklemez)
-        try
-        {
-            var conn = db.Database.GetDbConnection();
-            await conn.OpenAsync();
-            using var cmd = conn.CreateCommand();
-            // Sütun var mı kontrol et, yoksa ekle
-            var columns = new[] { "Name", "Title", "BoutiqueName", "Sector", "WebsiteUrl" };
-            foreach (var col in columns)
+            // Yeni profil sütunlarını ekle (EnsureCreated mevcut tablolara yeni sütun eklemez)
+            try
             {
-                try
+                var conn = db.Database.GetDbConnection();
+                await conn.OpenAsync();
+                using var cmd = conn.CreateCommand();
+                
+                // Sütun var mı kontrol et, yoksa ekle
+                var columns = new[] { "Name", "Title", "BoutiqueName", "Sector", "WebsiteUrl", "Role" };
+                foreach (var col in columns)
                 {
-                    cmd.CommandText = $"ALTER TABLE Users ADD COLUMN {col} TEXT NULL";
-                    await cmd.ExecuteNonQueryAsync();
-                    Log.Information("Yeni sütun eklendi: Users.{Column}", col);
+                    try
+                    {
+                        cmd.CommandText = $"ALTER TABLE Users ADD COLUMN {col} TEXT NULL";
+                        await cmd.ExecuteNonQueryAsync();
+                        Log.Information("Yeni sütun eklendi: Users.{Column}", col);
+                    }
+                    catch (Exception)
+                    {
+                        // Sütun zaten varsa hata verir, normal
+                    }
                 }
-                catch (Exception)
+
+                // Varsayılan User rolünü ata
+                cmd.CommandText = "UPDATE Users SET Role = 'User' WHERE Role IS NULL";
+                await cmd.ExecuteNonQueryAsync();
+
+                // Admin kullanıcısını kontrol et/ekle
+                cmd.CommandText = "SELECT COUNT(*) FROM Users WHERE Email = 'admin@giydir.ai'";
+                var adminExists = (long)(await cmd.ExecuteScalarAsync() ?? 0) > 0;
+                
+                if (!adminExists)
                 {
-                    // Sütun zaten varsa hata verir, normal
+                    var adminPassHash = BCrypt.Net.BCrypt.HashPassword("AdminGiydir2024!");
+                    cmd.CommandText = $@"
+                        INSERT INTO Users (Email, PasswordHash, Credits, Role, Name, CreatedAt) 
+                        VALUES ('admin@giydir.ai', '{adminPassHash}', 9999, 'Admin', 'Giydir Admin', '{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss}')";
+                    await cmd.ExecuteNonQueryAsync();
+                    Log.Information("Admin kullanıcısı oluşturuldu: admin@giydir.ai");
+                }
+                else
+                {
+                    // Varsa rolünü Admin olarak zorla (403 hatalarını önlemek için)
+                    cmd.CommandText = "UPDATE Users SET Role = 'Admin' WHERE Email = 'admin@giydir.ai'";
+                    await cmd.ExecuteNonQueryAsync();
+                    Log.Information("Mevcut admin kullanıcısı rolü Admin olarak güncellendi.");
                 }
             }
-        }
-        catch (Exception ex)
-        {
-            Log.Warning(ex, "Veritabanı sütun güncelleme hatası (muhtemelen sütunlar zaten mevcut)");
-        }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, "Veritabanı Users tablosu güncelleme hatası");
+            }
+            
+            // Hardcoded modelleri temizle
+            try
+            {
+                var conn = db.Database.GetDbConnection();
+                await conn.OpenAsync();
+                using var cmd = conn.CreateCommand();
+                // Bağımlı kayıtları (GeneratedImages) temizle
+                cmd.CommandText = "DELETE FROM GeneratedImages WHERE ModelAssetId IN ('elena-s', 'marcus-j', 'sophia-l', 'chloe-r', 'david-k', 'maya-t', 'zara-b', 'lily-a', 'ai-generated')";
+                await cmd.ExecuteNonQueryAsync();
+
+                // Modelleri temizle
+                cmd.CommandText = "DELETE FROM ModelAssets WHERE Id IN ('elena-s', 'marcus-j', 'sophia-l', 'chloe-r', 'david-k', 'maya-t', 'zara-b', 'lily-a', 'ai-generated')";
+                var deletedCount = await cmd.ExecuteNonQueryAsync();
+                if (deletedCount > 0) Log.Information("{Count} adet hardcoded model ve bağlı resimleri temizlendi.", deletedCount);
+            }
+            catch (Exception ex)
+            {
+                Log.Warning(ex, "Hardcoded modeller temizlenirken hata oluştu");
+            }
+
+            // SavedPrompts tablosunu oluştur
+            try
+            {
+                var conn = db.Database.GetDbConnection();
+                await conn.OpenAsync();
+                using var cmd = conn.CreateCommand();
+                cmd.CommandText = @"
+                    CREATE TABLE IF NOT EXISTS SavedPrompts (
+                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        Name TEXT NOT NULL,
+                        PromptText TEXT NOT NULL,
+                        NegativePrompt TEXT,
+                        ResultImageUrl TEXT,
+                        SettingsJson TEXT,
+                        CreatedAt TEXT NOT NULL,
+                        CreatedByUserId INTEGER NOT NULL,
+                        IsFavorite INTEGER NOT NULL DEFAULT 0,
+                        PublishedModelId TEXT
+                    );";
+                await cmd.ExecuteNonQueryAsync();
+                Log.Information("SavedPrompts tablosu kontrol edildi/oluşturuldu.");
+            }
+            catch (Exception ex)
+            {
+                Log.Error(ex, "SavedPrompts tablosu oluşturulamadı");
+            }
         
         // Templates tablosunu oluştur (eğer yoksa)
         try

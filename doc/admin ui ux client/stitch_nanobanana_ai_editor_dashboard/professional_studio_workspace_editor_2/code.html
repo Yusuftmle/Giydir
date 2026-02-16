@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Admin AI Model Creator &amp; Lab</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#13c8ec",
+              "background-light": "#f6f8f8",
+              "background-dark": "#05090a", 
+              "panel-dark": "#0c1416",
+              "surface-dark": "#121d20",
+              "accent-orange": "#f59e0b"
+            },
+            fontFamily: {
+              "display": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style type="text/tailwindcss">
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .custom-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 4px;
+            background: #162b2f;
+            border-radius: 2px;
+            outline: none;
+        }
+        .custom-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            background: #13c8ec;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .canvas-grid {
+            background-size: 40px 40px;
+            background-image: radial-gradient(circle, #1a2e32 1px, transparent 1px);
+        }
+        .token-chip {
+            @apply px-2 py-1 bg-white/5 border border-white/10 rounded text-[10px] font-mono text-primary hover:bg-primary/20 hover:border-primary/40 transition-all cursor-pointer;
+        }
+        .editor-container {
+            background: linear-gradient(180deg, rgba(12, 20, 22, 1) 0%, rgba(5, 9, 10, 1) 100%);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200 h-screen flex flex-col overflow-hidden font-display">
+<header class="h-14 border-b border-slate-200 dark:border-white/5 flex items-center justify-between px-4 bg-background-light dark:bg-panel-dark z-50">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 bg-primary rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-background-dark text-xl font-bold">biotech</span>
+</div>
+<span class="font-bold tracking-tight text-lg uppercase">Admin AI<span class="text-primary">Creator</span></span>
+</div>
+<div class="h-6 w-[1px] bg-white/10"></div>
+<div class="flex items-center gap-2 text-sm text-slate-400">
+<span class="text-slate-500 text-xs uppercase tracking-widest font-bold">Lab Environment</span>
+<span class="material-icons-outlined text-sm">chevron_right</span>
+<span class="text-slate-100 font-medium">Synthetic Human v4.2 Beta</span>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-3 bg-black/40 px-3 py-1.5 rounded-lg border border-white/5">
+<span class="text-[10px] uppercase font-bold text-slate-500">Seed:</span>
+<span class="text-[10px] font-mono text-primary">8249103857</span>
+<span class="material-symbols-outlined text-xs text-slate-500 cursor-pointer hover:text-white">refresh</span>
+</div>
+<div class="h-6 w-[1px] bg-white/10"></div>
+<button class="bg-white/5 text-slate-300 border border-white/10 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition-all">
+            Drafts
+        </button>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<aside class="w-80 border-r border-slate-200 dark:border-white/5 bg-background-light dark:bg-panel-dark flex flex-col">
+<div class="p-4 border-b border-white/5 flex items-center justify-between">
+<h2 class="font-bold text-[11px] uppercase tracking-widest text-slate-400">Prompt Engineering Lab</h2>
+<span class="material-symbols-outlined text-sm text-primary">terminal</span>
+</div>
+<div class="flex-1 overflow-y-auto px-4 py-4 space-y-6 no-scrollbar">
+<div class="space-y-3">
+<label class="text-[10px] uppercase font-bold text-slate-500 tracking-wider flex justify-between">
+                    System Prompt
+                    <span class="text-primary/60 lowercase font-normal italic">Weights enabled</span>
+</label>
+<div class="relative">
+<textarea class="w-full h-48 bg-black/40 border border-white/10 rounded-xl p-3 text-xs font-mono leading-relaxed focus:ring-1 focus:ring-primary/50 focus:border-primary/50 outline-none resize-none no-scrollbar" placeholder="Enter base identity prompt...">High-fidelity photorealistic full body shot of [Ethnicity] female model, [Age] years old, [Body_Type], standing in [Lighting] studio environment, wearing [Outfit_Description]. Shot on 85mm lens, f/1.8, cinematic lighting, 8k resolution, highly detailed skin texture, editorial fashion photography.</textarea>
+<div class="absolute bottom-2 right-2 flex gap-1">
+<span class="text-[9px] bg-black/60 px-2 py-0.5 rounded border border-white/5 text-slate-500 font-mono">154 tokens</span>
+</div>
+</div>
+</div>
+<div class="space-y-3">
+<span class="text-[10px] uppercase font-bold text-slate-500 tracking-wider block">Quick Tokens</span>
+<div class="flex flex-wrap gap-1.5">
+<span class="token-chip">[Ethnicity]</span>
+<span class="token-chip">[Age]</span>
+<span class="token-chip">[Body_Type]</span>
+<span class="token-chip">[Lighting]</span>
+<span class="token-chip">[Pose]</span>
+<span class="token-chip">[Hair_Style]</span>
+<span class="token-chip">[Expression]</span>
+<span class="token-chip">[Environment]</span>
+<span class="token-chip">[Lens_Type]</span>
+<span class="token-chip">[Skin_Tone]</span>
+</div>
+</div>
+<div class="space-y-4 pt-4 border-t border-white/5">
+<div class="space-y-1">
+<div class="flex justify-between text-[10px] uppercase font-bold text-slate-500">
+<span>Guidance Scale (CFG)</span>
+<span class="text-primary">7.5</span>
+</div>
+<input class="custom-slider" type="range" value="75"/>
+</div>
+<div class="space-y-1">
+<div class="flex justify-between text-[10px] uppercase font-bold text-slate-500">
+<span>Sampling Steps</span>
+<span class="text-primary">50</span>
+</div>
+<input class="custom-slider" type="range" value="50"/>
+</div>
+</div>
+</div>
+<div class="p-4 border-t border-white/5">
+<button class="w-full bg-primary text-background-dark py-3 rounded-xl font-bold text-xs uppercase tracking-widest flex items-center justify-center gap-2 hover:brightness-110 transition-all shadow-[0_0_20px_rgba(19,200,236,0.2)]">
+<span class="material-symbols-outlined text-sm">bolt</span>
+                Test Generation
+            </button>
+</div>
+</aside>
+<main class="flex-1 bg-background-light dark:bg-background-dark relative flex flex-col overflow-hidden">
+<div class="flex-1 relative flex items-center justify-center canvas-grid overflow-hidden p-10">
+<div class="relative max-w-[500px] w-full aspect-[4/5] bg-panel-dark rounded-2xl shadow-[0_40px_100px_rgba(0,0,0,0.9)] overflow-hidden ring-1 ring-white/10 group">
+<img alt="AI Generated Model" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJxC419FkQOHiXnZq5OLoR5CH7rF3i54fX5fWzXwhmUIDiRzM_PjMex9fc5dvs8f8IRUMlLZ44nrioSPg3KmtSNM8mZwg1IArmpdYszY2r_D7q2LhgZo8cfs3cF5LNM6nnSKM9xwPDFiajnAPBRpT_4tx-eB4xA4Ev7keW_VcRUBfhoPg_epKOKjP5U_939U9BE07SLzkJBmtJenAGorCJSX7zF7PvPQVPHfMplP8hDRjNAswrCUtBcj2RgA5TlfulbilOCN6n7Wty"/>
+<div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+<div class="flex gap-4">
+<button class="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-primary hover:text-black transition-all">
+<span class="material-symbols-outlined">zoom_in</span>
+</button>
+<button class="w-12 h-12 rounded-full bg-white/10 backdrop-blur-md border border-white/20 flex items-center justify-center text-white hover:bg-primary hover:text-black transition-all">
+<span class="material-symbols-outlined">refresh</span>
+</button>
+</div>
+</div>
+<div class="absolute top-6 right-6">
+<div class="bg-black/60 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-full flex items-center gap-2">
+<span class="text-[10px] font-bold text-primary uppercase tracking-widest">Version 04</span>
+</div>
+</div>
+<div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+<span class="text-[10px] font-bold text-white uppercase tracking-widest">Generation Complete</span>
+</div>
+<span class="text-[10px] text-slate-400 font-mono">14.2s</span>
+</div>
+</div>
+</div>
+</div>
+<div class="h-28 border-t border-white/5 bg-panel-dark flex items-center gap-4 px-6 overflow-x-auto no-scrollbar">
+<div class="flex-shrink-0 flex flex-col items-center gap-2">
+<button class="w-16 h-16 rounded-lg border-2 border-dashed border-white/10 flex items-center justify-center text-slate-500 hover:border-primary hover:text-primary transition-all">
+<span class="material-symbols-outlined">add</span>
+</button>
+<span class="text-[8px] uppercase font-bold text-slate-500">New Iteration</span>
+</div>
+<div class="h-10 w-[1px] bg-white/5 mx-2"></div>
+<div class="flex gap-4">
+<div class="flex-shrink-0 flex flex-col gap-2">
+<div class="w-16 h-16 rounded-lg overflow-hidden border border-primary/50 ring-2 ring-primary/20 cursor-pointer">
+<img alt="v1" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDM0SjBQDl8HmKW6yBz76FM2CPfPaPiNNw4K82E7g8RpAWAVprf8eFGw7IRXyNeMaHaNvRs2cTkHdfqaGNV2CJPIvO08obraxNNBbGuIPwJpHsD48_CGnYT_Ye3TYUAh-Cd8zMhWTHlzvlrcCJChI4TJuxtF3939xST5nJWqRvSnYNRW-1f1uihjLN94wuOdR9mC0k1qPRhCfju42HL9APNofwqkcBlygkTPJk3fDWdVTxXY9VwYm7bRcwdtdTAzgdqVXa4EsQksq-Q"/>
+</div>
+<span class="text-[8px] text-center font-bold text-primary uppercase">v.04 (Active)</span>
+</div>
+<div class="flex-shrink-0 flex flex-col gap-2">
+<div class="w-16 h-16 rounded-lg overflow-hidden border border-white/5 opacity-50 hover:opacity-100 transition-all cursor-pointer">
+<img alt="v1" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdWt-7Jh1ZoK0cdRsTJZW636JR2XU1iO8NDMuiUNnh79NDHVA8D2WraDDnPcvbWay5qMXlfgUvmZ1PbWxhYEyA5DurtXP0cvILeSYS7_JvynZMT6-tTM1bwEjFnolTGVdKW2QcM90UJ-MSjg8f1tiw2nLw4Z3bmqw1bol9KtyziHz4gSdaLUcUXrdaDruRYB7WJaU2tHdaqNCWJQN5hdBsf4GM7z-l0KbeL-HSLJXoWwZnvml5l0vp7_Ah6D2gyb65dAgs4tLrEM8n"/>
+</div>
+<span class="text-[8px] text-center font-bold text-slate-500 uppercase">v.03</span>
+</div>
+<div class="flex-shrink-0 flex flex-col gap-2">
+<div class="w-16 h-16 rounded-lg overflow-hidden border border-white/5 opacity-50 hover:opacity-100 transition-all cursor-pointer">
+<img alt="v1" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdw6Vx9iuPtPxM0zPG9U0exNF_cBkfrEpL177r2U-N6VRpIgQdXZRUBLipO4-OcuvYrCHaB-1olaaLxSt01iWG8VVOvo22lIGZRzh395l16YRBHi6TNFeOplRJmbK6_qSIZSfWkbvrq-bRE3fPAAXIR4bRvM6FnWNwFEz2vOYBEs7V9qWQliFvj2AtDQ8UKO5oGnE5CGFofZ5lNYpYmDxb8tr1-tzs16B1pwH1GOdVeZQhpc-RzAaHUNdfuk7XrefbK-TBu_c9NPCx"/>
+</div>
+<span class="text-[8px] text-center font-bold text-slate-500 uppercase">v.02</span>
+</div>
+</div>
+</div>
+</main>
+<aside class="w-[360px] border-l border-slate-200 dark:border-white/5 bg-background-light dark:bg-panel-dark flex flex-col overflow-hidden">
+<div class="p-5 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
+<div>
+<h2 class="font-bold text-sm tracking-tight">Model Identity &amp; Registry</h2>
+<p class="text-[10px] text-slate-500 uppercase tracking-widest font-medium mt-0.5">Global Assets Registry</p>
+</div>
+<span class="material-symbols-outlined text-primary">person_add_alt</span>
+</div>
+<div class="flex-1 overflow-y-auto no-scrollbar p-6 space-y-8">
+<div class="space-y-4">
+<h3 class="text-[11px] font-bold uppercase tracking-widest text-slate-400">Core Identity</h3>
+<div class="space-y-4">
+<div class="space-y-1.5">
+<label class="text-[10px] font-bold text-slate-500 uppercase tracking-tight">Public Talent Name</label>
+<input class="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none" type="text" value="Elena Rossi"/>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div class="space-y-1.5">
+<label class="text-[10px] font-bold text-slate-500 uppercase tracking-tight">Height (cm)</label>
+<input class="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none" type="number" value="178"/>
+</div>
+<div class="space-y-1.5">
+<label class="text-[10px] font-bold text-slate-500 uppercase tracking-tight">Base Size</label>
+<select class="w-full bg-black/40 border border-white/10 rounded-lg px-3 py-2 text-sm focus:ring-1 focus:ring-primary focus:border-primary outline-none appearance-none">
+<option>UK 8 / EU 36</option>
+<option>UK 10 / EU 38</option>
+<option>UK 12 / EU 40</option>
+</select>
+</div>
+</div>
+</div>
+</div>
+<div class="space-y-4">
+<h3 class="text-[11px] font-bold uppercase tracking-widest text-slate-400">Physical Signature</h3>
+<div class="bg-black/20 rounded-xl p-4 border border-white/5 space-y-5">
+<div class="space-y-2">
+<div class="flex justify-between text-[10px] font-bold uppercase text-slate-500">
+<span>Muscle Tone</span>
+<span class="text-primary">Athletic</span>
+</div>
+<input class="custom-slider" type="range" value="65"/>
+</div>
+<div class="space-y-2">
+<div class="flex justify-between text-[10px] font-bold uppercase text-slate-500">
+<span>Skin Luminosity</span>
+<span class="text-primary">High-Def</span>
+</div>
+<input class="custom-slider" type="range" value="82"/>
+</div>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex items-center justify-between">
+<h3 class="text-[11px] font-bold uppercase tracking-widest text-slate-400">Asset Validation</h3>
+<span class="px-2 py-0.5 bg-green-500/10 text-green-500 text-[9px] font-bold rounded">98.2% REALISM</span>
+</div>
+<div class="grid grid-cols-2 gap-2">
+<div class="bg-white/5 p-3 rounded-lg border border-white/5 flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-sm text-slate-400">face</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter text-slate-300 text-center">Face Consist.</span>
+<span class="text-[9px] text-green-500">Verified</span>
+</div>
+<div class="bg-white/5 p-3 rounded-lg border border-white/5 flex flex-col items-center gap-1">
+<span class="material-symbols-outlined text-sm text-slate-400">texture</span>
+<span class="text-[10px] font-bold uppercase tracking-tighter text-slate-300 text-center">Skin Pore Map</span>
+<span class="text-[9px] text-green-500">Attached</span>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-auto p-5 border-t border-white/5 bg-black/40 space-y-3">
+<div class="flex items-center gap-2 mb-2">
+<input checked="" class="rounded bg-black/50 border-white/10 text-primary focus:ring-0 w-4 h-4" type="checkbox"/>
+<span class="text-[10px] text-slate-400 font-medium">Agreement for AI Talent Usage Policy</span>
+</div>
+<button class="w-full bg-primary text-background-dark py-4 rounded-xl font-bold flex items-center justify-center gap-3 shadow-xl hover:scale-[1.02] transition-all">
+<span class="material-symbols-outlined">publish</span>
+                Publish to Boutique Studio
+            </button>
+</div>
+</aside>
+</div>
+<footer class="h-6 bg-primary/5 border-t border-white/5 flex items-center justify-between px-4 z-50">
+<div class="flex items-center gap-4 text-[9px] font-medium uppercase tracking-tight text-primary">
+<div class="flex items-center gap-1.5">
+<span class="w-1 h-1 rounded-full bg-primary animate-pulse"></span>
+            Neural Engine: active
+        </div>
+<div class="text-slate-800 dark:text-slate-700">|</div>
+<div class="text-slate-500">Latency: 24ms</div>
+<div class="text-slate-800 dark:text-slate-700">|</div>
+<div class="text-slate-500">Cluster: EU-WEST-A1</div>
+</div>
+<div class="text-[9px] text-slate-500 flex items-center gap-4">
+<span>© 2024 AI Model Lab Admin Console</span>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[10px]">shield_with_heart</span>
+<span>Policy Compliance</span>
+</div>
+</div>
+</footer>
+
+</body></html>

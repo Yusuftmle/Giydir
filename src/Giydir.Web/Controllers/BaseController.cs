@@ -10,14 +10,13 @@ public class BaseController : ControllerBase
     {
         get
         {
-            var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userIdClaim = User.FindFirst("sub")?.Value;
             if (int.TryParse(userIdClaim, out var userId))
                 return userId;
             return null;
         }
     }
 
-    protected string? UserEmail => User.FindFirst(ClaimTypes.Email)?.Value;
-    protected string? UserRole => User.FindFirst(ClaimTypes.Role)?.Value;
+    protected string? UserEmail => User.FindFirst("email")?.Value;
+    protected string? UserRole => User.FindFirst("role")?.Value;
 }
-

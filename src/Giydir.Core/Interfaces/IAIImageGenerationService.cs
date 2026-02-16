@@ -9,7 +9,8 @@ public interface IAIImageGenerationService
     /// <param name="aspectRatio">Görsel oranı (default: 4:3, image_input varsa match_input_image)</param>
     /// <param name="outputFormat">Çıktı formatı (default: jpg)</param>
     /// <param name="imageInput">Opsiyonel referans görseller (URL listesi)</param>
-    Task<string> GenerateImageFromPromptAsync(string prompt, string aspectRatio = "4:3", string outputFormat = "jpg", List<string>? imageInput = null);
+    /// <param name="negativePrompt">Opsiyonel negatif prompt</param>
+    Task<string> GenerateImageFromPromptAsync(string prompt, string aspectRatio = "3:4", string outputFormat = "jpg", List<string>? imageInput = null, string? negativePrompt = null);
     
     /// <summary>
     /// Prediction durumunu kontrol eder

@@ -7,31 +7,42 @@ namespace Giydir.Infrastructure.Services;
 
 public class PromptService : IPromptService
 {
-    public string GeneratePromptFromTemplate(Template template, string? customPrompt = null)
+    public string GeneratePromptFromTemplate(Template template, string? customPrompt = null, string? background = null, string? lighting = null)
     {
-        if (!string.IsNullOrEmpty(customPrompt))
+        string prompt = !string.IsNullOrEmpty(customPrompt) ? customPrompt : template.PromptTemplate;
+
+        // Eğer hiç hazır prompt yoksa (eski usul), JSON özelliklerinden üret
+        if (string.IsNullOrEmpty(prompt))
         {
-            return customPrompt;
+            return GeneratePromptFromJson(
+                template.Style,
+                template.Color,
+                template.Pattern,
+                template.Material,
+                template.Category,
+                background ?? template.Background,
+                lighting ?? template.Lighting,
+                template.Pose,
+                template.CameraAngle,
+                template.Mood,
+                template.AdditionalAttributes
+            );
         }
 
-        if (!string.IsNullOrEmpty(template.PromptTemplate))
-        {
-            return template.PromptTemplate;
-        }
+        // Hazır prompt'a kalite anahtar kelimelerini ekle
+        var parts = new List<string> { prompt };
+        
+        if (!string.IsNullOrEmpty(background)) parts.Add($"{background} background");
+        if (!string.IsNullOrEmpty(lighting)) parts.Add($"{lighting} lighting");
 
-        return GeneratePromptFromJson(
-            template.Style,
-            template.Color,
-            template.Pattern,
-            template.Material,
-            template.Category,
-            template.Background,
-            template.Lighting,
-            template.Pose,
-            template.CameraAngle,
-            template.Mood,
-            template.AdditionalAttributes
-        );
+        parts.Add("Masterpiece");
+        parts.Add("8k resolution");
+        parts.Add("photorealistic");
+        parts.Add("Vogue magazine style");
+        parts.Add("high fidelity");
+        parts.Add("sharp focus");
+
+        return string.Join(", ", parts);
     }
 
     // YENİ: Template + Model kombinasyonu için
@@ -42,13 +53,16 @@ public class PromptService : IPromptService
         string color = "",
         string pattern = "",
         string material = "",
-        string category = "upper_body")
+        string category = "upper_body",
+        string? background = null,
+        string? lighting = null)
     {
         // Template varsa template özelliklerini kullan (öncelikli)
         // Template yoksa model'in default özelliklerini kullan
+        // Explicit parametreler her zaman en öncelikli
         
-        string? background = template?.Background ?? model?.DefaultBackground;
-        string? lighting = template?.Lighting ?? model?.DefaultLighting;
+        string? finalBackground = background ?? template?.Background ?? model?.DefaultBackground;
+        string? finalLighting = lighting ?? template?.Lighting ?? model?.DefaultLighting;
         string? pose = template?.Pose ?? model?.DefaultPose;
         string? cameraAngle = template?.CameraAngle ?? model?.DefaultCameraAngle;
         string? mood = template?.Mood ?? model?.DefaultMood;
@@ -59,8 +73,8 @@ public class PromptService : IPromptService
             pattern,
             material,
             category,
-            background,
-            lighting,
+            finalBackground,
+            finalLighting,
             pose,
             cameraAngle,
             mood,
@@ -83,63 +97,61 @@ public class PromptService : IPromptService
     {
         var promptParts = new List<string>();
 
+        // Base quality keywords - ORGANIC STYLE
+        promptParts.Add("Raw photo");
+        promptParts.Add("High-end editorial photography");
+        promptParts.Add("natural skin texture with pores");
+        promptParts.Add("soft natural lighting");
+        promptParts.Add("slight film grain");
+        promptParts.Add("highly detailed fabric weave");
+
         switch (category.ToLower())
         {
             case "upper_body":
-                promptParts.Add("professional");
+                promptParts.Add("35mm film photo of a person wearing a designer top");
                 break;
             case "lower_body":
-                promptParts.Add("fashion");
+                promptParts.Add("Full body fashion shot of a person in high-end trousers");
                 break;
             case "dresses":
-                promptParts.Add("elegant");
+                promptParts.Add("Elegant portrait of a person in a luxury dress");
+                break;
+            default:
+                promptParts.Add("Candid fashion shot");
                 break;
         }
-
-        if (!string.IsNullOrEmpty(color))
-            promptParts.Add(color);
-
-        if (!string.IsNullOrEmpty(material))
-            promptParts.Add(material);
 
         if (!string.IsNullOrEmpty(style))
-            promptParts.Add(style);
+            promptParts.Add($"{style} style");
+
+        if (!string.IsNullOrEmpty(color))
+            promptParts.Add($"{color} color");
+
+        if (!string.IsNullOrEmpty(material))
+            promptParts.Add($"made of {material} material");
 
         if (!string.IsNullOrEmpty(pattern) && pattern.ToLower() != "solid")
-            promptParts.Add($"{pattern} pattern");
-
-        switch (category.ToLower())
-        {
-            case "upper_body":
-                promptParts.Add("shirt or top");
-                break;
-            case "lower_body":
-                promptParts.Add("pants or trousers");
-                break;
-            case "dresses":
-                promptParts.Add("dress");
-                break;
-        }
+            promptParts.Add($"with subtle {pattern} pattern");
 
         // Sahne özellikleri - Template varsa template, yoksa model default
         if (!string.IsNullOrEmpty(background))
-            promptParts.Add($"{background} background");
+            promptParts.Add($"shot on location at {background}");
         else
-            promptParts.Add("clean white background");
+            promptParts.Add("studio setting");
 
         if (!string.IsNullOrEmpty(lighting))
-            promptParts.Add($"{lighting} lighting");
+            promptParts.Add($"{lighting}, moody natural light, realistic shadows");
         else
-            promptParts.Add("studio lighting");
+            promptParts.Add("soft window light");
 
         if (!string.IsNullOrEmpty(pose))
             promptParts.Add($"{pose} pose");
 
         if (!string.IsNullOrEmpty(cameraAngle))
-            promptParts.Add($"{cameraAngle} angle");
+            promptParts.Add($"{cameraAngle} camera angle");
 
         if (!string.IsNullOrEmpty(mood))
-            promptParts.Add($"{mood} mood");
+            promptParts.Add($"{mood} expression");
 
         if (!string.IsNullOrEmpty(additionalAttributes))
         {
@@ -157,8 +169,9 @@ public class PromptService : IPromptService
             catch { }
         }
 
-        promptParts.Add("high quality fashion photography");
-        promptParts.Add("professional product image");
+        promptParts.Add("hyper-detailed");
+        promptParts.Add("cinematic composition");
+        promptParts.Add("blurred background");
 
         return string.Join(", ", promptParts);
     }

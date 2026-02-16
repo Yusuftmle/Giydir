@@ -39,7 +39,6 @@ public class AuthStateProvider : AuthenticationStateProvider
         try
         {
             string? token = null;
-            string source = "YOK";
             
             // Önce cookie'den dene
             if (httpContext.Request.Cookies.ContainsKey("JwtToken"))
@@ -47,7 +46,6 @@ public class AuthStateProvider : AuthenticationStateProvider
                 token = httpContext.Request.Cookies["JwtToken"];
                 if (!string.IsNullOrEmpty(token))
                 {
-                    source = "COOKIE";
                     _logger.LogInformation("[AuthStateProvider] Token cookie'den okundu: {TokenLength} karakter", token.Length);
                 }
             }
@@ -59,7 +57,6 @@ public class AuthStateProvider : AuthenticationStateProvider
                 token = session.GetString("JwtToken");
                 if (!string.IsNullOrEmpty(token))
                 {
-                    source = "SESSION";
                     _logger.LogInformation("[AuthStateProvider] Token session'dan okundu: {TokenLength} karakter", token.Length);
                 }
             }
@@ -71,9 +68,8 @@ public class AuthStateProvider : AuthenticationStateProvider
             _logger.LogInformation("[AuthStateProvider] Mevcut cookie'ler: {Cookies}", 
                 string.Join(", ", httpContext.Request.Cookies.Keys));
             
-            _logger.LogInformation("[AuthStateProvider] Token okundu: {TokenStatus} (Kaynak: {Source})", 
-                string.IsNullOrEmpty(token) ? "YOK" : $"VAR ({token.Length} karakter)",
-                source);
+            _logger.LogInformation("[AuthStateProvider] Token okundu: {TokenStatus}", 
+                string.IsNullOrEmpty(token) ? "YOK" : $"VAR ({token.Length} karakter)");
             
             if (string.IsNullOrEmpty(token))
             {
@@ -102,12 +98,12 @@ public class AuthStateProvider : AuthenticationStateProvider
             var securityToken = tokenHandler.ReadJwtToken(token);
 
             var claims = securityToken.Claims;
-            var userId = claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
-            var email = claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            var userId = claims.FirstOrDefault(c => c.Type == "sub")?.Value;
+            var email = claims.FirstOrDefault(c => c.Type == "email")?.Value;
             
             _logger.LogInformation("[AuthStateProvider] Token parse edildi - UserId: {UserId}, Email: {Email}", userId, email);
             
-            var identity = new ClaimsIdentity(claims, "jwt");
+            var identity = new ClaimsIdentity(claims, "jwt", "sub", "role");
             var principal = new ClaimsPrincipal(identity);
 
             return new AuthenticationState(principal);
@@ -128,10 +124,10 @@ public class AuthStateProvider : AuthenticationStateProvider
     {
         _logger.LogInformation("[AuthStateProvider] NotifyUserLoginAsync çağrıldı - Token length: {TokenLength}", token?.Length ?? 0);
         
-        // Token zaten controller'da session'a kaydedildi, sadece state'i güncelle
-        // (Response başladıktan sonra session'a yazamayız, bu yüzden controller'da yapıldı)
-        
+        if (string.IsNullOrEmpty(token)) return;
+
         // State'i güncelle
+        await Task.CompletedTask;
         _logger.LogInformation("[AuthStateProvider] Authentication state güncelleniyor...");
         var authState = CreateAuthStateFromToken(token);
         NotifyAuthenticationStateChanged(Task.FromResult(authState));

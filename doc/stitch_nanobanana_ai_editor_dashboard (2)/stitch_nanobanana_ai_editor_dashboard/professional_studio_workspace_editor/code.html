@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Studio Scene &amp; Model Director</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#13c8ec",
+              "background-light": "#f6f8f8",
+              "background-dark": "#05090a", 
+              "panel-dark": "#0c1416",
+              "surface-dark": "#121d20",
+            },
+            fontFamily: {
+              "display": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style type="text/tailwindcss">
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .custom-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 4px;
+            background: #162b2f;
+            border-radius: 2px;
+            outline: none;
+        }
+        .custom-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            background: #13c8ec;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        .canvas-grid {
+            background-size: 40px 40px;
+            background-image: radial-gradient(circle, #1a2e32 1px, transparent 1px);
+        }
+        .glass-card {
+            background: rgba(16, 31, 34, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200 h-screen flex flex-col overflow-hidden font-display">
+<header class="h-14 border-b border-slate-200 dark:border-white/5 flex items-center justify-between px-4 bg-background-light dark:bg-panel-dark z-50">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 bg-primary rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-background-dark text-xl font-bold">movie_filter</span>
+</div>
+<span class="font-bold tracking-tight text-lg uppercase">Director's<span class="text-primary">Console</span></span>
+</div>
+<div class="h-6 w-[1px] bg-white/10"></div>
+<div class="flex items-center gap-2 text-sm text-slate-400">
+<span class="text-slate-500">Scene Builder</span>
+<span class="material-icons-outlined text-sm">chevron_right</span>
+<span class="text-slate-100 font-medium">Summer Collection 2024 Shoot</span>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex flex-col items-end gap-1">
+<div class="flex items-center gap-2 text-[10px] uppercase tracking-wider font-semibold text-slate-400">
+<span>GPU Tokens</span>
+<span class="text-primary">842 / 1000</span>
+</div>
+<div class="w-32 h-1.5 bg-white/10 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[84%]"></div>
+</div>
+</div>
+<div class="h-6 w-[1px] bg-white/10"></div>
+<button class="bg-primary text-background-dark px-5 py-2 rounded-lg text-sm font-bold flex items-center gap-2 hover:brightness-110 transition-all">
+<span class="material-symbols-outlined text-sm">auto_fix_high</span>
+            Generate Shoot
+        </button>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<aside class="w-72 border-r border-slate-200 dark:border-white/5 bg-background-light dark:bg-panel-dark flex flex-col">
+<div class="p-4 border-b border-white/5 flex items-center justify-between">
+<h2 class="font-bold text-[11px] uppercase tracking-widest text-slate-400">Wardrobe Selection</h2>
+<button class="p-1 hover:bg-white/5 rounded text-slate-400"><span class="material-icons-outlined text-sm">settings</span></button>
+</div>
+<div class="flex-1 overflow-y-auto px-4 py-4 space-y-6 no-scrollbar">
+<div>
+<span class="text-[10px] uppercase font-bold text-slate-500 mb-3 block tracking-wider">Active Hero Piece</span>
+<div class="relative aspect-[3/4] rounded-xl overflow-hidden group ring-2 ring-primary">
+<img alt="Beige linen blazer" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAFj9DyX2empAhO6vhh7RCRgrZjo_l626aK80geR3f_q1YSgcouXm2OlukWPcsyqFBfr_l00jQE8K8-68QjhLJPVFItTHyOw4qAveQXO74hwy0ugJxH-N79j3Wl1xqhTJCXj9P4ojFveNbjcab5er-NCL-c7ehyKJ_ilK9lmdNp5-mTXDpiZK_yKVrHnsoWAJxTIxAO841C8VDR5GzcJ5EbHsJeBabl7zLygPokdKFJmEy9LnIl-eU411WSjjIX0zmnNzEetYpUfpw2"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+<div class="absolute bottom-3 left-3">
+<p class="text-[10px] font-bold text-white uppercase tracking-wider">Tailored Linen Blazer</p>
+<p class="text-[8px] text-primary font-medium tracking-widest uppercase">Sandstone Beige</p>
+</div>
+</div>
+</div>
+<div>
+<span class="text-[10px] uppercase font-bold text-slate-500 mb-3 block tracking-wider">Layering Items</span>
+<div class="grid grid-cols-2 gap-3">
+<div class="aspect-square rounded-lg bg-white/5 border border-white/10 overflow-hidden cursor-pointer hover:border-primary/50 transition-colors">
+<img alt="Black silk shirt" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCBSzjWfM52H5S35rdPe1dqgL5at5SZPvr9EBfF7sYZsRoMseYZLcwGAuxq1eBeGOCDA1ZyoiOpxkDy0fTz7z4rOIaCyBsdRLN2KKK5koWQkKYa-43ElqVgpZ_WN_LKKNUJgN1t6Ax3ZYZDZ-KHcF0gNnKeStJEZ4uSrlJbHj3rvCpzt1IUNa_sJdYx1-e6BD0_1LjryJe2TNhTwajvGj_KhyTjWU2_VyB5iAUOKMrSUXWi6liyEDsf88njEX7IVZ4i1GG8Z5NkIyDA"/>
+</div>
+<div class="aspect-square rounded-lg bg-white/5 border border-white/10 overflow-hidden cursor-pointer hover:border-primary/50 transition-colors">
+<img alt="White oxford shirt" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDv2-JDRUsnHt7p0V6UkJjESiGR2Jy5p9AgTfYycUP0wOnWjlt1Vl2HLRZKCYjqkpg6t1SnmJiUjinLNqmi9mZovPwsnbj_nBkcaJewLEDPYo6x3PYSf-TtqjNsEwm4yGnqQNxE5U0esUzyymmIJBlkx1v7pLcsyCwwStmRcJiVHDHu82sWl9XnIv0Z4gH1W9agB8rSE2Aq1HcK0feofX96sxNhGAZDCUh9EwFVrnLCYhwUsmf60cR7ahgH8uSu0_Rt6VOKs5e6OZk_"/>
+</div>
+<div class="aspect-square rounded-lg bg-white/5 border border-white/10 overflow-hidden cursor-pointer hover:border-primary/50 transition-colors">
+<img alt="Leather jacket" class="w-full h-full object-cover opacity-50" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBildvWjpZIPbGpUH4-Lj0-JPlaAysP9v3Dhw5da0sfz6YjoPOBIyvD6vWW3Gmoe4KmgUxUm_iL16Z5DHmxoQK8GK42_C6o-yEKE9R7xLR1oV3jjcIo1BbuZ7DsCIe8d4PeOPMdqg7yEk02NEMoiuGcLhQ4PIHWUegwHw3REcW3ZWGBuZ0uiT34XC97rqKPOxtNPz124-8tLejJ0RKA82PDeOLKpVQ52HVkoDQFXmhbBaWdiKpNoygC4Ai41b49tKn0ZX3lB2SiGuQb"/>
+</div>
+<button class="aspect-square rounded-lg border-2 border-dashed border-white/10 flex flex-col items-center justify-center gap-1 hover:bg-white/5 transition-colors">
+<span class="material-symbols-outlined text-slate-500 text-lg">add</span>
+<span class="text-[9px] font-bold text-slate-500 uppercase">Import</span>
+</button>
+</div>
+</div>
+</div>
+<div class="p-4 border-t border-white/5">
+<div class="bg-surface-dark rounded-lg p-3 border border-white/5">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-primary text-xs">info</span>
+<span class="text-[9px] font-bold uppercase tracking-widest text-slate-400">Fabric Simulation</span>
+</div>
+<div class="text-[10px] text-slate-500 leading-relaxed">
+                    High-fidelity drape enabled for linen blend assets.
+                </div>
+</div>
+</div>
+</aside>
+<main class="flex-1 bg-background-light dark:bg-background-dark relative flex flex-col overflow-hidden">
+<div class="flex-1 relative flex items-center justify-center canvas-grid overflow-hidden p-8">
+<div class="relative max-w-[560px] w-full aspect-[4/5] bg-panel-dark rounded-2xl shadow-[0_40px_100px_rgba(0,0,0,0.8)] overflow-hidden ring-1 ring-white/10">
+<img alt="Preview" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJxC419FkQOHiXnZq5OLoR5CH7rF3i54fX5fWzXwhmUIDiRzM_PjMex9fc5dvs8f8IRUMlLZ44nrioSPg3KmtSNM8mZwg1IArmpdYszY2r_D7q2LhgZo8cfs3cF5LNM6nnSKM9xwPDFiajnAPBRpT_4tx-eB4xA4Ev7keW_VcRUBfhoPg_epKOKjP5U_939U9BE07SLzkJBmtJenAGorCJSX7zF7PvPQVPHfMplP8hDRjNAswrCUtBcj2RgA5TlfulbilOCN6n7Wty"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent"></div>
+<div class="absolute top-6 left-6 flex items-center gap-3">
+<div class="bg-black/80 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-full flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_#13c8ec]"></div>
+<span class="text-[10px] font-bold text-white uppercase tracking-widest">Live Preview</span>
+</div>
+<div class="bg-black/80 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-full">
+<span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">4K Render Mode</span>
+</div>
+</div>
+<div class="absolute bottom-6 left-6 right-6 flex items-center justify-between">
+<div class="flex gap-2">
+<button class="bg-white/10 backdrop-blur-md border border-white/10 p-2 rounded-lg text-white hover:bg-white/20 transition-all">
+<span class="material-symbols-outlined text-xl">zoom_in</span>
+</button>
+<button class="bg-white/10 backdrop-blur-md border border-white/10 p-2 rounded-lg text-white hover:bg-white/20 transition-all">
+<span class="material-symbols-outlined text-xl">crop_free</span>
+</button>
+</div>
+<div class="flex gap-2">
+<button class="bg-white/10 backdrop-blur-md border border-white/10 px-4 py-2 rounded-lg text-xs font-bold text-white uppercase tracking-widest flex items-center gap-2 hover:bg-white/20 transition-all">
+<span class="material-symbols-outlined text-sm">history</span>
+                            History
+                        </button>
+</div>
+</div>
+</div>
+</div>
+<div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-4 bg-panel-dark/80 backdrop-blur-xl p-2 rounded-2xl border border-white/10 shadow-2xl">
+<button class="bg-primary text-background-dark px-8 py-4 rounded-xl font-bold flex items-center gap-3 shadow-xl hover:scale-105 transition-all">
+<span class="material-symbols-outlined">auto_fix_high</span>
+                Generate Final Shoot
+            </button>
+<div class="h-10 w-[1px] bg-white/10"></div>
+<button class="p-3 text-slate-400 hover:text-white transition-colors" title="Compare View">
+<span class="material-symbols-outlined">compare_arrows</span>
+</button>
+<button class="p-3 text-slate-400 hover:text-white transition-colors" title="Export Frames">
+<span class="material-symbols-outlined">download</span>
+</button>
+</div>
+</main>
+<aside class="w-[420px] border-l border-slate-200 dark:border-white/5 bg-background-light dark:bg-panel-dark flex flex-col overflow-hidden">
+<div class="p-5 border-b border-white/5 flex items-center justify-between bg-white/[0.02]">
+<div>
+<h2 class="font-bold text-sm tracking-tight">Model &amp; Environment Selector</h2>
+<p class="text-[10px] text-slate-500 uppercase tracking-widest font-medium mt-0.5">Studio Directing Module</p>
+</div>
+<span class="material-symbols-outlined text-primary">theater_comedy</span>
+</div>
+<div class="flex-1 overflow-y-auto no-scrollbar p-5 space-y-8">
+<div>
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-[11px] font-bold uppercase tracking-widest text-slate-400">Lighting Profiles</h3>
+<span class="text-[10px] text-primary font-bold">Virtual HDR</span>
+</div>
+<div class="grid grid-cols-3 gap-2 bg-black/20 p-1.5 rounded-xl border border-white/5">
+<button class="flex flex-col items-center gap-1.5 py-3 rounded-lg hover:bg-white/5 transition-all">
+<span class="material-symbols-outlined text-slate-400">wb_sunny</span>
+<span class="text-[9px] font-bold uppercase tracking-tighter text-slate-500">Natural</span>
+</button>
+<button class="flex flex-col items-center gap-1.5 py-3 rounded-lg bg-surface-dark border border-primary/20 transition-all">
+<span class="material-symbols-outlined text-primary">movie_filter</span>
+<span class="text-[9px] font-bold uppercase tracking-tighter text-primary">Cinematic</span>
+</button>
+<button class="flex flex-col items-center gap-1.5 py-3 rounded-lg hover:bg-white/5 transition-all">
+<span class="material-symbols-outlined text-slate-400">light_mode</span>
+<span class="text-[9px] font-bold uppercase tracking-tighter text-slate-500">High-Key</span>
+</button>
+</div>
+</div>
+<div>
+<div class="flex items-center justify-between mb-4">
+<h3 class="text-[11px] font-bold uppercase tracking-widest text-slate-400">Select Cast &amp; Scene</h3>
+<button class="text-[10px] font-bold text-primary flex items-center gap-1 hover:underline">
+<span>All Talents</span>
+<span class="material-symbols-outlined text-sm">arrow_right_alt</span>
+</button>
+</div>
+<div class="space-y-6">
+<div class="space-y-3">
+<div class="relative group aspect-[16/9] rounded-xl overflow-hidden ring-1 ring-white/10 hover:ring-primary/40 transition-all cursor-pointer">
+<img alt="Model 1" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDM0SjBQDl8HmKW6yBz76FM2CPfPaPiNNw4K82E7g8RpAWAVprf8eFGw7IRXyNeMaHaNvRs2cTkHdfqaGNV2CJPIvO08obraxNNBbGuIPwJpHsD48_CGnYT_Ye3TYUAh-Cd8zMhWTHlzvlrcCJChI4TJuxtF3939xST5nJWqRvSnYNRW-1f1uihjLN94wuOdR9mC0k1qPRhCfju42HL9APNofwqkcBlygkTPJk3fDWdVTxXY9VwYm7bRcwdtdTAzgdqVXa4EsQksq-Q"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+<div class="absolute bottom-3 left-3 flex items-center justify-between w-[calc(100%-24px)]">
+<div>
+<p class="text-[11px] font-bold text-white uppercase tracking-wider">Elena Rossi</p>
+<p class="text-[9px] text-slate-400 uppercase">Height: 178cm | UK 8</p>
+</div>
+<span class="material-symbols-outlined text-primary text-xl">check_circle</span>
+</div>
+</div>
+<div class="flex flex-wrap gap-2">
+<button class="px-3 py-1.5 rounded-full bg-primary/10 border border-primary/30 text-[9px] font-bold text-primary uppercase tracking-tight">Walking in Milan</button>
+<button class="px-3 py-1.5 rounded-full bg-white/5 border border-white/5 text-[9px] font-bold text-slate-500 uppercase tracking-tight hover:border-white/20">Studio Portrait</button>
+<button class="px-3 py-1.5 rounded-full bg-white/5 border border-white/5 text-[9px] font-bold text-slate-500 uppercase tracking-tight hover:border-white/20">Summer Garden</button>
+</div>
+</div>
+<div class="space-y-3">
+<div class="relative group aspect-[16/9] rounded-xl overflow-hidden ring-1 ring-white/10 hover:ring-primary/40 transition-all cursor-pointer opacity-70 hover:opacity-100">
+<img alt="Model 2" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdWt-7Jh1ZoK0cdRsTJZW636JR2XU1iO8NDMuiUNnh79NDHVA8D2WraDDnPcvbWay5qMXlfgUvmZ1PbWxhYEyA5DurtXP0cvILeSYS7_JvynZMT6-tTM1bwEjFnolTGVdKW2QcM90UJ-MSjg8f1tiw2nLw4Z3bmqw1bol9KtyziHz4gSdaLUcUXrdaDruRYB7WJaU2tHdaqNCWJQN5hdBsf4GM7z-l0KbeL-HSLJXoWwZnvml5l0vp7_Ah6D2gyb65dAgs4tLrEM8n"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+<div class="absolute bottom-3 left-3">
+<p class="text-[11px] font-bold text-white uppercase tracking-wider">Julian Chen</p>
+<p class="text-[9px] text-slate-400 uppercase">Height: 188cm | UK 40R</p>
+</div>
+</div>
+<div class="flex flex-wrap gap-2">
+<button class="px-3 py-1.5 rounded-full bg-white/5 border border-white/5 text-[9px] font-bold text-slate-500 uppercase tracking-tight hover:border-white/20">Parisian Street</button>
+<button class="px-3 py-1.5 rounded-full bg-white/5 border border-white/5 text-[9px] font-bold text-slate-500 uppercase tracking-tight hover:border-white/20">Penthouse Balcony</button>
+<button class="px-3 py-1.5 rounded-full bg-white/5 border border-white/5 text-[9px] font-bold text-slate-500 uppercase tracking-tight hover:border-white/20">Abstract Studio</button>
+</div>
+</div>
+<div class="space-y-3">
+<div class="relative group aspect-[16/9] rounded-xl overflow-hidden ring-1 ring-white/10 hover:ring-primary/40 transition-all cursor-pointer opacity-70 hover:opacity-100">
+<img alt="Model 3" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdw6Vx9iuPtPxM0zPG9U0exNF_cBkfrEpL177r2U-N6VRpIgQdXZRUBLipO4-OcuvYrCHaB-1olaaLxSt01iWG8VVOvo22lIGZRzh395l16YRBHi6TNFeOplRJmbK6_qSIZSfWkbvrq-bRE3fPAAXIR4bRvM6FnWNwFEz2vOYBEs7V9qWQliFvj2AtDQ8UKO5oGnE5CGFofZ5lNYpYmDxb8tr1-tzs16B1pwH1GOdVeZQhpc-RzAaHUNdfuk7XrefbK-TBu_c9NPCx"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+<div class="absolute bottom-3 left-3">
+<p class="text-[11px] font-bold text-white uppercase tracking-wider">Amara Diop</p>
+<p class="text-[9px] text-slate-400 uppercase">Height: 175cm | UK 10</p>
+</div>
+</div>
+<div class="flex flex-wrap gap-2">
+<button class="px-3 py-1.5 rounded-full bg-white/5 border border-white/5 text-[9px] font-bold text-slate-500 uppercase tracking-tight hover:border-white/20">Tropical Villa</button>
+<button class="px-3 py-1.5 rounded-full bg-white/5 border border-white/5 text-[9px] font-bold text-slate-500 uppercase tracking-tight hover:border-white/20">High Fashion Runway</button>
+</div>
+</div>
+</div>
+</div>
+<div class="pb-10">
+<h3 class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-5">Atmospheric Controls</h3>
+<div class="space-y-6">
+<div>
+<div class="flex justify-between text-[10px] uppercase font-bold text-slate-500 mb-2">
+<span>Focal Depth (Blur)</span>
+<span class="text-primary">f/2.8</span>
+</div>
+<input class="custom-slider" type="range" value="30"/>
+</div>
+<div>
+<div class="flex justify-between text-[10px] uppercase font-bold text-slate-500 mb-2">
+<span>Color Temperature</span>
+<span class="text-primary">5400K</span>
+</div>
+<div class="h-1 w-full bg-gradient-to-r from-blue-400 via-white to-orange-400 rounded-full relative">
+<div class="absolute top-1/2 -translate-y-1/2 left-[45%] w-3 h-3 bg-white ring-2 ring-primary rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-auto p-4 border-t border-white/5 bg-black/40">
+<div class="flex items-center justify-between text-[10px] text-slate-500 uppercase tracking-widest">
+<span class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                    Engine: Ultra-Real v2
+                </span>
+<span class="hover:text-primary cursor-pointer">Documentation</span>
+</div>
+</div>
+</aside>
+</div>
+<footer class="h-6 bg-primary/5 border-t border-white/5 flex items-center justify-between px-4 z-50">
+<div class="flex items-center gap-4 text-[9px] font-medium uppercase tracking-tight text-primary">
+<div class="flex items-center gap-1.5">
+<span class="w-1 h-1 rounded-full bg-primary animate-pulse"></span>
+            System: Optimized
+        </div>
+<div class="text-slate-800 dark:text-slate-700">|</div>
+<div class="text-slate-500">Render Queue: Idle</div>
+<div class="text-slate-800 dark:text-slate-700">|</div>
+<div class="text-slate-500">Workspace: Cloud Sync Enabled</div>
+</div>
+<div class="text-[9px] text-slate-500 flex items-center gap-4">
+<span>© 2024 Studio Scene Director AI</span>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[10px]">support_agent</span>
+<span>Support Access</span>
+</div>
+</div>
+</footer>
+
+</body></html>

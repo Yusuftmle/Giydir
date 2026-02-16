@@ -28,14 +28,26 @@ public class ReplicateVirtualTryOnService : IVirtualTryOnService
         _httpContextAccessor = httpContextAccessor;
         _logger = logger;
 
+        var token = _config["Replicate:ApiToken"]?.Trim();
+
+        if (string.IsNullOrEmpty(token))
+        {
+            _logger.LogError("[ReplicateVirtualTryOnService] Replicate API Token is NULL or EMPTY in configuration!");
+        }
+
         _httpClient.BaseAddress = new Uri("https://api.replicate.com/v1/");
-        _httpClient.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue("Token", _config["Replicate:ApiToken"]);
+        
+        // Token'ı Authorization header'a ekle - RAW format (TryAddWithoutValidation)
+        if (!string.IsNullOrEmpty(token))
+        {
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Token {token}");
+        }
+        
         _httpClient.DefaultRequestHeaders.Accept.Add(
             new MediaTypeWithQualityHeaderValue("application/json"));
     }
 
-    public async Task<string> GenerateTryOnImageAsync(string clothingImageUrl, string modelAssetId, string category = "upper_body")
+    public async Task<string> GenerateTryOnImageAsync(string clothingImageUrl, string modelAssetId, string category = "upper_body", string? background = null, string? lighting = null)
     {
         // Model asset'inden gerçek URL'yi al (veritabanından)
         var modelImageUrl = await GetModelImageUrlAsync(modelAssetId);
@@ -58,6 +70,14 @@ public class ReplicateVirtualTryOnService : IVirtualTryOnService
         
         _logger.LogInformation("Görsel URL'leri: Clothing: {ClothingUrl}, Model: {ModelUrl}", clothingImageUrl, modelImageUrl);
 
+        // Atmosfer ve Işıklandırma Detayları
+        var atmosphericContext = "";
+        if (!string.IsNullOrEmpty(background)) atmosphericContext += $"{background} background, ";
+        if (!string.IsNullOrEmpty(lighting)) atmosphericContext += $"{lighting} cinematic lighting, golden hour, ";
+
+        // Orijinal kıyafet kalıntılarını (residue) tamamen silmek için agresif temizlik komutları
+        var garmentDescription = $"{category.Replace("_", " ")} with absolute coverage, completely replacing and overlapping ANY previous clothing, no layers of original outfit visible, clean and unobstructed hemline, high-fidelity {category.Replace("_", " ")} texture, 8k photographic precision, professional editorial style, eliminate all background clothing artifacts";
+
         var payload = new
         {
             version = _config["Replicate:ModelVersion"],
@@ -65,8 +85,11 @@ public class ReplicateVirtualTryOnService : IVirtualTryOnService
             {
                 garm_img = clothingImageUrl,
                 human_img = modelImageUrl,
-                garment_des = "clothing item",
-                category = category
+                garment_des = garmentDescription,
+                category = category,
+                steps = 40,
+                crop = true,
+                is_checked = true // Maske üretimini ve sınır takibini daha hassas yapması için zorluyoruz
             }
         };
 

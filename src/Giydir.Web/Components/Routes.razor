@@ -1,7 +1,21 @@
 <CascadingAuthenticationState>
     <Router AppAssembly="typeof(Program).Assembly">
         <Found Context="routeData">
-            <RouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)" />
+            <AuthorizeRouteView RouteData="routeData" DefaultLayout="typeof(Layout.MainLayout)">
+                <NotAuthorized>
+                    <div class="h-screen flex flex-col items-center justify-center bg-background-dark text-white p-6 text-center">
+                        <span class="material-symbols-outlined text-6xl text-red-500 mb-4">gpp_maybe</span>
+                        <h1 class="text-2xl font-bold mb-2 uppercase tracking-widest">Access Denied</h1>
+                        <p class="text-slate-400 mb-6">You do not have administrative privileges to access this secure zone.</p>
+                        <a href="/login" class="bg-primary text-background-dark px-8 py-3 rounded-xl font-bold uppercase tracking-widest text-xs">Return to Sanctuary</a>
+                    </div>
+                </NotAuthorized>
+                <Authorizing>
+                    <div class="h-screen flex items-center justify-center bg-background-dark">
+                        <div class="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+                    </div>
+                </Authorizing>
+            </AuthorizeRouteView>
             <FocusOnNavigate RouteData="routeData" Selector="h1" />
         </Found>
     </Router>

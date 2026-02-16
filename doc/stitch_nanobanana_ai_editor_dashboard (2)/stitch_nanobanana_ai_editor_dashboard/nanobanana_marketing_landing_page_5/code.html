@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NanoBanana | Premium AI Boutique Studio</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;family=Outfit:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#ffffff",
+                        "accent": "#0071e3",
+                        "background-dark": "#000000",
+                        "surface": "#0a0a0a",
+                        "gold": "#D4AF37"
+                    },
+                    fontFamily: {
+                        "display": ["Outfit", "Inter", "sans-serif"],
+                        "body": ["Inter", "sans-serif"]
+                    },
+                    letterSpacing: {
+                        "tighter-tight": "-0.04em",
+                    }
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer base {
+            body { @apply font-body bg-background-dark text-white antialiased; }
+            h1, h2, h3 { @apply font-display tracking-tighter-tight; }
+        }
+        .glass-nav {
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: saturate(180%) blur(20px);
+        }
+        .hero-gradient {
+            background: linear-gradient(to bottom, rgba(0,0,0,0) 0%, rgba(0,0,0,0.8) 100%);
+        }
+        .text-gradient {
+            background: linear-gradient(135deg, #ffffff 0%, #a1a1a1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .step-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .step-card:hover {
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+        .lookbook-card {
+            aspect-ratio: 3/4;
+            overflow: hidden;
+            position: relative;
+        }
+        .lookbook-overlay {
+            background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0) 50%);
+        }
+    </style>
+</head>
+<body class="selection:bg-accent selection:text-white">
+<nav class="fixed top-0 w-full z-[100] glass-nav border-b border-white/5">
+<div class="max-w-[1400px] mx-auto px-8 lg:px-12">
+<div class="flex items-center justify-between h-20">
+<div class="flex items-center gap-16">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+<span class="text-black font-extrabold text-sm tracking-tighter">NB</span>
+</div>
+<span class="font-bold text-xl tracking-[0.1em] uppercase">NanoBanana</span>
+</div>
+<div class="hidden lg:flex items-center space-x-10">
+<a class="text-gray-400 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors" href="#">Studio</a>
+<a class="text-gray-400 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors" href="#">Lookbook</a>
+<a class="text-gray-400 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors" href="#">Technology</a>
+</div>
+</div>
+<div class="flex items-center gap-8">
+<a class="hidden md:block text-xs font-bold uppercase tracking-widest text-gray-400 hover:text-white" href="#">Client Portal</a>
+<a class="bg-white text-black hover:bg-gray-200 px-8 py-3 rounded-none text-xs font-bold uppercase tracking-widest transition-all" href="#">
+                    Reserve Studio
+                </a>
+</div>
+</div>
+</div>
+</nav>
+<header class="relative min-h-screen flex items-end pt-32 pb-24 overflow-hidden">
+<div class="absolute inset-0 z-0">
+<img alt="Boutique owner reviewing photorealistic AI shoot" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3Q1mFKQMY0CgZYaW2YlV0yBCfjgXUCiOAvMShPJmD367xDnSwpIHRRmMIr0fKPEZ6tcbnj1k-FmI3z_2M61yfmTMBN-TcaW3uzQRjsGIN04nOJvi_7QjjDPJrDsLTPCCNpyZ5i45nxRzTUwJsaseZpqYSwGIxYCxBl3YeYig5PqaTI1oBOHGhVWC24Kn8s6_EweorXwuyos4q6MopTVMFXr8eO3Gf2wQuwXV1Y5KG4hI7MDcH9Dcl-CW4Q6qp3_oQ9zZ__wRdGpSR"/>
+<div class="absolute inset-0 hero-gradient"></div>
+<div class="absolute inset-0 bg-black/20"></div>
+</div>
+<div class="relative z-20 max-w-7xl mx-auto px-8 w-full">
+<div class="max-w-3xl">
+<div class="inline-flex items-center gap-3 px-4 py-1 rounded-full border border-white/20 backdrop-blur-md bg-white/5 mb-8">
+<span class="w-1.5 h-1.5 rounded-full bg-accent animate-pulse"></span>
+<span class="text-[10px] font-bold uppercase tracking-[0.2em] text-white">Ultra-Premium AI Generation</span>
+</div>
+<h1 class="text-6xl md:text-8xl font-extrabold mb-8 leading-[0.9] text-gradient">
+                Your Boutique's Personal AI Photo Studio
+            </h1>
+<p class="text-lg md:text-xl text-gray-300 mb-12 max-w-xl font-light leading-relaxed">
+                Elevate your brand with high-fidelity, photorealistic virtual try-ons. No models, no sets, no limits. Just pure creative excellence.
+            </p>
+<div class="flex flex-col sm:flex-row gap-6">
+<button class="px-12 py-5 bg-white text-black hover:bg-gray-200 text-sm font-black uppercase tracking-widest transition-all shadow-2xl">
+                    Start Your Collection
+                </button>
+<button class="px-12 py-5 border border-white/20 hover:bg-white/10 text-sm font-black uppercase tracking-widest transition-all backdrop-blur-md">
+                    Explore Lookbook
+                </button>
+</div>
+</div>
+</div>
+</header>
+<section class="py-32 bg-background-dark border-b border-white/5">
+<div class="max-w-7xl mx-auto px-8">
+<div class="text-center mb-24">
+<h2 class="text-xs font-black uppercase tracking-[0.4em] text-accent mb-4">The Workflow</h2>
+<p class="text-4xl md:text-5xl font-bold">How Perfection is Crafted</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+<div class="step-card p-10 flex flex-col items-center text-center">
+<div class="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-8">
+<span class="material-symbols-outlined text-3xl font-light">add_photo_alternate</span>
+</div>
+<h3 class="text-lg font-bold mb-4 uppercase tracking-widest">1. Upload Flat-lay</h3>
+<p class="text-sm text-gray-500 leading-relaxed font-light">Supply a high-resolution photo of your garment. Our AI preserves every texture and stitch.</p>
+</div>
+<div class="step-card p-10 flex flex-col items-center text-center">
+<div class="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-8">
+<span class="material-symbols-outlined text-3xl font-light">accessibility_new</span>
+</div>
+<h3 class="text-lg font-bold mb-4 uppercase tracking-widest">2. Choose Model</h3>
+<p class="text-sm text-gray-500 leading-relaxed font-light">Select from an elite roster of diverse AI models and dynamic, high-fashion poses.</p>
+</div>
+<div class="step-card p-10 flex flex-col items-center text-center">
+<div class="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-8">
+<span class="material-symbols-outlined text-3xl font-light">wb_sunny</span>
+</div>
+<h3 class="text-lg font-bold mb-4 uppercase tracking-widest">3. Set Atmosphere</h3>
+<p class="text-sm text-gray-500 leading-relaxed font-light">Choose iconic locations and cinematic lighting setups to define your brand's aesthetic.</p>
+</div>
+<div class="step-card p-10 flex flex-col items-center text-center">
+<div class="w-16 h-16 rounded-full bg-white/5 border border-white/10 flex items-center justify-center mb-8">
+<span class="material-symbols-outlined text-3xl font-light">auto_awesome</span>
+</div>
+<h3 class="text-lg font-bold mb-4 uppercase tracking-widest">4. Instant Render</h3>
+<p class="text-sm text-gray-500 leading-relaxed font-light">Receive stunning, studio-grade 4K imagery in seconds, ready for your luxury storefront.</p>
+</div>
+</div>
+</div>
+</section>
+<section class="py-32 bg-surface">
+<div class="max-w-[1600px] mx-auto px-8">
+<div class="flex flex-col md:flex-row justify-between items-end mb-20 gap-8">
+<div class="max-w-2xl">
+<h2 class="text-xs font-black uppercase tracking-[0.4em] text-accent mb-4">Curated Excellence</h2>
+<p class="text-5xl md:text-6xl font-bold leading-tight">The Lookbook Gallery</p>
+</div>
+<div class="flex gap-4">
+<button class="p-4 border border-white/10 hover:bg-white/5 transition-colors">
+<span class="material-symbols-outlined">west</span>
+</button>
+<button class="p-4 border border-white/10 hover:bg-white/5 transition-colors">
+<span class="material-symbols-outlined">east</span>
+</button>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+<div class="lookbook-card group">
+<img alt="High-end fashion campaign 1" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3Q1mFKQMY0CgZYaW2YlV0yBCfjgXUCiOAvMShPJmD367xDnSwpIHRRmMIr0fKPEZ6tcbnj1k-FmI3z_2M61yfmTMBN-TcaW3uzQRjsGIN04nOJvi_7QjjDPJrDsLTPCCNpyZ5i45nxRzTUwJsaseZpqYSwGIxYCxBl3YeYig5PqaTI1oBOHGhVWC24Kn8s6_EweorXwuyos4q6MopTVMFXr8eO3Gf2wQuwXV1Y5KG4hI7MDcH9Dcl-CW4Q6qp3_oQ9zZ__wRdGpSR"/>
+<div class="absolute inset-0 lookbook-overlay opacity-60"></div>
+<div class="absolute bottom-0 left-0 p-8">
+<p class="text-[10px] font-bold uppercase tracking-[0.3em] text-accent mb-2">Summer Edition</p>
+<p class="text-xl font-medium">Parisian Chic</p>
+</div>
+</div>
+<div class="lookbook-card group">
+<img alt="High-end fashion campaign 2" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3Q1mFKQMY0CgZYaW2YlV0yBCfjgXUCiOAvMShPJmD367xDnSwpIHRRmMIr0fKPEZ6tcbnj1k-FmI3z_2M61yfmTMBN-TcaW3uzQRjsGIN04nOJvi_7QjjDPJrDsLTPCCNpyZ5i45nxRzTUwJsaseZpqYSwGIxYCxBl3YeYig5PqaTI1oBOHGhVWC24Kn8s6_EweorXwuyos4q6MopTVMFXr8eO3Gf2wQuwXV1Y5KG4hI7MDcH9Dcl-CW4Q6qp3_oQ9zZ__wRdGpSR"/>
+<div class="absolute inset-0 lookbook-overlay opacity-60"></div>
+<div class="absolute bottom-0 left-0 p-8">
+<p class="text-[10px] font-bold uppercase tracking-[0.3em] text-accent mb-2">Essentials</p>
+<p class="text-xl font-medium">Minimal Studio</p>
+</div>
+</div>
+<div class="lookbook-card group">
+<img alt="High-end fashion campaign 3" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3Q1mFKQMY0CgZYaW2YlV0yBCfjgXUCiOAvMShPJmD367xDnSwpIHRRmMIr0fKPEZ6tcbnj1k-FmI3z_2M61yfmTMBN-TcaW3uzQRjsGIN04nOJvi_7QjjDPJrDsLTPCCNpyZ5i45nxRzTUwJsaseZpqYSwGIxYCxBl3YeYig5PqaTI1oBOHGhVWC24Kn8s6_EweorXwuyos4q6MopTVMFXr8eO3Gf2wQuwXV1Y5KG4hI7MDcH9Dcl-CW4Q6qp3_oQ9zZ__wRdGpSR"/>
+<div class="absolute inset-0 lookbook-overlay opacity-60"></div>
+<div class="absolute bottom-0 left-0 p-8">
+<p class="text-[10px] font-bold uppercase tracking-[0.3em] text-accent mb-2">Luxury Knitwear</p>
+<p class="text-xl font-medium">Aspen Nights</p>
+</div>
+</div>
+<div class="lookbook-card group">
+<img alt="High-end fashion campaign 4" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3Q1mFKQMY0CgZYaW2YlV0yBCfjgXUCiOAvMShPJmD367xDnSwpIHRRmMIr0fKPEZ6tcbnj1k-FmI3z_2M61yfmTMBN-TcaW3uzQRjsGIN04nOJvi_7QjjDPJrDsLTPCCNpyZ5i45nxRzTUwJsaseZpqYSwGIxYCxBl3YeYig5PqaTI1oBOHGhVWC24Kn8s6_EweorXwuyos4q6MopTVMFXr8eO3Gf2wQuwXV1Y5KG4hI7MDcH9Dcl-CW4Q6qp3_oQ9zZ__wRdGpSR"/>
+<div class="absolute inset-0 lookbook-overlay opacity-60"></div>
+<div class="absolute bottom-0 left-0 p-8">
+<p class="text-[10px] font-bold uppercase tracking-[0.3em] text-accent mb-2">Active Line</p>
+<p class="text-xl font-medium">Urban Dynamic</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="py-32 relative overflow-hidden bg-background-dark">
+<div class="max-w-7xl mx-auto px-8">
+<div class="grid lg:grid-cols-2 gap-24 items-center">
+<div class="relative">
+<div class="aspect-[4/5] overflow-hidden border border-white/10 grayscale hover:grayscale-0 transition-all duration-1000">
+<img alt="Boutique owner using NanoBanana" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3Q1mFKQMY0CgZYaW2YlV0yBCfjgXUCiOAvMShPJmD367xDnSwpIHRRmMIr0fKPEZ6tcbnj1k-FmI3z_2M61yfmTMBN-TcaW3uzQRjsGIN04nOJvi_7QjjDPJrDsLTPCCNpyZ5i45nxRzTUwJsaseZpqYSwGIxYCxBl3YeYig5PqaTI1oBOHGhVWC24Kn8s6_EweorXwuyos4q6MopTVMFXr8eO3Gf2wQuwXV1Y5KG4hI7MDcH9Dcl-CW4Q6qp3_oQ9zZ__wRdGpSR"/>
+</div>
+<div class="absolute -bottom-10 -right-10 p-12 bg-white text-black max-w-[320px] shadow-2xl">
+<div class="text-5xl font-black mb-4">95%</div>
+<p class="text-xs font-bold uppercase tracking-widest leading-relaxed">Cost reduction compared to traditional studio photography.</p>
+</div>
+</div>
+<div>
+<h2 class="text-xs font-black uppercase tracking-[0.4em] text-accent mb-6">Unrivaled Quality</h2>
+<h3 class="text-5xl md:text-6xl font-bold mb-10 leading-tight">Crafted for the Discerning Brand.</h3>
+<div class="space-y-12">
+<div class="flex gap-8">
+<span class="text-4xl font-light text-white/20">01</span>
+<div>
+<h4 class="text-xl font-bold mb-3 uppercase tracking-widest">Infinite Scalability</h4>
+<p class="text-gray-500 font-light leading-relaxed">Shoot your entire seasonal catalog in an afternoon. No logistical hurdles, just pure output.</p>
+</div>
+</div>
+<div class="flex gap-8">
+<span class="text-4xl font-light text-white/20">02</span>
+<div>
+<h4 class="text-xl font-bold mb-3 uppercase tracking-widest">Global Locations</h4>
+<p class="text-gray-500 font-light leading-relaxed">Instantly transport your products to world-class studios or scenic vistas across the globe.</p>
+</div>
+</div>
+<div class="flex gap-8">
+<span class="text-4xl font-light text-white/20">03</span>
+<div>
+<h4 class="text-xl font-bold mb-3 uppercase tracking-widest">Hyper-Realism</h4>
+<p class="text-gray-500 font-light leading-relaxed">Our proprietary AI engines are trained on millions of fashion assets to ensure flawless fabric physics.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<section class="py-40 bg-surface border-t border-white/5 relative overflow-hidden">
+<div class="absolute inset-0 bg-[radial-gradient(circle_at_center,_rgba(0,113,227,0.1)_0%,_transparent_70%)]"></div>
+<div class="max-w-4xl mx-auto px-8 text-center relative z-10">
+<h2 class="text-5xl md:text-7xl font-bold mb-12 tracking-tighter">Ready to redefine your visual identity?</h2>
+<div class="flex flex-col sm:flex-row gap-6 justify-center">
+<button class="bg-white text-black px-16 py-6 text-sm font-black uppercase tracking-[0.2em] hover:bg-gray-200 transition-all">
+                Access the Studio
+            </button>
+<button class="border border-white/20 text-white px-16 py-6 text-sm font-black uppercase tracking-[0.2em] hover:bg-white/10 transition-all backdrop-blur-md">
+                Talk to an Expert
+            </button>
+</div>
+</div>
+</section>
+<footer class="py-24 bg-background-dark border-t border-white/5">
+<div class="max-w-7xl mx-auto px-8">
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-16 mb-24">
+<div class="col-span-1 lg:col-span-2">
+<div class="flex items-center gap-3 mb-8">
+<div class="w-10 h-10 bg-white rounded-full flex items-center justify-center">
+<span class="text-black font-extrabold text-xs">NB</span>
+</div>
+<span class="font-bold text-xl tracking-[0.1em] uppercase">NanoBanana</span>
+</div>
+<p class="text-gray-500 max-w-sm font-light leading-relaxed">
+                    The ultra-premium AI studio designed for boutique owners who refuse to compromise on quality, aesthetic, or brand integrity.
+                </p>
+</div>
+<div>
+<p class="text-[10px] font-black uppercase tracking-[0.3em] text-white mb-8">Studio</p>
+<ul class="space-y-4 text-sm text-gray-500 font-light">
+<li><a class="hover:text-white transition-colors" href="#">Process</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Model Roster</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Technology</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Enterprise</a></li>
+</ul>
+</div>
+<div>
+<p class="text-[10px] font-black uppercase tracking-[0.3em] text-white mb-8">Connect</p>
+<ul class="space-y-4 text-sm text-gray-500 font-light">
+<li><a class="hover:text-white transition-colors" href="#">Instagram</a></li>
+<li><a class="hover:text-white transition-colors" href="#">LinkedIn</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Showcase</a></li>
+<li><a class="hover:text-white transition-colors" href="#">Contact</a></li>
+</ul>
+</div>
+</div>
+<div class="pt-12 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6">
+<p class="text-[10px] text-gray-600 uppercase tracking-[0.4em]">© 2024 NanoBanana Boutique Studio. All Rights Reserved.</p>
+<div class="flex items-center gap-12 text-[10px] text-gray-600 uppercase tracking-[0.4em]">
+<a class="hover:text-white transition-colors" href="#">Privacy Policy</a>
+<a class="hover:text-white transition-colors" href="#">Terms of Service</a>
+</div>
+</div>
+</div>
+</footer>
+
+</body></html>

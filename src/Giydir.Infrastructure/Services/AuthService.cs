@@ -54,9 +54,9 @@ public class AuthService : IAuthService
         // JWT Token oluştur
         var claims = new[]
         {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Role, "User")
+            new Claim("sub", user.Id.ToString()),
+            new Claim("email", user.Email),
+            new Claim("role", user.Role)
         };
         _currentToken = _jwtTokenService.GenerateToken(claims);
 
@@ -101,9 +101,9 @@ public class AuthService : IAuthService
         // JWT Token oluştur
         var claims = new[]
         {
-            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim(ClaimTypes.Role, "User")
+            new Claim("sub", user.Id.ToString()),
+            new Claim("email", user.Email),
+            new Claim("role", user.Role)
         };
         _currentToken = _jwtTokenService.GenerateToken(claims);
 
@@ -138,7 +138,7 @@ public class AuthService : IAuthService
         var httpContext = _httpContextAccessor.HttpContext;
         if (httpContext?.User?.Identity?.IsAuthenticated == true)
         {
-            var userIdClaim = httpContext.User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            var userIdClaim = httpContext.User.FindFirst("sub")?.Value;
             if (int.TryParse(userIdClaim, out var userId))
                 return userId;
         }

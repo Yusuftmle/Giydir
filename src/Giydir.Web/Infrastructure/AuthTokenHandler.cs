@@ -26,7 +26,6 @@ public class AuthTokenHandler : DelegatingHandler
             if (httpContext != null)
             {
                 string? token = null;
-                string source = "YOK";
                 
                 // Önce cookie'den dene
                 if (httpContext.Request.Cookies.ContainsKey("JwtToken"))
@@ -34,7 +33,6 @@ public class AuthTokenHandler : DelegatingHandler
                     token = httpContext.Request.Cookies["JwtToken"];
                     if (!string.IsNullOrEmpty(token))
                     {
-                        source = "COOKIE";
                         _logger.LogInformation("[AuthTokenHandler] Token cookie'den alındı: {Uri} (Token length: {TokenLength})", request.RequestUri, token.Length);
                     }
                 }
@@ -49,7 +47,6 @@ public class AuthTokenHandler : DelegatingHandler
                         token = session.GetString("JwtToken");
                         if (!string.IsNullOrEmpty(token))
                         {
-                            source = "SESSION";
                             _logger.LogInformation("[AuthTokenHandler] Token session'dan alındı: {Uri} (Token length: {TokenLength})", request.RequestUri, token.Length);
                         }
                     }
@@ -61,7 +58,6 @@ public class AuthTokenHandler : DelegatingHandler
                     token = request.Headers.GetValues("X-JWT-Token").FirstOrDefault();
                     if (!string.IsNullOrEmpty(token))
                     {
-                        source = "HEADER";
                         _logger.LogInformation("[AuthTokenHandler] Token header'dan alındı: {Uri} (Token length: {TokenLength})", request.RequestUri, token.Length);
                     }
                 }

@@ -5,6 +5,130 @@
 @inject IJSRuntime JSRuntime
 @rendermode InteractiveServer
 
+<!-- Registration Container -->
+<main class="w-full h-screen flex overflow-hidden">
+    <!-- Left Side: Immersive Imagery -->
+    <section class="hidden lg:flex lg:w-1/2 relative overflow-hidden bg-slate-800">
+        <div class="absolute inset-0 bg-gradient-to-r from-black/40 via-transparent to-transparent z-10"></div>
+        <img alt="Fashion Studio" class="absolute inset-0 w-full h-full object-cover" src="https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=2070&auto=format&fit=crop" />
+        
+        <div class="absolute inset-0 flex flex-col justify-end p-20 z-20 text-white">
+            <div class="max-w-md">
+                <span class="text-xs uppercase tracking-[0.3em] font-semibold mb-4 block text-[#d4b38d]/80">Moda'da Yenilik</span>
+                <h2 class="font-serif text-5xl mb-6 leading-tight">AI ile koleksiyonunuzu bir üst seviyeye taşıyın.</h2>
+                <p class="text-lg font-light text-white/80 leading-relaxed">
+                    Dünyanın en gelişmiş sanal deneme teknolojisini kullanarak çevrimiçi alışveriş deneyimini yeniden tanımlayan seçkin butik sahipleri topluluğuna katılın.
+                </p>
+            </div>
+        </div>
+        
+        <!-- Floating Preview Card -->
+        <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 w-80 h-96 rounded-xl overflow-hidden shadow-2xl border border-white/20 backdrop-blur-md">
+            <img alt="AI Try-on" class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=2070&auto=format&fit=crop" />
+            <div class="absolute bottom-4 left-4 right-4 p-4 bg-black/40 backdrop-blur-md rounded-lg border border-white/10">
+                <div class="flex items-center justify-between">
+                    <span class="text-[10px] uppercase tracking-widest text-white/70">AI Studio Durumu</span>
+                    <span class="flex h-2 w-2 rounded-full bg-green-400"></span>
+                </div>
+                <p class="text-white text-sm font-medium mt-1">Sanal Render Aktif</p>
+            </div>
+        </div>
+    </section>
+    
+    <!-- Right Side: Minimalist Form -->
+    <section class="w-full lg:w-1/2 bg-[#F9F8F6] dark:bg-slate-950 flex flex-col justify-center items-center px-8 sm:px-16 lg:px-24">
+        <div class="w-full max-w-md space-y-10">
+            <!-- Header -->
+            <header class="text-left space-y-2">
+                <div class="flex items-center space-x-2 mb-8">
+                    <div class="w-10 h-10 bg-[#d4b38d] rounded-xl flex items-center justify-center">
+                        <span class="material-symbols-outlined text-slate-950 text-xl font-bold">auto_awesome</span>
+                    </div>
+                    <span class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">GIYDIR<span class="text-[#d4b38d]">.AI</span></span>
+                </div>
+                <h1 class="font-serif text-4xl lg:text-5xl text-gray-900 dark:text-white leading-tight">Stüdyoya Katılın</h1>
+                <p class="text-gray-500 dark:text-gray-400 font-light">AI Sanal Deneme Stüdyonuza erişmek için bir hesap oluşturun.</p>
+            </header>
+            
+            @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-600 dark:text-red-400 text-sm">
+                    @errorMessage
+                </div>
+            }
+            
+            <!-- Form -->
+            <form @onsubmit="HandleRegister" @onsubmit:preventDefault="true" class="space-y-6">
+                <div class="grid grid-cols-1 gap-6">
+                    <div class="space-y-1">
+                        <label class="text-xs uppercase tracking-widest font-semibold text-gray-500 dark:text-gray-400" for="full-name">Ad Soyad</label>
+                        <input @bind="name" @bind:event="oninput" class="w-full px-4 py-3 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-sm focus:outline-none focus:border-[#d4b38d] focus:ring-1 focus:ring-[#d4b38d] transition-colors placeholder:text-gray-300 dark:placeholder:text-gray-600" id="full-name" placeholder="Adınız Soyadınız" type="text" />
+                    </div>
+                    <div class="space-y-1">
+                        <label class="text-xs uppercase tracking-widest font-semibold text-gray-500 dark:text-gray-400" for="email">E-posta Adresi</label>
+                        <input @bind="email" @bind:event="oninput" class="w-full px-4 py-3 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-sm focus:outline-none focus:border-[#d4b38d] focus:ring-1 focus:ring-[#d4b38d] transition-colors placeholder:text-gray-300 dark:placeholder:text-gray-600" id="email" placeholder="ornek@butik.com" type="email" required />
+                    </div>
+                    <div class="space-y-1 relative">
+                        <label class="text-xs uppercase tracking-widest font-semibold text-gray-500 dark:text-gray-400" for="password">Şifre Oluştur</label>
+                        <input @bind="password" @bind:event="oninput" class="w-full px-4 py-3 bg-white dark:bg-white/5 border border-gray-200 dark:border-white/10 rounded-sm focus:outline-none focus:border-[#d4b38d] focus:ring-1 focus:ring-[#d4b38d] transition-colors placeholder:text-gray-300 dark:placeholder:text-gray-600" id="password" placeholder="••••••••" type="password" required />
+                    </div>
+                    
+                    <!-- Terms -->
+                    <div class="flex items-start gap-2">
+                        <input @bind="termsAccepted" type="checkbox" id="terms" class="w-4 h-4 mt-1 rounded border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-[#d4b38d] focus:ring-[#d4b38d]" />
+                        <label for="terms" class="text-sm text-gray-600 dark:text-slate-400">
+                            <a href="#" class="text-[#d4b38d] hover:underline no-underline">Kullanım Şartları</a>'nı ve
+                            <a href="#" class="text-[#d4b38d] hover:underline no-underline">Gizlilik Politikası</a>'nı kabul ediyorum
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="pt-4">
+                    <button disabled="@isLoading" class="w-full py-4 bg-[#d4b38d] text-white font-bold rounded-sm hover:bg-[#b08d65] disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-[#d4b38d]/20 flex items-center justify-center space-x-2 transition-all" type="submit">
+                        @if (isLoading)
+                        {
+                            <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                            <span>KAYDEDILIYOR</span>
+                        }
+                        else
+                        {
+                            <span>STÜDYOYA KATIL</span>
+                            <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                        }
+                    </button>
+                </div>
+            </form>
+            
+            <!-- Social Signup & Footer -->
+            <footer class="space-y-8 pt-4">
+                <div class="relative flex items-center">
+                    <div class="flex-grow border-t border-gray-200 dark:border-white/10"></div>
+                    <span class="flex-shrink mx-4 text-xs text-gray-400 uppercase tracking-widest">veya kayıt ol</span>
+                    <div class="flex-grow border-t border-gray-200 dark:border-white/10"></div>
+                </div>
+                <div class="grid grid-cols-1 gap-4">
+                    <button class="flex items-center justify-center space-x-3 py-3 px-4 border border-gray-200 dark:border-white/10 rounded-sm bg-white dark:bg-white/5 hover:bg-gray-50 dark:hover:bg-white/10 transition-colors group">
+                        <svg class="w-5 h-5 text-gray-400 group-hover:text-[#d4b38d] transition-colors" fill="currentColor" viewBox="0 0 24 24">
+                            <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.908 3.152-1.928 4.176-1.224 1.224-3.136 2.592-6.44 2.592-5.336 0-9.496-4.32-9.496-9.656s4.16-9.656 9.496-9.656c2.824 0 4.936 1.112 6.472 2.56l2.304-2.304C18.592 1.632 15.832 0 12.12 0 5.464 0 0 5.464 0 12.12s5.464 12.12 12.12 12.12c3.624 0 6.36-1.192 8.448-3.376 2.136-2.136 2.808-5.144 2.808-7.536 0-.72-.064-1.408-.184-2.04h-10.728z"></path>
+                        </svg>
+                        <span class="text-sm font-semibold tracking-wide">GOOGLE İLE KAYIT OL</span>
+                    </button>
+                </div>
+                <p class="text-center text-sm text-gray-500 dark:text-gray-400">
+                    Zaten hesabınız var mı?
+                    <a class="text-[#d4b38d] font-bold hover:underline ml-1 no-underline" href="/login">Giriş Yap</a>
+                </p>
+            </footer>
+        </div>
+        <!-- Legal Terms -->
+        <div class="mt-12 lg:mt-24 text-center lg:absolute lg:bottom-12">
+            <p class="text-[10px] uppercase tracking-widest text-gray-400 font-medium">
+                © 2024 Giydir.AI Sanal Deneme. Tüm hakları saklıdır.
+            </p>
+        </div>
+    </section>
+</main>
+
 @code {
     private string name = string.Empty;
     private string email = string.Empty;
@@ -12,7 +136,6 @@
     private bool termsAccepted = false;
     private bool isLoading = false;
     private string? errorMessage;
-    private string? successMessage;
 
     private async Task HandleRegister()
     {
@@ -36,7 +159,6 @@
 
         isLoading = true;
         errorMessage = null;
-        successMessage = null;
 
         try
         {
@@ -48,10 +170,7 @@
                 var result = await response.Content.ReadFromJsonAsync<AuthResponseDto>();
                 if (result?.Success == true && !string.IsNullOrEmpty(result.Token))
                 {
-                    // Token'ı tarayıcıda localStorage + cookie'ye kaydet
                     await JSRuntime.InvokeVoidAsync("tokenStorage.setToken", result.Token);
-                    
-                    // forceLoad: true → tam sayfa yenilemesi, tarayıcı cookie'yi gönderir
                     Navigation.NavigateTo("/", forceLoad: true);
                 }
                 else
@@ -82,123 +201,3 @@
         }
     }
 }
-
-<div class="min-h-screen flex items-center justify-center bg-background-dark relative overflow-hidden">
-    <!-- Background decorations -->
-    <div class="absolute top-0 right-1/4 w-96 h-96 bg-primary/10 blur-[120px] rounded-full pointer-events-none"></div>
-    <div class="absolute bottom-0 left-1/4 w-96 h-96 bg-blue-500/10 blur-[120px] rounded-full pointer-events-none"></div>
-
-    <div class="relative z-10 w-full max-w-md px-6">
-        <!-- Logo -->
-        <div class="text-center mb-10">
-            <a href="/" class="inline-flex items-center gap-2 no-underline mb-6">
-                <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center text-white font-bold text-2xl shadow-lg shadow-primary/20">
-                    G
-                </div>
-            </a>
-            <h1 class="text-3xl font-bold text-white mb-2">Hesap Oluştur</h1>
-            <p class="text-gray-400">Ücretsiz başlayın, kredi kartı gerekmez</p>
-        </div>
-
-        <!-- Register Card -->
-        <div class="glass rounded-2xl p-8 border border-white/5 shadow-2xl">
-            @if (!string.IsNullOrEmpty(errorMessage))
-            {
-                <div class="mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-red-400 text-sm">
-                    @errorMessage
-                </div>
-            }
-
-            @if (!string.IsNullOrEmpty(successMessage))
-            {
-                <div class="mb-4 p-3 bg-green-500/10 border border-green-500/20 rounded-lg text-green-400 text-sm">
-                    @successMessage
-                </div>
-            }
-
-            <form @onsubmit="HandleRegister" @onsubmit:preventDefault="true">
-                <!-- Full Name -->
-                <div class="mb-5">
-                    <label class="block text-sm font-medium text-gray-300 mb-2">Ad Soyad <span class="text-gray-500">(opsiyonel)</span></label>
-                    <div class="relative">
-                        <span class="material-icons-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-lg">person</span>
-                        <input @bind="name" @bind:event="oninput" type="text" placeholder="Adınız Soyadınız"
-                               class="w-full pl-10 pr-4 py-3 bg-background-dark/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-primary focus:border-primary transition-all" />
-                    </div>
-                </div>
-
-                <!-- Email -->
-                <div class="mb-5">
-                    <label class="block text-sm font-medium text-gray-300 mb-2">E-posta Adresi</label>
-                    <div class="relative">
-                        <span class="material-icons-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-lg">mail</span>
-                        <input @bind="email" @bind:event="oninput" type="email" placeholder="ornek@butik.com"
-                               class="w-full pl-10 pr-4 py-3 bg-background-dark/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-primary focus:border-primary transition-all" />
-                    </div>
-                </div>
-
-                <!-- Password -->
-                <div class="mb-5">
-                    <label class="block text-sm font-medium text-gray-300 mb-2">Şifre</label>
-                    <div class="relative">
-                        <span class="material-icons-outlined absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 text-lg">lock</span>
-                        <input @bind="password" @bind:event="oninput" type="password" placeholder="En az 6 karakter"
-                               class="w-full pl-10 pr-4 py-3 bg-background-dark/50 border border-gray-700 rounded-xl text-white placeholder-gray-500 focus:ring-2 focus:ring-primary focus:border-primary transition-all" />
-                    </div>
-                </div>
-
-                <!-- Terms -->
-                <div class="flex items-start gap-2 mb-6">
-                    <input @bind="termsAccepted" type="checkbox" id="terms" class="w-4 h-4 mt-0.5 rounded border-gray-600 bg-background-dark text-primary focus:ring-primary" />
-                    <label for="terms" class="text-sm text-gray-400">
-                        <a href="#" class="text-primary hover:underline no-underline">Kullanım Şartları</a>'nı ve
-                        <a href="#" class="text-primary hover:underline no-underline">Gizlilik Politikası</a>'nı kabul ediyorum
-                    </label>
-                </div>
-
-                <!-- Submit -->
-                <button type="submit" disabled="@isLoading" class="w-full py-3.5 bg-primary hover:bg-blue-500 disabled:opacity-50 disabled:cursor-not-allowed text-background-dark font-bold rounded-xl shadow-lg shadow-primary/25 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2">
-                    @if (isLoading)
-                    {
-                        <div class="w-5 h-5 border-2 border-background-dark border-t-transparent rounded-full animate-spin"></div>
-                        <span>Kayıt yapılıyor...</span>
-                    }
-                    else
-                    {
-                        <span class="material-icons-outlined text-lg">rocket_launch</span>
-                        <span>Ücretsiz Hesap Oluştur</span>
-                    }
-                </button>
-            </form>
-
-            <!-- Divider -->
-            <div class="flex items-center gap-4 my-6">
-                <div class="flex-1 h-px bg-gray-700"></div>
-                <span class="text-xs text-gray-500 uppercase">veya</span>
-                <div class="flex-1 h-px bg-gray-700"></div>
-            </div>
-
-            <!-- Social Register -->
-            <button class="w-full py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-white font-medium transition-all flex items-center justify-center gap-3">
-                <svg class="w-5 h-5" viewBox="0 0 24 24"><path fill="currentColor" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z"/><path fill="currentColor" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="currentColor" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="currentColor" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
-                Google ile Kayıt Ol
-            </button>
-
-            <!-- Free Credits Info -->
-            <div class="mt-6 p-3 bg-primary/5 border border-primary/10 rounded-xl flex items-start gap-3">
-                <span class="material-icons-outlined text-primary text-lg mt-0.5">card_giftcard</span>
-                <div>
-                    <p class="text-sm text-white font-medium m-0">10 Ücretsiz Kredi Hediye!</p>
-                    <p class="text-xs text-gray-400 m-0 mt-1">Kayıt olduğunuzda hesabınıza otomatik yüklenir.</p>
-                </div>
-            </div>
-        </div>
-
-        <!-- Login Link -->
-        <p class="text-center mt-8 text-gray-400 text-sm">
-            Zaten hesabınız var mı?
-            <a href="/login" class="text-primary font-semibold hover:text-primary/80 no-underline ml-1">Giriş Yap</a>
-        </p>
-    </div>
-</div>
-

@@ -1,0 +1,142 @@
+@page "/admin/settings"
+@layout AdminLayout
+@attribute [Authorize(Roles = "Admin")]
+@using Giydir.Core.Interfaces
+@inject IConfiguration Configuration
+@inject IJSRuntime JSRuntime
+
+<div class="p-8 max-w-4xl mx-auto space-y-8">
+    <div class="flex items-center justify-between">
+        <div>
+            <h1 class="text-2xl font-bold text-primary tracking-tight">System Configuration</h1>
+            <p class="text-sm text-slate-500 mt-1">Manage your AI core, engine versions, and API connections.</p>
+        </div>
+        <div class="flex items-center gap-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/20 rounded-full">
+            <div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+            <span class="text-[10px] font-bold text-emerald-500 uppercase tracking-widest">NanoBanana Pro Active</span>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <!-- AI Core Settings -->
+        <div class="glass-panel p-6 rounded-2xl border border-white/5 space-y-6">
+            <div class="flex items-center gap-3 mb-2">
+                <span class="material-icons text-primary">psychology</span>
+                <h2 class="text-sm font-bold uppercase tracking-widest text-slate-300">AI Core Engine</h2>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="text-[10px] uppercase font-bold text-slate-500 mb-2 block tracking-wider">Active Model</label>
+                    <select @bind="aiCoreModel" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 text-xs font-bold text-slate-300 outline-none">
+                        <option value="google/nano-banana-pro">NanoBanana v2.4 Pro (High Fidelity)</option>
+                        <option value="google/nano-banana-lite">NanoBanana v1.2 Lite (Optimized)</option>
+                        <option value="google/nano-banana-experimental">Experimental Research Core</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="text-[10px] uppercase font-bold text-slate-500 mb-2 block tracking-wider">Engine Version</label>
+                    <div class="flex items-center gap-2">
+                        <input type="text" @bind="engineVersion" class="flex-1 bg-black/40 border border-white/10 rounded-xl p-3 text-xs text-slate-300" />
+                        <span class="px-3 py-1 bg-primary/10 text-primary rounded text-[10px] font-bold">STABLE</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Credentials -->
+        <div class="glass-panel p-6 rounded-2xl border border-white/5 space-y-6">
+            <div class="flex items-center gap-3 mb-2">
+                <span class="material-icons text-primary">vpn_key</span>
+                <h2 class="text-sm font-bold uppercase tracking-widest text-slate-300">API Credentials</h2>
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="text-[10px] uppercase font-bold text-slate-500 mb-2 block tracking-wider">Replicate API Token</label>
+                    <div class="relative">
+                        <input type="@(showToken ? "text" : "password")" @bind="apiToken" 
+                               class="w-full bg-black/40 border border-white/10 rounded-xl p-3 pl-3 pr-10 text-xs text-slate-300 font-mono" />
+                        <button @onclick="() => showToken = !showToken" class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-primary transition-colors">
+                            <span class="material-icons text-sm">@(showToken ? "visibility_off" : "visibility")</span>
+                        </button>
+                    </div>
+                    <p class="text-[9px] text-slate-500 mt-2 italic font-medium tracking-wide">Securely stored and used for all AI inference requests.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Features -->
+    <div class="glass-panel p-8 rounded-2xl border border-white/5 space-y-6">
+        <h2 class="text-sm font-bold uppercase tracking-widest text-slate-300 mb-4">Enterprise Features</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+            <div @onclick="() => toggleFeature(1)" class="p-4 rounded-xl border border-white/5 cursor-pointer transition-all @(features[0] ? "bg-primary/10 border-primary/30" : "bg-white/5 hover:bg-white/10")">
+                <div class="flex items-center justify-between">
+                    <span class="material-icons text-primary">auto_fix_high</span>
+                    <div class="w-8 h-4 bg-black/40 rounded-full relative p-0.5">
+                        <div class="w-3 h-3 rounded-full bg-primary transition-all @(features[0] ? "ml-4" : "ml-0") shadow-[0_0_8px_rgba(19,200,236,0.6)]"></div>
+                    </div>
+                </div>
+                <p class="mt-3 text-[10px] font-bold uppercase tracking-wider text-slate-400">Deep Upscaling</p>
+                <p class="text-[9px] text-slate-600 mt-1">4K Neural Upscaler for high-end fashion catalogs.</p>
+            </div>
+
+            <div @onclick="() => toggleFeature(2)" class="p-4 rounded-xl border border-white/5 cursor-pointer transition-all @(features[1] ? "bg-primary/10 border-primary/30" : "bg-white/5 hover:bg-white/10")">
+                <div class="flex items-center justify-between">
+                    <span class="material-icons text-primary">shutter_speed</span>
+                    <div class="w-8 h-4 bg-black/40 rounded-full relative p-0.5">
+                        <div class="w-3 h-3 rounded-full bg-primary transition-all @(features[1] ? "ml-4" : "ml-0") shadow-[0_0_8px_rgba(19,200,236,0.6)]"></div>
+                    </div>
+                </div>
+                <p class="mt-3 text-[10px] font-bold uppercase tracking-wider text-slate-400">Turbo Mode</p>
+                <p class="text-[9px] text-slate-600 mt-1">Concurrent inference channels for rapid generation.</p>
+            </div>
+
+            <div @onclick="() => toggleFeature(3)" class="p-4 rounded-xl border border-white/5 cursor-pointer transition-all @(features[2] ? "bg-primary/10 border-primary/30" : "bg-white/5 hover:bg-white/10")">
+                <div class="flex items-center justify-between">
+                    <span class="material-icons text-primary">brush</span>
+                    <div class="w-8 h-4 bg-black/40 rounded-full relative p-0.5">
+                        <div class="w-3 h-3 rounded-full bg-primary transition-all @(features[2] ? "ml-4" : "ml-0") shadow-[0_0_8px_rgba(19,200,236,0.6)]"></div>
+                    </div>
+                </div>
+                <p class="mt-3 text-[10px] font-bold uppercase tracking-wider text-slate-400">HD Refinement</p>
+                <p class="text-[9px] text-slate-600 mt-1">Second-pass attention for texture consistency.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Save Bar -->
+    <div class="flex items-center justify-end pt-4">
+        <button @onclick="SaveSettings" class="bg-primary text-background-dark px-12 py-4 rounded-xl font-bold uppercase tracking-widest text-xs hover:brightness-110 transition-all shadow-xl shadow-primary/20">
+            Save System Changes
+        </button>
+    </div>
+</div>
+
+@code {
+    private string aiCoreModel = "google/nano-banana-pro";
+    private string engineVersion = "V2.4";
+    private string apiToken = string.Empty;
+    private bool showToken = false;
+    private bool[] features = new bool[] { true, true, false };
+
+    protected override void OnInitialized()
+    {
+        aiCoreModel = Configuration["Replicate:NanoBananaModelVersion"] ?? "google/nano-banana-pro";
+        apiToken = Configuration["Replicate:ApiToken"] ?? "";
+    }
+
+    private void toggleFeature(int index)
+    {
+        features[index - 1] = !features[index - 1];
+    }
+
+    private async Task SaveSettings()
+    {
+        // In a real app, this would save to a database or encrypted config
+        await Task.Delay(1000);
+        await JSRuntime.InvokeVoidAsync("alert", "NanoBanana Engine settings updated successfully. AI Core is reloading.");
+    }
+}

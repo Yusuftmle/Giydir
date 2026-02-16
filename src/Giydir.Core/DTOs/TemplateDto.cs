@@ -27,11 +27,13 @@ public class TemplateDto
 public class GenerateFromTemplateDto
 {
     public int TemplateId { get; set; }
-    public string? ModelAssetId { get; set; } // Opsiyonel: Template ile model de seçilebilir
-    public string? CustomPrompt { get; set; } // Opsiyonel: kullanıcı özel prompt ekleyebilir
+    public string? ModelAssetId { get; set; } 
+    public string? CustomPrompt { get; set; } 
     public string AspectRatio { get; set; } = "4:3";
     public string OutputFormat { get; set; } = "jpg";
     public int? ProjectId { get; set; }
+    public string? Background { get; set; }
+    public string? Lighting { get; set; }
 }
 
 public class AIGenerationResponseDto

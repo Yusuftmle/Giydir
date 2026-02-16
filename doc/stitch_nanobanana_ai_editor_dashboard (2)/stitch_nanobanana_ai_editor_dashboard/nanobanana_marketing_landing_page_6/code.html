@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Reset Access | NanoBanana Premium Studio</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Outfit:wght@200;300;400;500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "cream": "#F5F5F3",
+                        "charcoal": "#121212",
+                        "border-muted": "rgba(18, 18, 18, 0.08)",
+                    },
+                    fontFamily: {
+                        "display": ["Outfit", "sans-serif"],
+                        "body": ["Inter", "sans-serif"]
+                    },
+                    letterSpacing: {
+                        "extra-wide": "0.15em",
+                        "ultra-wide": "0.25em",
+                    }
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer base {
+            body { @apply font-body bg-cream text-charcoal antialiased min-h-screen flex flex-col; }
+        }
+        .glass-button {
+            background: rgba(18, 18, 18, 0.9);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .glass-button:hover {
+            background: rgba(18, 18, 18, 1);
+        }
+        .input-premium {
+            @apply w-full bg-transparent border-t-0 border-x-0 border-b border-border-muted py-4 px-0 focus:ring-0 focus:border-charcoal transition-colors duration-500 placeholder:text-gray-300 text-sm tracking-extra-wide;
+        }
+        .success-state {
+            display: none;
+        }</style>
+</head>
+<body class="justify-center items-center p-6">
+<main class="w-full max-w-[440px] animate-fade-in">
+<div class="flex justify-center mb-24">
+<div class="flex items-center gap-3">
+<div class="w-7 h-7 bg-charcoal flex items-center justify-center">
+<span class="text-white font-bold text-[9px] tracking-tighter">NB</span>
+</div>
+<span class="text-charcoal text-[10px] font-medium tracking-ultra-wide uppercase">Studio Access</span>
+</div>
+</div>
+<section class="space-y-12" id="recovery-form">
+<header class="text-center">
+<h1 class="text-2xl font-display font-light tracking-extra-wide mb-4 uppercase">Reset Access</h1>
+<p class="text-xs text-gray-500 font-light tracking-widest leading-relaxed max-w-xs mx-auto">
+                    Enter your registered email to receive a secure recovery link.
+                </p>
+</header>
+<form action="#" class="space-y-10" onsubmit="event.preventDefault(); document.getElementById('recovery-form').style.display='none'; document.getElementById('confirmation-state').style.display='block';">
+<div class="group">
+<label class="block text-[10px] font-bold uppercase tracking-ultra-wide text-gray-400 mb-1 group-focus-within:text-charcoal transition-colors" for="email">
+                        Security Identification
+                    </label>
+<input class="input-premium" id="email" placeholder="email@boutique.com" required="" type="email"/>
+</div>
+<div class="space-y-6">
+<button class="glass-button w-full py-5 text-white text-[11px] font-bold uppercase tracking-ultra-wide transition-all duration-500 hover:tracking-[0.3em] shadow-sm" type="submit">
+                        Send Recovery Link
+                    </button>
+<div class="text-center">
+<a class="text-[10px] font-medium tracking-ultra-wide uppercase text-gray-400 hover:text-charcoal transition-colors inline-flex items-center gap-2" href="#">
+<span class="material-symbols-outlined text-[14px]">arrow_back</span>
+                            Back to Sign In
+                        </a>
+</div>
+</div>
+</form>
+</section>
+<section class="success-state space-y-12 text-center" id="confirmation-state">
+<div class="flex justify-center">
+<div class="w-16 h-16 rounded-full border border-border-muted flex items-center justify-center">
+<span class="material-symbols-outlined text-charcoal font-light text-2xl">mail</span>
+</div>
+</div>
+<header>
+<h2 class="text-2xl font-display font-light tracking-extra-wide mb-4 uppercase">Link Sent</h2>
+<p class="text-xs text-gray-500 font-light tracking-widest leading-relaxed max-w-xs mx-auto">
+                    An encryption key has been dispatched to your inbox. Please follow the instructions to restore your studio access.
+                </p>
+</header>
+<div class="pt-8 border-t border-border-muted">
+<p class="text-[9px] font-medium tracking-ultra-wide uppercase text-gray-400 mb-6">Didn't receive it?</p>
+<button class="text-[10px] font-bold uppercase tracking-ultra-wide text-charcoal hover:opacity-70 transition-opacity">
+                    Resend Transmission
+                </button>
+</div>
+</section>
+<footer class="mt-32 text-center">
+<p class="text-[9px] font-medium tracking-ultra-wide uppercase text-gray-300">
+                © 2024 NanoBanana Systems • Secure Environment
+            </p>
+</footer>
+</main>
+
+</body></html>

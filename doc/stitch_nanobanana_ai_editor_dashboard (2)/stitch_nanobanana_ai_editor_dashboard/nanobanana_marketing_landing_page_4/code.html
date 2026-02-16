@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NanoBanana Studio | High-Fidelity AI Export</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Outfit:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0071e3",
+                        "studio-bg": "#050505",
+                        "panel": "#0c0c0e",
+                        "border-thin": "rgba(255, 255, 255, 0.08)",
+                    },
+                    fontFamily: {
+                        "display": ["Outfit", "sans-serif"],
+                        "body": ["Inter", "sans-serif"]
+                    },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer base {
+            body { @apply font-body bg-studio-bg text-white antialiased overflow-hidden; }
+            h1, h2, h3 { @apply font-display tracking-tight; }
+        }
+        .canvas-shadow {
+            box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 0.5);
+        }
+        .tool-button {
+            @apply flex flex-col items-center justify-center gap-2 p-4 rounded-xl border border-border-thin bg-white/[0.02] hover:bg-white/[0.05] transition-all cursor-pointer;
+        }
+        .tool-button.active {
+            @apply border-primary/50 bg-primary/5 text-primary;
+        }
+        .thin-scrollbar::-webkit-scrollbar { width: 4px; }
+        .thin-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.1); border-radius: 10px; }.mag-line-r { border-right: 1px solid rgba(255, 255, 255, 0.08); }
+        .mag-line-b { border-bottom: 1px solid rgba(255, 255, 255, 0.08); }
+        .mag-line-t { border-top: 1px solid rgba(255, 255, 255, 0.08); }
+        .mag-line-l { border-left: 1px solid rgba(255, 255, 255, 0.08); }
+    </style>
+</head>
+<body class="h-screen flex flex-col">
+<nav class="h-14 mag-line-b flex items-center justify-between px-6 bg-studio-bg z-50">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 bg-white rounded flex items-center justify-center">
+<span class="text-black font-black text-[10px]">NB</span>
+</div>
+<span class="font-bold text-sm tracking-tighter uppercase">Studio</span>
+</div>
+<div class="h-4 w-px bg-white/10"></div>
+<div class="flex items-center gap-2">
+<span class="text-[11px] font-medium text-gray-500 uppercase tracking-widest">Project:</span>
+<span class="text-[11px] font-semibold text-gray-200 uppercase tracking-widest">Autumn_Campaign_Look_04</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 bg-green-500/10 px-3 py-1 rounded-full">
+<span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
+<span class="text-[10px] font-bold text-green-500 uppercase tracking-tighter">Render Complete</span>
+</div>
+<button class="text-gray-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-xl">close</span>
+</button>
+</div>
+</nav>
+<main class="flex-1 flex overflow-hidden">
+<section class="flex-1 relative bg-black flex items-center justify-center p-12 group">
+<div class="absolute top-8 left-8 z-10 space-y-4 pointer-events-none">
+<div class="bg-black/40 backdrop-blur-md border border-white/10 p-4 rounded-sm">
+<p class="text-[10px] font-bold text-gray-500 uppercase tracking-[0.2em] mb-1">Asset Info</p>
+<p class="text-xs font-medium text-white/80">Resolution: 7680 x 4320 (8K)</p>
+<p class="text-xs font-medium text-white/80">Fabric: Heavy Silk Charmeuse</p>
+<p class="text-xs font-medium text-white/80">Drape Accuracy: 99.8%</p>
+</div>
+</div>
+<div class="relative max-w-5xl w-full h-full flex items-center justify-center">
+<div class="relative aspect-[3/4] h-full canvas-shadow group-hover:scale-[1.01] transition-transform duration-700 ease-out border border-white/5 overflow-hidden">
+<img alt="High Fidelity Result" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3Q1mFKQMY0CgZYaW2YlV0yBCfjgXUCiOAvMShPJmD367xDnSwpIHRRmMIr0fKPEZ6tcbnj1k-FmI3z_2M61yfmTMBN-TcaW3uzQRjsGIN04nOJvi_7QjjDPJrDsLTPCCNpyZ5i45nxRzTUwJsaseZpqYSwGIxYCxBl3YeYig5PqaTI1oBOHGhVWC24Kn8s6_EweorXwuyos4q6MopTVMFXr8eO3Gf2wQuwXV1Y5KG4hI7MDcH9Dcl-CW4Q6qp3_oQ9zZ__wRdGpSR"/>
+<div class="absolute bottom-10 right-10 bg-white/5 backdrop-blur-xl border border-white/20 p-4 rounded-lg hidden group-hover:block transition-all duration-300">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded border border-white/10 overflow-hidden">
+<img alt="Detail zoom" class="w-full h-full object-cover scale-[4]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3Q1mFKQMY0CgZYaW2YlV0yBCfjgXUCiOAvMShPJmD367xDnSwpIHRRmMIr0fKPEZ6tcbnj1k-FmI3z_2M61yfmTMBN-TcaW3uzQRjsGIN04nOJvi_7QjjDPJrDsLTPCCNpyZ5i45nxRzTUwJsaseZpqYSwGIxYCxBl3YeYig5PqaTI1oBOHGhVWC24Kn8s6_EweorXwuyos4q6MopTVMFXr8eO3Gf2wQuwXV1Y5KG4hI7MDcH9Dcl-CW4Q6qp3_oQ9zZ__wRdGpSR"/>
+</div>
+<div>
+<p class="text-[10px] font-bold uppercase tracking-widest text-primary">Texture Detail</p>
+<p class="text-[9px] text-gray-400">Pore-level neural render</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-4 bg-white/5 backdrop-blur-md border border-white/10 px-4 py-2 rounded-full">
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-lg">zoom_in</span></button>
+<div class="w-px h-4 bg-white/10"></div>
+<span class="text-[10px] font-mono text-gray-400">34% VIEW</span>
+<div class="w-px h-4 bg-white/10"></div>
+<button class="hover:text-primary transition-colors"><span class="material-symbols-outlined text-lg">aspect_ratio</span></button>
+</div>
+</section>
+<aside class="w-96 mag-line-l bg-panel flex flex-col h-full overflow-y-auto thin-scrollbar">
+<div class="p-8 mag-line-b">
+<h2 class="text-2xl font-light mb-1">Studio Tools</h2>
+<p class="text-[10px] text-gray-500 font-bold uppercase tracking-[0.2em]">Post-Production Engine</p>
+</div>
+<div class="p-8 mag-line-b">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-xs font-bold uppercase tracking-widest text-gray-300">Background Swap</h3>
+<span class="text-[10px] text-primary font-bold px-2 py-0.5 bg-primary/10 rounded">AI Active</span>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<button class="tool-button active">
+<span class="material-symbols-outlined text-2xl font-light">camera_indoor</span>
+<span class="text-[10px] font-medium uppercase tracking-tighter">Realistic Studio</span>
+</button>
+<button class="tool-button">
+<span class="material-symbols-outlined text-2xl font-light">location_city</span>
+<span class="text-[10px] font-medium uppercase tracking-tighter">Paris Street</span>
+</button>
+<button class="tool-button">
+<span class="material-symbols-outlined text-2xl font-light">grid_view</span>
+<span class="text-[10px] font-medium uppercase tracking-tighter">Minimalist Room</span>
+</button>
+<button class="tool-button">
+<span class="material-symbols-outlined text-2xl font-light">add</span>
+<span class="text-[10px] font-medium uppercase tracking-tighter">Custom HDRI</span>
+</button>
+</div>
+</div>
+<div class="p-8 mag-line-b">
+<div class="flex items-center justify-between mb-6">
+<h3 class="text-xs font-bold uppercase tracking-widest text-gray-300">Export Presets</h3>
+<span class="material-symbols-outlined text-sm text-gray-500">info</span>
+</div>
+<div class="space-y-3">
+<div class="group flex items-center justify-between p-4 border border-border-thin rounded-lg hover:border-white/20 transition-all cursor-pointer">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-gray-400 group-hover:text-white transition-colors">photo_library</span>
+<div>
+<p class="text-[11px] font-bold uppercase tracking-widest">Instagram Post</p>
+<p class="text-[10px] text-gray-500">4:5 Aspect · 1080x1350</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-gray-600 group-hover:text-primary transition-colors">download</span>
+</div>
+<div class="group flex items-center justify-between p-4 border border-border-thin rounded-lg hover:border-white/20 transition-all cursor-pointer">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-gray-400 group-hover:text-white transition-colors">phone_iphone</span>
+<div>
+<p class="text-[11px] font-bold uppercase tracking-widest">Instagram Story</p>
+<p class="text-[10px] text-gray-500">9:16 Aspect · 1080x1920</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-gray-600 group-hover:text-primary transition-colors">download</span>
+</div>
+<div class="group flex items-center justify-between p-4 border border-border-thin rounded-lg hover:border-white/20 transition-all cursor-pointer">
+<div class="flex items-center gap-4">
+<span class="material-symbols-outlined text-gray-400 group-hover:text-white transition-colors">desktop_windows</span>
+<div>
+<p class="text-[11px] font-bold uppercase tracking-widest">Website Banner</p>
+<p class="text-[10px] text-gray-500">21:9 Aspect · 4000x1700</p>
+</div>
+</div>
+<span class="material-symbols-outlined text-gray-600 group-hover:text-primary transition-colors">download</span>
+</div>
+</div>
+</div>
+<div class="p-8 mb-20">
+<h3 class="text-xs font-bold uppercase tracking-widest text-gray-500 mb-6">Technical Overrides</h3>
+<div class="space-y-6">
+<div class="space-y-3">
+<div class="flex justify-between text-[10px] uppercase font-bold tracking-widest">
+<span class="text-gray-400">Ray-Traced Shadows</span>
+<span class="text-primary">Ultra High</span>
+</div>
+<div class="h-0.5 bg-white/5 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[90%]"></div>
+</div>
+</div>
+<div class="space-y-3">
+<div class="flex justify-between text-[10px] uppercase font-bold tracking-widest">
+<span class="text-gray-400">Neural Upscaling</span>
+<span class="text-primary">8K Native</span>
+</div>
+<div class="h-0.5 bg-white/5 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-full"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-auto p-6 bg-panel mag-line-t sticky bottom-0">
+<button class="w-full bg-white text-black py-4 rounded-lg font-bold text-sm hover:bg-gray-200 transition-all flex items-center justify-center gap-3">
+<span class="material-symbols-outlined">download_done</span>
+                    EXPORT CAMPAIGN ASSETS
+                </button>
+<p class="text-[9px] text-center text-gray-600 mt-4 font-medium uppercase tracking-[0.2em]">Estimated file size: 245 MB</p>
+</div>
+</aside>
+</main>
+<div class="fixed bottom-6 left-6 pointer-events-none opacity-20 hidden lg:block">
+<p class="font-display text-4xl font-extralight tracking-tighter">NANOBANANA<br/>STUDIO V.4</p>
+</div>
+
+</body></html>

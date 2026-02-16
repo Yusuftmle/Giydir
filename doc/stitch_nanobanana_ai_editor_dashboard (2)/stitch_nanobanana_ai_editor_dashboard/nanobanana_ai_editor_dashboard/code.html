@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NanoBanana AI Fashion Studio</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&amp;family=Space+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "slate-950": "#080a0f",
+                        "slate-900": "#0f1219",
+                        "slate-800": "#1a1e26",
+                        "premium-accent": "#d4b38d",
+                        "soft-white": "#f1f5f9",
+                    },
+                    fontFamily: {
+                        "sans": ["Inter", "sans-serif"],
+                        "display": ["Space Grotesk", "sans-serif"]
+                    },
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer base {
+            body {
+                @apply bg-slate-950 text-slate-300 antialiased;
+            }
+        }
+        .glass-panel {
+            @apply bg-white/[0.03] backdrop-blur-2xl border border-white/10;
+        }
+        .sidebar-item-active {
+            @apply text-premium-accent bg-premium-accent/5;
+        }
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+        ::-webkit-scrollbar-track {
+            @apply bg-transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            @apply bg-slate-800 rounded-full;
+        }
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .step-label {
+            @apply text-[10px] font-bold tracking-[0.2em] uppercase text-slate-500 mb-2 block;
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden font-sans">
+<nav class="fixed left-0 top-0 h-full w-20 flex flex-col items-center py-8 border-r border-white/5 bg-slate-950 z-50">
+<div class="mb-12">
+<div class="w-12 h-12 rounded-xl bg-gradient-to-br from-premium-accent to-[#b08d65] flex items-center justify-center text-slate-950 shadow-lg shadow-premium-accent/20">
+<span class="material-symbols-outlined font-bold text-2xl">camera</span>
+</div>
+</div>
+<div class="flex flex-col gap-10 flex-1">
+<button class="text-premium-accent"><span class="material-symbols-outlined text-[26px]">grid_view</span></button>
+<button class="text-slate-600 hover:text-premium-accent transition-colors"><span class="material-symbols-outlined text-[26px]">inventory_2</span></button>
+<button class="text-slate-600 hover:text-premium-accent transition-colors"><span class="material-symbols-outlined text-[26px]">group</span></button>
+<button class="text-slate-600 hover:text-premium-accent transition-colors"><span class="material-symbols-outlined text-[26px]">collections</span></button>
+</div>
+<div class="mt-auto flex flex-col gap-8">
+<button class="text-slate-600 hover:text-premium-accent transition-colors"><span class="material-symbols-outlined text-[26px]">settings</span></button>
+<div class="w-10 h-10 rounded-full overflow-hidden border border-white/10 p-0.5">
+<img alt="Profile" class="w-full h-full object-cover rounded-full" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAoKjXKuuit50ZbVTUrL_M231n53Sx-hdpx7tQdJw3Ajc4O40ndep8m-TVutfPx_7VwADo1n10H5KYUyMsvyszoIxcwXpzz2DEk_hvs6z6YNWm6waZ3RChj75si5U_kA7-5XuGQUf1nC0TNW23Bkm397XVb4_Ya_LmPV8ehYDvL3FHx_vtfjH20Lp_w9SRfJzTshnhnohOI2nQz-di5b6jQd-TUgieUtEsXum48pApPc8ECl_SFRlL1yPNQWvSH03S-5dYJgE584l70"/>
+</div>
+</div>
+</nav>
+<div class="flex-1 flex flex-col ml-20">
+<header class="h-16 border-b border-white/5 px-8 flex items-center justify-between bg-slate-950/80 backdrop-blur-md">
+<div class="flex items-center gap-6">
+<h1 class="text-sm font-display font-semibold tracking-[0.15em] text-soft-white uppercase">NanoBanana <span class="text-premium-accent/80 ml-2">AI Fashion Studio</span></h1>
+<div class="h-4 w-px bg-white/10"></div>
+<div class="flex items-center gap-2">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+<span class="text-[10px] text-slate-400 font-medium tracking-widest uppercase">Live Production Mode</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-3 px-4 py-1.5 glass-panel rounded-lg">
+<span class="text-[10px] font-semibold tracking-widest text-slate-400">CREDITS:</span>
+<span class="text-xs font-display font-bold text-premium-accent">2,840</span>
+</div>
+<button class="bg-soft-white text-slate-950 px-5 py-2 rounded-lg text-[11px] font-bold tracking-widest uppercase hover:bg-premium-accent transition-colors">Export Session</button>
+</div>
+</header>
+<main class="flex-1 flex overflow-hidden">
+<aside class="w-[320px] border-r border-white/5 flex flex-col bg-slate-900/20">
+<div class="p-6">
+<span class="step-label">Step 01 / Garment Upload</span>
+<div class="relative group cursor-pointer mb-8">
+<div class="absolute -inset-0.5 bg-premium-accent/20 rounded-xl blur opacity-0 group-hover:opacity-100 transition duration-500"></div>
+<div class="relative glass-panel rounded-xl p-8 border-dashed border-white/10 flex flex-col items-center text-center hover:border-premium-accent/40 transition-colors">
+<span class="material-symbols-outlined text-3xl font-light text-premium-accent mb-4">add_photo_alternate</span>
+<p class="text-xs font-semibold text-soft-white tracking-wide uppercase">Add Boutique Item</p>
+<p class="text-[9px] text-slate-500 mt-2 leading-relaxed">UPLOAD FLAT-LAY OR<br/>MANNEQUIN PHOTOGRAPHY</p>
+</div>
+</div>
+<div class="flex items-center justify-between mb-4 border-b border-white/5 pb-2">
+<h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Garment Library</h3>
+<span class="text-[9px] text-premium-accent font-medium">12 ITEMS</span>
+</div>
+</div>
+<div class="flex-1 overflow-y-auto px-6 space-y-4 pb-6">
+<div class="relative rounded-xl overflow-hidden ring-1 ring-premium-accent/50 bg-slate-900/40 p-1.5">
+<div class="aspect-[4/5] rounded-lg overflow-hidden relative">
+<img alt="Garment" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC16JVnOR00rPeWB7VjgQ2dpFlWan_x5hFok9C9BScxqetYPXL2CmrjUiTl39HZyaR-DcjrQf-8eWbs_IfTlW9Y_EULrepP2WSySxfH4mRw_JlxStQAPo747vlXsTbPn35V-LY_J4nmMBEhD_QhBvVy1cPjYVeQEtGPdwZVmhGmYbgFhIIbFnSdxoVwO3KaiG2uXX9eu_1N9P5Eu0iAyri7t44TnyHcODCHbwflynfHZ5di2HTMBNLciEmVbyfAipMOzhhlsEIgh2w3"/>
+<div class="absolute inset-0 bg-gradient-to-t from-slate-950/60 to-transparent"></div>
+<div class="absolute bottom-2 left-2 right-2 flex justify-between items-center">
+<span class="text-[10px] font-medium text-white truncate pr-2">Silk Evening Red</span>
+<span class="material-symbols-outlined text-premium-accent text-sm">check_circle</span>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-3">
+<div class="aspect-[4/5] rounded-xl overflow-hidden glass-panel p-1 group cursor-pointer border-white/5 hover:border-white/20 transition-all">
+<img alt="Garment" class="w-full h-full object-cover rounded-lg opacity-60 group-hover:opacity-100 transition-opacity" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCqQewPBbP_hlEXXUIiPvDPa8X_ZlLfqvYFzp9OEXJLhSF5a2FSIyVs4t8XPYvR0-2HJq7EZKUM-h6ZpuPb5INcudsMu5rjP5_y8pACtTg6OodXEAPBdSc56C54RE_OGQLwwECeCk80ipUKk5JnNfF1S6iMO1t4PyVMTWbqy7zJBXtFEfShxrvnsSv1vKLC7xh0bqRJOVKjpAj5BfiZdR-Egq64ygtcgRiCvu3R_YuB5hOydVCeTbQuINnRrr-eZLRd3GcbcIOuO7ZF"/>
+</div>
+<div class="aspect-[4/5] rounded-xl overflow-hidden glass-panel p-1 group cursor-pointer border-white/5 hover:border-white/20 transition-all">
+<img alt="Garment" class="w-full h-full object-cover rounded-lg opacity-60 group-hover:opacity-100 transition-opacity" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA_v08O-hDI5gX6K2ed7KfRAFsjuadGAHlE-EqTBox7vxxWr33EgTNwOAVsQMG3SZH40AfTLOFpmXYPLKabeCl3xqEKYhUQcspsP9K31wsuciScX_34iWVTe-ZtHAKx2N3lZELGYmf9jnLqUr0pDgPMaTobH2-rVtL4xVJKp1n_Zv88_QanYPTYYWARW6vxXh12MVWL0WhVlb__MDIhyJetKbqo0oA9zg7AxryuO-Oy8WpQBnbFX4VH0Ccll2eVK3WogQDEyYsJcyLh"/>
+</div>
+<div class="aspect-[4/5] rounded-xl overflow-hidden glass-panel p-1 group cursor-pointer border-white/5 hover:border-white/20 transition-all">
+<img alt="Garment" class="w-full h-full object-cover rounded-lg opacity-60 group-hover:opacity-100 transition-opacity" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCA9v0mR-Dox4I1fNKYOTfAjsZk9MVeTDLe8pbx9GZLreLx1Rgr2EfV3cN828lldxj8byLiW9Xz2OlAjFF02zGXrZGPoIAea3ndKMeYZnCKhpxaibho_qkKRpDkPN44h-xgItjiPHcxhR5E7nvecKqrReBVIRSmjC0WiAj2AW8pWga_yf696ET4YZnNOU_P0PUH-llCtTI6rXk31HfCeGbFOQq69-w-RAFUqYH3KEaHe_ujwomvH34q0bnLm-ICHT1Vo7-HgKEzqajM"/>
+</div>
+</div>
+</div>
+</aside>
+<section class="flex-1 flex flex-col bg-slate-950 min-w-0 border-r border-white/5">
+<div class="p-8 pb-4">
+<span class="step-label">Step 02 / Creative Direction</span>
+<div class="flex items-center justify-between mb-8">
+<h2 class="text-2xl font-display font-medium text-soft-white tracking-tight">Virtual Talent &amp; Set</h2>
+<div class="flex gap-2">
+<button class="glass-panel px-4 py-2 rounded-lg text-[10px] font-bold tracking-widest uppercase hover:bg-white/5 transition-colors">Advanced Filters</button>
+</div>
+</div>
+<div class="space-y-8">
+<div>
+<div class="flex items-center gap-3 mb-4">
+<span class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Photorealistic Talent</span>
+<div class="flex-1 h-px bg-white/5"></div>
+</div>
+<div class="flex gap-4 overflow-x-auto no-scrollbar pb-2">
+<div class="flex-none w-36 aspect-[3/4] rounded-xl overflow-hidden relative ring-2 ring-premium-accent group cursor-pointer">
+<img alt="Model" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBi-JZTVchJ7MDg0T4cmwa7gac-HLXK1ubWKFs8d0CEzRbuEmZZBjol8-E2_0nynXHYYBWDZ18Da81JWBgzL89oRYxxHoYGkK_X_AoUBzPPRH1fslzv_CZSzHHTl0eEdiYwPIr4_AJiVF1qbkcS1uoc7QnPlQkV5ikxMhCWx1wDDIkT5-VmuVgKMv9RHtygmjMP614JOHRWUhXlz7WzCkzxdz5w5eP6nYau5gbOaSYsMgGV2GvNwU-0IBuCF6NxHBZfyP3UQ7Ye9WoD"/>
+<div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
+<div class="absolute bottom-3 left-3">
+<p class="text-xs font-bold text-white tracking-wide">ELENA</p>
+<p class="text-[8px] text-premium-accent uppercase font-bold tracking-widest mt-0.5">Caucasian / Fit</p>
+</div>
+</div>
+<div class="flex-none w-36 aspect-[3/4] rounded-xl overflow-hidden relative glass-panel group cursor-pointer hover:border-premium-accent/30 transition-all">
+<img alt="Model" class="w-full h-full object-cover opacity-60 group-hover:opacity-90" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAeXc4bOfxLbkVLRqH-4051XnkJqMoSi0DqAgiEV1SsI0sdvwv_Vq3P3CRl7TmzS0RblYW6cVn7yQQxbmBCBEuGDpuKls8IMwDOiQo0RbN7xbcGOar_N58kqg8ih0NbaTh3LNFH8KuFBQDlyTOTay1LGiKtPWzuf_bWF_Zop6TfzYxylk0XYPoqXXRzwPWOjK0z99e0gGuefuSmMSvCUCRtR59cBKKfeE-dlDe9ghuirK4cNa25d3llmDNFhipCxav3Sb5ZV8LoSI-E"/>
+<div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
+<div class="absolute bottom-3 left-3">
+<p class="text-xs font-bold text-white tracking-wide">MARCUS</p>
+<p class="text-[8px] text-slate-400 uppercase font-bold tracking-widest mt-0.5">African / Athletic</p>
+</div>
+</div>
+<div class="flex-none w-36 aspect-[3/4] rounded-xl overflow-hidden relative glass-panel group cursor-pointer hover:border-premium-accent/30 transition-all">
+<img alt="Model" class="w-full h-full object-cover opacity-60 group-hover:opacity-90" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAlm9ZnHv3XtmLsmCiE3BVixApLiZMOQQdxDL5p5s8XuWtINXFvePRxvb8cUJSMjPewgmI7KxhhZ4HDO05TkDeLrkXzZwDHElUSf-2Z3iqpnnGoW3cfdX8p-6rKBtb-iu8gMVI3-Xcauke-Ro6DNyQ7KtS6P84UoaY_Zrww-vicwSjDHtld1Z2SlPGVz7flzgID5kTv33hkULsiw7lwA4A6iRoZXLhlGcw_s4Nes6ihxduFL0lLJjV1USq8U7mVar20nDNdiHxqjKZQ"/>
+<div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
+<div class="absolute bottom-3 left-3">
+<p class="text-xs font-bold text-white tracking-wide">SOPHIA</p>
+<p class="text-[8px] text-slate-400 uppercase font-bold tracking-widest mt-0.5">Asian / Petite</p>
+</div>
+</div>
+<div class="flex-none w-36 aspect-[3/4] rounded-xl overflow-hidden relative glass-panel group cursor-pointer hover:border-premium-accent/30 transition-all">
+<img alt="Model" class="w-full h-full object-cover opacity-60 group-hover:opacity-90" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCzEae11HajK_A_XmyLtq50GnrZLqapqrXihXSrgQIOuj6vrFac-tjqr0hYtOQI24MuIDhf2MbozJtGWIiLHQ2tAOq-crvzaC-HZe-37hH7lf4nfEMyXpg0e6QBDsLys2BQurKITZB5BFbxn2aokABhYTEnUx7xZ7IZ2bIiC-1dDyWAA9PhqZpqcMiBmT1UbWHsqYUB9HMitkSCryuwTopPez7vRIi9ErUPChEjSLT7FR5y7Ng9sbsqD239FB_exp97HmaKkVWvB13n"/>
+<div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
+<div class="absolute bottom-3 left-3">
+<p class="text-xs font-bold text-white tracking-wide">CHLOE</p>
+<p class="text-[8px] text-slate-400 uppercase font-bold tracking-widest mt-0.5">Curvy / Studio</p>
+</div>
+</div>
+</div>
+</div>
+<div class="grid grid-cols-2 gap-8">
+<div>
+<div class="flex items-center gap-3 mb-4">
+<span class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Lighting Profile</span>
+<div class="flex-1 h-px bg-white/5"></div>
+</div>
+<div class="grid grid-cols-1 gap-2">
+<button class="flex items-center justify-between p-3 rounded-lg border border-premium-accent bg-premium-accent/5 text-premium-accent">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-sm">wb_sunny</span>
+<span class="text-[10px] font-bold tracking-widest uppercase">Golden Hour</span>
+</div>
+<span class="material-symbols-outlined text-sm">check</span>
+</button>
+<button class="flex items-center justify-between p-3 rounded-lg border border-white/5 hover:border-white/20 transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-sm text-slate-500">light_mode</span>
+<span class="text-[10px] font-bold tracking-widest uppercase text-slate-400">Studio Soft</span>
+</div>
+</button>
+<button class="flex items-center justify-between p-3 rounded-lg border border-white/5 hover:border-white/20 transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-sm text-slate-500">brightness_4</span>
+<span class="text-[10px] font-bold tracking-widest uppercase text-slate-400">Sunset High-Key</span>
+</div>
+</button>
+</div>
+</div>
+<div>
+<div class="flex items-center gap-3 mb-4">
+<span class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Location Set</span>
+<div class="flex-1 h-px bg-white/5"></div>
+</div>
+<div class="grid grid-cols-1 gap-2">
+<button class="flex items-center justify-between p-3 rounded-lg border border-white/5 hover:border-white/20 transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-sm text-slate-500">location_on</span>
+<span class="text-[10px] font-bold tracking-widest uppercase text-slate-400">Parisian Street</span>
+</div>
+</button>
+<button class="flex items-center justify-between p-3 rounded-lg border border-premium-accent bg-premium-accent/5 text-premium-accent">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-sm">storefront</span>
+<span class="text-[10px] font-bold tracking-widest uppercase">Minimalist Boutique</span>
+</div>
+<span class="material-symbols-outlined text-sm">check</span>
+</button>
+<button class="flex items-center justify-between p-3 rounded-lg border border-white/5 hover:border-white/20 transition-colors">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-sm text-slate-500">villa</span>
+<span class="text-[10px] font-bold tracking-widest uppercase text-slate-400">Luxury Interior</span>
+</div>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<aside class="w-[440px] flex flex-col bg-slate-900/40 backdrop-blur-3xl">
+<div class="p-8 flex-1 flex flex-col">
+<span class="step-label">Step 03 / Live Preview</span>
+<div class="flex-1 relative mt-2 group">
+<div class="absolute inset-0 glass-panel rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10">
+<div class="absolute inset-0 bg-slate-950 flex flex-col items-center justify-center p-8 text-center">
+<div class="w-full h-full relative group/preview cursor-crosshair">
+<img alt="Composite Preview" class="w-full h-full object-cover rounded-xl opacity-40 transition-opacity duration-1000 group-hover/preview:opacity-60" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBi-JZTVchJ7MDg0T4cmwa7gac-HLXK1ubWKFs8d0CEzRbuEmZZBjol8-E2_0nynXHYYBWDZ18Da81JWBgzL89oRYxxHoYGkK_X_AoUBzPPRH1fslzv_CZSzHHTl0eEdiYwPIr4_AJiVF1qbkcS1uoc7QnPlQkV5ikxMhCWx1wDDIkT5-VmuVgKMv9RHtygmjMP614JOHRWUhXlz7WzCkzxdz5w5eP6nYau5gbOaSYsMgGV2GvNwU-0IBuCF6NxHBZfyP3UQ7Ye9WoD"/>
+<div class="absolute inset-0 flex flex-col items-center justify-center">
+<div class="w-24 h-24 mb-6 relative">
+<div class="absolute inset-0 border-2 border-premium-accent/30 rounded-full animate-ping"></div>
+<div class="relative w-full h-full bg-slate-900/80 rounded-full flex items-center justify-center backdrop-blur-sm border border-premium-accent/20">
+<span class="material-symbols-outlined text-premium-accent text-4xl font-light">auto_fix_high</span>
+</div>
+</div>
+<h4 class="text-sm font-display font-bold text-soft-white tracking-[0.15em] uppercase mb-2">Initialize Composite</h4>
+<p class="text-[10px] text-slate-500 max-w-[240px] leading-relaxed uppercase tracking-widest font-medium">Ready to dress Elena in Silk Evening Red at the Minimalist Boutique.</p>
+</div>
+<div class="absolute top-4 left-4 flex gap-2">
+<span class="px-2 py-1 bg-black/60 backdrop-blur-md rounded text-[9px] font-bold text-white uppercase border border-white/5">8K Upscaling Active</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-8 space-y-6">
+<div class="flex items-center justify-between border-b border-white/5 pb-2">
+<h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Finishing Suite</h3>
+<span class="text-[9px] text-slate-500 font-bold tracking-widest uppercase">Production Grade</span>
+</div>
+<div class="grid grid-cols-3 gap-3">
+<button class="flex flex-col items-center gap-3 p-4 glass-panel rounded-xl hover:border-premium-accent/40 transition-all group">
+<span class="material-symbols-outlined text-xl text-slate-400 group-hover:text-premium-accent">tune</span>
+<span class="text-[9px] font-bold tracking-widest uppercase text-slate-500 group-hover:text-soft-white">Exposure</span>
+</button>
+<button class="flex flex-col items-center gap-3 p-4 glass-panel rounded-xl hover:border-premium-accent/40 transition-all group border-premium-accent/20 bg-premium-accent/5">
+<span class="material-symbols-outlined text-xl text-premium-accent">high_res</span>
+<span class="text-[9px] font-bold tracking-widest uppercase text-soft-white">HD Enhance</span>
+</button>
+<button class="flex flex-col items-center gap-3 p-4 glass-panel rounded-xl hover:border-premium-accent/40 transition-all group">
+<span class="material-symbols-outlined text-xl text-slate-400 group-hover:text-premium-accent">image_search</span>
+<span class="text-[9px] font-bold tracking-widest uppercase text-slate-500 group-hover:text-soft-white">Retouch</span>
+</button>
+</div>
+</div>
+</div>
+<div class="p-8 border-t border-white/5 bg-slate-950/40">
+<button class="w-full relative group">
+<div class="absolute -inset-1 bg-gradient-to-r from-premium-accent via-white/20 to-premium-accent rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+<div class="relative w-full bg-soft-white hover:bg-premium-accent text-slate-950 font-display font-extrabold text-[12px] tracking-[0.25em] py-5 rounded-xl transition-all flex items-center justify-center gap-4 group-hover:shadow-[0_0_30px_rgba(212,179,141,0.3)]">
+<span class="material-symbols-outlined text-xl">camera_enhance</span>
+                        RENDER MASTERPIECE
+                    </div>
+</button>
+<div class="mt-4 flex items-center justify-center gap-3">
+<div class="flex -space-x-1">
+<div class="w-4 h-4 rounded-full border border-slate-950 bg-slate-800"></div>
+<div class="w-4 h-4 rounded-full border border-slate-950 bg-slate-700"></div>
+</div>
+<p class="text-[9px] text-slate-500 font-bold tracking-[0.1em] uppercase">Trusted by 200+ Premium Brands</p>
+</div>
+</div>
+</aside>
+</main>
+</div>
+
+</body></html>

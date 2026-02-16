@@ -7,276 +7,346 @@
 @inject ILogger<Editor> Logger
 @rendermode InteractiveServer
 
-<div class="flex h-[calc(100vh-5rem)] overflow-hidden">
-    <!-- Column 1: Upload/Template (Left Sidebar) -->
-    <aside class="w-80 flex-none flex flex-col border-r border-gray-200 dark:border-gray-800 bg-white dark:bg-surface-dark z-10">
-        <div class="p-5 border-b border-gray-200 dark:border-gray-800">
-            <div class="flex items-center justify-between mb-2">
-                <h2 class="text-sm uppercase tracking-wider text-primary font-bold">Adım 1</h2>
-                @if ((!string.IsNullOrEmpty(uploadedClothingUrl)) || selectedTemplateId.HasValue)
-                {
-                    <span class="material-icons-outlined text-primary text-sm">check_circle</span>
-                }
-            </div>
-            <h3 class="text-xl font-bold mb-1">Kıyafet Seç</h3>
-            <p class="text-xs text-gray-500 dark:text-gray-400">Fotoğraf yükleyin, template seçin veya galeriden seçin.</p>
-        </div>
+<div class="flex h-[calc(100vh-4rem)] overflow-hidden bg-slate-950">
+    <!-- Column 1: Garment Upload/Selection (Left Sidebar) -->
+    <aside class="w-[320px] border-r border-white/5 flex flex-col bg-slate-900/20">
+        <div class="p-6">
+            <span class="step-label">Step 01 / Garment Upload</span>
+            
+            @if (editorMode == "upload")
+            {
+                <!-- Upload Area -->
+                <div class="relative group cursor-pointer mb-8">
+                    <div class="absolute -inset-0.5 bg-[#d4b38d]/20 rounded-xl blur opacity-0 group-hover:opacity-100 transition duration-500"></div>
+                    <div class="relative glass-panel rounded-xl p-8 border-dashed border-white/10 flex flex-col items-center text-center hover:border-[#d4b38d]/40 transition-colors">
+                        @if (string.IsNullOrEmpty(uploadedClothingUrl))
+                        {
+                            <span class="material-symbols-outlined text-3xl font-light text-[#d4b38d] mb-4">add_photo_alternate</span>
+                            <p class="text-xs font-semibold text-[#f1f5f9] tracking-wide uppercase">Add Boutique Item</p>
+                            <p class="text-[9px] text-slate-500 mt-2 leading-relaxed">UPLOAD FLAT-LAY OR<br/>MANNEQUIN PHOTOGRAPHY</p>
+                            <InputFile OnChange="HandleClothingUpload" class="mt-2 text-xs w-full" accept="image/jpeg,image/png,image/webp" />
+                        }
+                        else
+                        {
+                            <img src="@uploadedClothingUrl" class="max-h-28 rounded-lg object-contain" alt="Yüklenen kıyafet" />
+                            <button class="mt-2 text-xs text-red-400 hover:text-red-300 flex items-center gap-1" @onclick="ClearClothing">
+                                <span class="material-symbols-outlined text-sm">delete</span> Kaldır
+                            </button>
+                        }
+                    </div>
+                </div>
+            }
+            else
+            {
+                <!-- Template Mode -->
+                <div class="relative group cursor-pointer mb-8">
+                    <div class="relative glass-panel rounded-xl p-6 border-white/10 flex flex-col items-center text-center">
+                        <span class="material-symbols-outlined text-3xl font-light text-[#d4b38d] mb-3">auto_awesome</span>
+                        <p class="text-xs font-semibold text-[#f1f5f9] tracking-wide uppercase">Template Mode</p>
+                        <p class="text-[9px] text-slate-500 mt-2">AI GENERATED FASHION</p>
+                    </div>
+                </div>
+            }
 
-        <!-- Mode Tabs -->
-        <div class="px-5 pt-3 pb-2 border-b border-gray-200 dark:border-gray-800">
-            <div class="flex gap-2 bg-gray-100 dark:bg-gray-800 rounded-lg p-1">
-                <button class="flex-1 px-3 py-2 rounded-md text-sm font-medium transition-all @(editorMode == "upload" ? "bg-white dark:bg-gray-700 text-primary shadow-sm" : "text-gray-600 dark:text-gray-400")"
+            <!-- Mode Tabs -->
+            <div class="flex gap-2 mb-8">
+                <button class="flex-1 px-3 py-2 rounded-lg text-[10px] font-bold tracking-widest uppercase transition-all @(editorMode == "upload" ? "bg-white/5 text-[#d4b38d] border border-[#d4b38d]/30" : "text-slate-500 hover:text-slate-300")"
                         @onclick='() => { editorMode = "upload"; selectedTemplateId = null; }'>
-                    <span class="material-icons-outlined text-base align-middle mr-1">cloud_upload</span>
-                    Yükle
+                    Upload
                 </button>
-                <button class="flex-1 px-3 py-2 rounded-md text-sm font-medium transition-all @(editorMode == "template" ? "bg-white dark:bg-gray-700 text-primary shadow-sm" : "text-gray-600 dark:text-gray-400")"
+                <button class="flex-1 px-3 py-2 rounded-lg text-[10px] font-bold tracking-widest uppercase transition-all @(editorMode == "template" ? "bg-white/5 text-[#d4b38d] border border-[#d4b38d]/30" : "text-slate-500 hover:text-slate-300")"
                         @onclick='() => { editorMode = "template"; uploadedClothingUrl = null; }'>
-                    <span class="material-icons-outlined text-base align-middle mr-1">auto_awesome</span>
                     Template
                 </button>
             </div>
+
+            <div class="flex items-center justify-between mb-4 border-b border-white/5 pb-2">
+                <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                    @(editorMode == "template" ? "Template Library" : "Garment Library")
+                </h3>
+                <span class="text-[9px] text-[#d4b38d] font-medium">
+                    @(editorMode == "template" ? templates.Count : "12") ITEMS
+                </span>
+            </div>
         </div>
 
-        @if (editorMode == "upload")
-        {
-            <!-- Drag & Drop Area -->
-            <div class="px-5 pt-5 pb-2 flex-none">
-                <div class="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-6 flex flex-col items-center justify-center text-center transition-all hover:border-primary hover:bg-primary/5 cursor-pointer group h-40 @(isDragging ? "border-primary bg-primary/5" : "") upload-pulse"
-                     @ondragover="HandleDragOver"
-                     @ondragover:preventDefault
-                     @ondragleave="HandleDragLeave">
-                    @if (string.IsNullOrEmpty(uploadedClothingUrl))
-                    {
-                        <div class="w-10 h-10 rounded-full bg-gray-100 dark:bg-gray-800 flex items-center justify-center mb-3 group-hover:bg-primary group-hover:text-background-dark transition-colors">
-                            <span class="material-icons-outlined text-xl">cloud_upload</span>
-                        </div>
-                        <p class="text-sm font-medium mb-1">Tıklayın veya Sürükleyin</p>
-                        <p class="text-xs text-gray-500">JPG, PNG desteklenir (Maks 10MB)</p>
-                        <InputFile OnChange="HandleClothingUpload" class="mt-2 text-xs w-full" accept="image/jpeg,image/png,image/webp" />
-                    }
-                    else
-                    {
-                        <img src="@uploadedClothingUrl" class="max-h-28 rounded-lg object-contain" alt="Yüklenen kıyafet" />
-                        <button class="mt-2 text-xs text-red-400 hover:text-red-300 flex items-center gap-1" @onclick="ClearClothing">
-                            <span class="material-icons-outlined text-sm">delete</span> Kaldır
-                        </button>
-                    }
-                </div>
-            </div>
-        }
-        else
-        {
-            <!-- Template Selector -->
-            <div class="flex-1 overflow-y-auto px-5 py-4">
+        <!-- Library / Templates -->
+        <div class="flex-1 overflow-y-auto px-6 space-y-4 pb-6 no-scrollbar">
+            @if (editorMode == "template")
+            {
                 @if (isLoadingTemplates)
                 {
                     <div class="flex items-center justify-center py-10">
-                        <div class="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                        <div class="w-6 h-6 border-2 border-[#d4b38d] border-t-transparent rounded-full animate-spin"></div>
                     </div>
                 }
                 else if (templates.Any())
                 {
-                    <div class="grid grid-cols-1 gap-3">
-                        @foreach (var template in templates)
-                        {
-                            <button class="text-left p-4 rounded-xl border-2 transition-all @(selectedTemplateId == template.Id ? "border-primary bg-primary/10" : "border-gray-200 dark:border-gray-700 hover:border-primary/50")"
-                                    @onclick='() => SelectTemplate(template.Id)'>
-                                <div class="flex items-start gap-3">
-                                    @if (!string.IsNullOrEmpty(template.ThumbnailPath))
-                                    {
-                                        <img src="@template.ThumbnailPath" class="w-16 h-16 rounded-lg object-cover" alt="@template.Name" />
-                                    }
-                                    else
-                                    {
-                                        <div class="w-16 h-16 rounded-lg bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center">
-                                            <span class="material-icons-outlined text-white text-2xl">style</span>
-                                        </div>
-                                    }
-                                    <div class="flex-1 min-w-0">
-                                        <h4 class="font-bold text-sm mb-1 truncate">@template.Name</h4>
-                                        <p class="text-xs text-gray-500 dark:text-gray-400 line-clamp-2">@template.Description</p>
-                                        <div class="flex gap-1 mt-2">
-                                            @if (!string.IsNullOrEmpty(template.Color))
-                                            {
-                                                <span class="text-xs px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">@template.Color</span>
-                                            }
-                                            @if (!string.IsNullOrEmpty(template.Style))
-                                            {
-                                                <span class="text-xs px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400">@template.Style</span>
-                                            }
-                                        </div>
+                    @foreach (var template in templates)
+                    {
+                        <button class="w-full text-left p-4 rounded-xl border transition-all @(selectedTemplateId == template.Id ? "border-[#d4b38d] bg-[#d4b38d]/10" : "border-white/10 hover:border-[#d4b38d]/50")"
+                                @onclick='() => SelectTemplate(template.Id)'>
+                            <div class="flex items-start gap-3">
+                                @if (!string.IsNullOrEmpty(template.ThumbnailPath))
+                                {
+                                    <img src="@template.ThumbnailPath" class="w-16 h-16 rounded-lg object-cover" alt="@template.Name" />
+                                }
+                                else
+                                {
+                                    <div class="w-16 h-16 rounded-lg bg-gradient-to-br from-[#d4b38d] to-[#b08d65] flex items-center justify-center">
+                                        <span class="material-symbols-outlined text-white text-2xl">style</span>
                                     </div>
-                                    @if (selectedTemplateId == template.Id)
-                                    {
-                                        <span class="material-icons-outlined text-primary text-lg">check_circle</span>
-                                    }
+                                }
+                                <div class="flex-1 min-w-0">
+                                    <h4 class="font-bold text-sm mb-1 truncate text-white">@template.Name</h4>
+                                    <p class="text-xs text-slate-400 line-clamp-2">@template.Description</p>
                                 </div>
-                            </button>
-                        }
-                    </div>
+                                @if (selectedTemplateId == template.Id)
+                                {
+                                    <span class="material-symbols-outlined text-[#d4b38d] text-lg">check_circle</span>
+                                }
+                            </div>
+                        </button>
+                    }
                 }
-                else
-                {
-                    <div class="text-center py-10 text-gray-400">
-                        <span class="material-icons-outlined text-4xl mb-2">inbox</span>
-                        <p class="text-sm">Template bulunamadı</p>
+            }
+            else
+            {
+                <!-- Placeholder garment gallery -->
+                <div class="grid grid-cols-2 gap-3">
+                    <div class="aspect-[4/5] rounded-xl overflow-hidden glass-panel p-1 group cursor-pointer border-white/5 hover:border-white/20 transition-all">
+                        <div class="w-full h-full bg-slate-800 rounded-lg"></div>
                     </div>
-                }
-            </div>
-        }
+                    <div class="aspect-[4/5] rounded-xl overflow-hidden glass-panel p-1 group cursor-pointer border-white/5 hover:border-white/20 transition-all">
+                        <div class="w-full h-full bg-slate-800 rounded-lg"></div>
+                    </div>
+                </div>
+            }
+        </div>
 
         @if (!string.IsNullOrEmpty(uploadError))
         {
-            <div class="mx-5 mt-2 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-xs text-red-400">
-                <span class="material-icons-outlined text-sm align-middle mr-1">error</span>@uploadError
+            <div class="mx-6 mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-xs text-red-400">
+                <span class="material-symbols-outlined text-sm align-middle mr-1">error</span>@uploadError
             </div>
         }
-
-        <!-- Category Chips -->
-        <div class="px-5 py-4 flex-none">
-            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wide mb-3">Kategori</p>
-            <div class="flex gap-2">
-                <button class="flex-none px-4 py-1.5 rounded-full text-sm transition-all @(selectedCategory == "upper_body" ? "bg-primary text-background-dark font-medium" : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-primary")"
-                        @onclick='() => selectedCategory = "upper_body"'>Üst Giyim</button>
-                <button class="flex-none px-4 py-1.5 rounded-full text-sm transition-all @(selectedCategory == "lower_body" ? "bg-primary text-background-dark font-medium" : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-primary")"
-                        @onclick='() => selectedCategory = "lower_body"'>Alt Giyim</button>
-                <button class="flex-none px-4 py-1.5 rounded-full text-sm transition-all @(selectedCategory == "dresses" ? "bg-primary text-background-dark font-medium" : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-primary")"
-                        @onclick='() => selectedCategory = "dresses"'>Elbise</button>
-            </div>
-        </div>
     </aside>
 
-    <!-- Column 2: Select Model (Center) -->
-    @if (editorMode == "upload" || (editorMode == "template" && selectedTemplateId.HasValue))
-    {
-        <section class="flex-1 flex flex-col bg-gray-50 dark:bg-background-dark min-w-0">
-            <!-- Filter Bar -->
-            <div class="flex-none p-5 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-10 bg-gray-50/95 dark:bg-background-dark/95 backdrop-blur">
-                <div class="flex items-center justify-between mb-4">
-                    <div class="flex items-center gap-2">
-                        <h2 class="text-sm uppercase tracking-wider text-primary font-bold">Adım 2</h2>
-                        <div class="h-1 w-1 rounded-full bg-gray-400"></div>
-                        <h3 class="text-xl font-bold">Model Seç @(editorMode == "template" && selectedTemplate?.RequiresModel == false ? "(Opsiyonel)" : "")</h3>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Model Grid -->
-            <div class="flex-1 overflow-y-auto p-5">
-                <ModelSelector @bind-SelectedModelId="selectedModelId" />
-            </div>
-        </section>
-    }
-    else
-    {
-        <!-- Template modunda boş alan -->
-        <section class="flex-1 flex flex-col bg-gray-50 dark:bg-background-dark min-w-0 items-center justify-center">
-            <div class="text-center p-10">
-                <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <span class="material-icons-outlined text-primary text-4xl">auto_awesome</span>
-                </div>
-                <h3 class="text-xl font-bold mb-2">AI ile Görsel Oluştur</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400">Template seçerek AI'nın görsel oluşturmasını sağlayın</p>
-            </div>
-        </section>
-    }
-
-    <!-- Column 3: Result (Right Sidebar) -->
-    <aside class="w-96 flex-none bg-white dark:bg-surface-dark border-l border-gray-200 dark:border-gray-800 flex flex-col z-10 shadow-xl">
-        <div class="p-5 border-b border-gray-200 dark:border-gray-800">
-            <div class="flex items-center justify-between mb-2">
-                <h2 class="text-sm uppercase tracking-wider text-primary font-bold">Adım 3</h2>
-                <span class="material-icons-outlined text-gray-400 text-sm">auto_fix_high</span>
-            </div>
-            <h3 class="text-xl font-bold">Sonuç</h3>
-        </div>
-
-        <div class="flex-1 p-6 flex flex-col items-center justify-center relative">
-            <!-- Canvas / Preview Area -->
-            <div class="w-full h-full max-h-[500px] bg-gray-100 dark:bg-gray-800/50 rounded-2xl border-2 border-dashed border-gray-300 dark:border-gray-600 flex flex-col items-center justify-center relative overflow-hidden group">
-                @if (isProcessing)
-                {
-                    <!-- Processing State -->
-                    <div class="text-center p-6 z-10">
-                        <div class="relative w-16 h-16 mx-auto mb-4">
-                            <div class="absolute inset-0 border-4 border-slate-700 rounded-full"></div>
-                            <div class="absolute inset-0 border-4 border-primary rounded-full border-t-transparent animate-spin"></div>
-                        </div>
-                        <p class="text-primary font-semibold animate-pulse">Oluşturuluyor...</p>
-                        <p class="text-xs text-gray-500 mt-2">Tahmini süre: ~30s</p>
-                    </div>
-                }
-                else if (!string.IsNullOrEmpty(resultImageUrl))
-                {
-                    <!-- Result State -->
-                    <img src="@resultImageUrl" class="w-full h-full object-contain rounded-xl" alt="Oluşturulan görsel" />
-                    <div class="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        <a href="@resultImageUrl" download class="bg-black/60 backdrop-blur text-white p-2 rounded-lg hover:bg-primary hover:text-black transition-colors no-underline">
-                            <span class="material-icons-outlined text-sm">download</span>
-                        </a>
-                    </div>
-                }
-                else if (!string.IsNullOrEmpty(errorMessage))
-                {
-                    <!-- Error State -->
-                    <div class="text-center p-6">
-                        <span class="material-icons-outlined text-4xl text-red-400 mb-2">error_outline</span>
-                        <p class="text-sm text-red-400 mb-3">@errorMessage</p>
-                        <button class="text-xs text-primary hover:underline" @onclick="ClearResult">Tekrar Dene</button>
-                    </div>
-                }
-                else
-                {
-                    <!-- Placeholder State -->
-                    <div class="text-center p-6">
-                        <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <span class="material-icons-outlined text-primary text-3xl">style</span>
-                        </div>
-                        <h4 class="text-lg font-bold mb-2">Görselleştirmeye Hazır mısınız?</h4>
-                        <p class="text-sm text-gray-500 mb-6">Oluşturulan görseliniz burada yüksek çözünürlükte görünecek.</p>
-                    </div>
-                }
-            </div>
-        </div>
-
-        <!-- Action Area -->
-        <div class="p-6 bg-gray-50 dark:bg-gray-800/30 border-t border-gray-200 dark:border-gray-800">
-            <div class="flex items-center justify-between text-xs text-gray-500 mb-3 px-1">
-                <span>Tahmini süre: @(editorMode == "template" ? "~20s" : "~30s")</span>
-                <span>Çözünürlük: @(editorMode == "template" ? "2K" : "2K")</span>
-            </div>
-            <button class="w-full bg-primary hover:bg-primary/90 text-background-dark font-bold text-lg py-4 rounded-xl shadow-lg shadow-primary/25 transition-all transform active:scale-[0.98] flex items-center justify-center gap-2 group disabled:opacity-50 disabled:cursor-not-allowed"
-                    @onclick="GenerateImage"
-                    disabled="@(!CanGenerate)">
-                @if (isProcessing)
-                {
-                    <div class="w-5 h-5 border-2 border-background-dark/30 border-t-background-dark rounded-full animate-spin"></div>
-                    <span>Oluşturuluyor...</span>
-                }
-                else
-                {
-                    <span class="material-icons-outlined group-hover:animate-pulse">@(editorMode == "template" ? "auto_awesome" : "style")</span>
-                    <span>@(editorMode == "template" ? "AI ile Oluştur" : "Oluştur")</span>
-                    <span class="bg-background-dark/20 text-background-dark text-xs py-0.5 px-2 rounded-full ml-1">-2 Kredi</span>
-                }
-            </button>
-
-            @if (!string.IsNullOrEmpty(resultImageUrl))
-            {
-                <!-- Download buttons after result -->
-                <div class="mt-4 flex gap-2">
-                    <a href="@resultImageUrl" download class="flex-1 py-2.5 bg-green-600 hover:bg-green-500 text-white rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2 no-underline">
-                        <span class="material-icons-outlined text-base">download</span>
-                        İndir
-                    </a>
-                    <button class="flex-1 py-2.5 bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg text-sm font-medium transition-colors flex items-center justify-center gap-2"
-                            @onclick="ClearResult">
-                        <span class="material-icons-outlined text-base">refresh</span>
-                        Yeni Oluştur
+    <!-- Column 2: Creative Direction (Center) -->
+    <section class="flex-1 flex flex-col bg-slate-950 min-w-0 border-r border-white/5">
+        <div class="p-8 pb-4">
+            <span class="step-label">Step 02 / Creative Direction</span>
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="text-2xl font-display font-medium text-[#f1f5f9] tracking-tight">Virtual Talent &amp; Set</h2>
+                <div class="flex gap-2">
+                    <button class="glass-panel px-4 py-2 rounded-lg text-[10px] font-bold tracking-widest uppercase hover:bg-white/5 transition-colors">
+                        Advanced Filters
                     </button>
                 </div>
-            }
+            </div>
+
+            <div class="space-y-8">
+                <!-- Model Selection -->
+                <div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Photorealistic Talent</span>
+                        <div class="flex-1 h-px bg-white/5"></div>
+                    </div>
+                    <div class="overflow-y-auto max-h-[calc(100vh-32rem)] pb-2 no-scrollbar">
+                        <ModelSelector @bind-SelectedModelId="selectedModelId" />
+                    </div>
+                </div>
+
+                <!-- Scene Settings -->
+                <div class="grid grid-cols-2 gap-8">
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Garment Category</span>
+                            <div class="flex-1 h-px bg-white/5"></div>
+                        </div>
+                        <select @bind="selectedCategory" class="w-full bg-slate-900 border border-white/10 rounded-lg p-3 text-[10px] font-bold text-slate-400 outline-none appearance-none cursor-pointer hover:border-[#d4b38d]/40 transition-colors uppercase tracking-widest">
+                            <option value="upper_body">Upper Body (T-shirt, Jacket)</option>
+                            <option value="lower_body">Lower Body (Pants, Skirt)</option>
+                            <option value="dresses">Dresses / Full Body</option>
+                        </select>
+                    </div>
+                    <div>
+                        <div class="flex items-center gap-3 mb-4">
+                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Lighting Profile</span>
+                            <div class="flex-1 h-px bg-white/5"></div>
+                        </div>
+                        <div class="grid grid-cols-1 gap-2">
+                            <button class="flex items-center justify-between p-3 rounded-lg border transition-all @(selectedLighting == "Golden Hour" ? "border-[#d4b38d] bg-[#d4b38d]/5 text-[#d4b38d]" : "border-white/5 hover:border-white/20 text-slate-400")"
+                                    @onclick='() => selectedLighting = "Golden Hour"'>
+                                <div class="flex items-center gap-3">
+                                    <span class="material-symbols-outlined text-sm @(selectedLighting == "Golden Hour" ? "" : "text-slate-500")">wb_sunny</span>
+                                    <span class="text-[10px] font-bold tracking-widest uppercase">Golden Hour</span>
+                                </div>
+                                @if (selectedLighting == "Golden Hour")
+                                {
+                                    <span class="material-symbols-outlined text-sm">check</span>
+                                }
+                            </button>
+                            <button class="flex items-center justify-between p-3 rounded-lg border transition-all @(selectedLighting == "Studio Soft" ? "border-[#d4b38d] bg-[#d4b38d]/5 text-[#d4b38d]" : "border-white/5 hover:border-white/20 text-slate-400")"
+                                    @onclick='() => selectedLighting = "Studio Soft"'>
+                                <div class="flex items-center gap-3">
+                                    <span class="material-symbols-outlined text-sm @(selectedLighting == "Studio Soft" ? "" : "text-slate-500")">light_mode</span>
+                                    <span class="text-[10px] font-bold tracking-widest uppercase">Studio Soft</span>
+                                </div>
+                                @if (selectedLighting == "Studio Soft")
+                                {
+                                    <span class="material-symbols-outlined text-sm">check</span>
+                                }
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Location Set -->
+                <div>
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Location Set</span>
+                        <div class="flex-1 h-px bg-white/5"></div>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <button class="flex items-center justify-between p-3 rounded-lg border transition-all @(selectedBackground == "Parisian Street" ? "border-[#d4b38d] bg-[#d4b38d]/5 text-[#d4b38d]" : "border-white/5 hover:border-white/20 text-slate-400")"
+                                @onclick='() => selectedBackground = "Parisian Street"'>
+                            <div class="flex items-center gap-3">
+                                <span class="material-symbols-outlined text-sm @(selectedBackground == "Parisian Street" ? "" : "text-slate-500")">location_on</span>
+                                <span class="text-[10px] font-bold tracking-widest uppercase">Parisian Street</span>
+                            </div>
+                            @if (selectedBackground == "Parisian Street")
+                            {
+                                <span class="material-symbols-outlined text-sm">check</span>
+                            }
+                        </button>
+                        <button class="flex items-center justify-between p-3 rounded-lg border transition-all @(selectedBackground == "Minimalist Boutique" ? "border-[#d4b38d] bg-[#d4b38d]/5 text-[#d4b38d]" : "border-white/5 hover:border-white/20 text-slate-400")"
+                                @onclick='() => selectedBackground = "Minimalist Boutique"'>
+                            <div class="flex items-center gap-3">
+                                <span class="material-symbols-outlined text-sm @(selectedBackground == "Minimalist Boutique" ? "" : "text-slate-500")">storefront</span>
+                                <span class="text-[10px] font-bold tracking-widest uppercase">Minimalist Boutique</span>
+                            </div>
+                            @if (selectedBackground == "Minimalist Boutique")
+                            {
+                                <span class="material-symbols-outlined text-sm">check</span>
+                            }
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Column 3: Live Preview & Result (Right Sidebar) -->
+    <aside class="w-[440px] flex flex-col bg-slate-900/40 backdrop-blur-3xl">
+        <div class="p-8 flex-1 flex flex-col">
+            <span class="step-label">Step 03 / Live Preview</span>
+            <div class="flex-1 relative mt-2 group">
+                <div class="absolute inset-0 glass-panel rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10">
+                    <div class="absolute inset-0 bg-slate-950 flex flex-col items-center justify-center p-8 text-center">
+                        @if (isProcessing)
+                        {
+                            <!-- Processing State -->
+                            <div class="w-full h-full relative group/preview">
+                                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                    <div class="w-24 h-24 mb-6 relative">
+                                        <div class="absolute inset-0 border-2 border-[#d4b38d]/30 rounded-full animate-ping"></div>
+                                        <div class="relative w-full h-full bg-slate-900/80 rounded-full flex items-center justify-center backdrop-blur-sm border border-[#d4b38d]/20">
+                                            <span class="material-symbols-outlined text-[#d4b38d] text-4xl font-light">auto_fix_high</span>
+                                        </div>
+                                    </div>
+                                    <h4 class="text-sm font-display font-bold text-[#f1f5f9] tracking-[0.15em] uppercase mb-2">Processing...</h4>
+                                    <p class="text-[10px] text-slate-500 max-w-[240px] leading-relaxed uppercase tracking-widest font-medium">AI is creating your masterpiece</p>
+                                </div>
+                            </div>
+                        }
+                        else if (!string.IsNullOrEmpty(resultImageUrl))
+                        {
+                            <!-- Result State -->
+                            <div class="w-full h-full relative group">
+                                <img src="@resultImageUrl" class="w-full h-full object-cover rounded-xl shadow-2xl" alt="Result" />
+                                <div class="absolute inset-0 ring-1 ring-white/10 rounded-xl pointer-events-none"></div>
+                                <div class="absolute top-4 left-4 flex gap-2">
+                                    <span class="px-2 py-1 bg-black/60 backdrop-blur-md rounded text-[9px] font-bold text-white uppercase border border-white/5 tracking-widest">High Fidelity Generated</span>
+                                </div>
+                            </div>
+                        }
+                        else if (!string.IsNullOrEmpty(errorMessage))
+                        {
+                            <!-- Error State -->
+                            <div class="text-center p-6">
+                                <span class="material-symbols-outlined text-4xl text-red-400 mb-2">error_outline</span>
+                                <p class="text-sm text-red-400 mb-3">@errorMessage</p>
+                                <button class="text-xs text-[#d4b38d] hover:underline" @onclick="ClearResult">Tekrar Dene</button>
+                            </div>
+                        }
+                        else
+                        {
+                            <!-- Placeholder State -->
+                            <div class="w-full h-full relative group/preview cursor-crosshair">
+                                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                    <div class="w-24 h-24 mb-6 relative">
+                                        <div class="relative w-full h-full bg-slate-900/80 rounded-full flex items-center justify-center backdrop-blur-sm border border-[#d4b38d]/20">
+                                            <span class="material-symbols-outlined text-[#d4b38d] text-4xl font-light">auto_fix_high</span>
+                                        </div>
+                                    </div>
+                                    <h4 class="text-sm font-display font-bold text-[#f1f5f9] tracking-[0.15em] uppercase mb-2">Initialize Composite</h4>
+                                    <p class="text-[10px] text-slate-500 max-w-[240px] leading-relaxed uppercase tracking-widest font-medium">Ready to create stunning fashion imagery</p>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Finishing Suite -->
+            <div class="mt-8 space-y-6">
+                <div class="flex items-center justify-between border-b border-white/5 pb-2">
+                    <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Finishing Suite</h3>
+                    <span class="text-[9px] text-slate-500 font-bold tracking-widest uppercase">Production Grade</span>
+                </div>
+                <div class="grid grid-cols-3 gap-3">
+                    <button class="flex flex-col items-center gap-3 p-4 glass-panel rounded-xl hover:border-[#d4b38d]/40 transition-all group">
+                        <span class="material-symbols-outlined text-xl text-slate-400 group-hover:text-[#d4b38d]">tune</span>
+                        <span class="text-[9px] font-bold tracking-widest uppercase text-slate-500 group-hover:text-[#f1f5f9]">Exposure</span>
+                    </button>
+                    <button class="flex flex-col items-center gap-3 p-4 glass-panel rounded-xl hover:border-[#d4b38d]/40 transition-all group border-[#d4b38d]/20 bg-[#d4b38d]/5">
+                        <span class="material-symbols-outlined text-xl text-[#d4b38d]">high_res</span>
+                        <span class="text-[9px] font-bold tracking-widest uppercase text-[#f1f5f9]">HD Enhance</span>
+                    </button>
+                    <button class="flex flex-col items-center gap-3 p-4 glass-panel rounded-xl hover:border-[#d4b38d]/40 transition-all group">
+                        <span class="material-symbols-outlined text-xl text-slate-400 group-hover:text-[#d4b38d]">image_search</span>
+                        <span class="text-[9px] font-bold tracking-widest uppercase text-slate-500 group-hover:text-[#f1f5f9]">Retouch</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Render Button -->
+        <div class="p-8 border-t border-white/5 bg-slate-950/40">
+            <button class="w-full relative group"
+                    @onclick="GenerateImage"
+                    disabled="@(!CanGenerate)">
+                <div class="absolute -inset-1 bg-gradient-to-r from-[#d4b38d] via-white/20 to-[#d4b38d] rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
+                <div class="relative w-full bg-[#f1f5f9] hover:bg-[#d4b38d] text-slate-950 font-display font-extrabold text-[12px] tracking-[0.25em] py-5 rounded-xl transition-all flex items-center justify-center gap-4 group-hover:shadow-[0_0_30px_rgba(212,179,141,0.3)] disabled:opacity-50 disabled:cursor-not-allowed">
+                    <span class="material-symbols-outlined text-xl">camera_enhance</span>
+                    @if (isProcessing)
+                    {
+                        <span>RENDERING...</span>
+                    }
+                    else
+                    {
+                        <span>RENDER MASTERPIECE</span>
+                    }
+                </div>
+            </button>
+            <div class="mt-4 flex items-center justify-center gap-3">
+                <div class="flex -space-x-1">
+                    <div class="w-4 h-4 rounded-full border border-slate-950 bg-slate-800"></div>
+                    <div class="w-4 h-4 rounded-full border border-slate-950 bg-slate-700"></div>
+                </div>
+                <p class="text-[9px] text-slate-500 font-bold tracking-[0.1em] uppercase">Trusted by 200+ Premium Brands</p>
+            </div>
         </div>
     </aside>
 </div>
@@ -284,13 +354,20 @@
 @code {
     private string? uploadedClothingUrl;
     private string? selectedModelId;
+    private string? selectedBackground = "Minimalist Boutique";
+    private string? selectedLighting = "Studio Soft";
     private string selectedCategory = "upper_body";
     private string? resultImageUrl;
     private string? errorMessage;
     private string? uploadError;
     private bool isProcessing;
-    private bool isDragging;
     private int? currentImageId;
+
+    private string editorMode = "upload"; // "upload" or "template"
+    private List<TemplateDto> templates = new();
+    private bool isLoadingTemplates = false;
+    private int? selectedTemplateId;
+    private TemplateDto? selectedTemplate;
 
     protected override async Task OnInitializedAsync()
     {
@@ -327,15 +404,9 @@
         {
             selectedTemplateId = templateId;
             selectedTemplate = templates.FirstOrDefault(t => t.Id == templateId);
-            uploadedClothingUrl = null; // Template seçildiğinde upload'ı temizle
+            uploadedClothingUrl = null;
         }
     }
-
-    private string editorMode = "upload"; // "upload" or "template"
-    private List<TemplateDto> templates = new();
-    private bool isLoadingTemplates = false;
-    private int? selectedTemplateId;
-    private TemplateDto? selectedTemplate;
 
     private bool CanGenerate => 
         !isProcessing &&
@@ -346,13 +417,10 @@
                 (selectedTemplate?.RequiresModel != true || !string.IsNullOrEmpty(selectedModelId)))
         );
 
-    private void HandleDragOver() => isDragging = true;
-    private void HandleDragLeave() => isDragging = false;
 
     private async Task HandleClothingUpload(InputFileChangeEventArgs e)
     {
         uploadError = null;
-        isDragging = false;
 
         var file = e.File;
 
@@ -408,12 +476,11 @@
         {
             if (editorMode == "template" && selectedTemplateId.HasValue)
             {
-                // Template-based AI generation
                 var request = new GenerateFromTemplateDto
                 {
                     TemplateId = selectedTemplateId.Value,
-                    ModelAssetId = selectedModelId, // Model ID eklendi
-                    AspectRatio = "4:3",
+                    ModelAssetId = selectedModelId,
+                    AspectRatio = "3:4",
                     OutputFormat = "jpg"
                 };
 
@@ -446,12 +513,13 @@
             }
             else
             {
-                // Virtual Try-On (mevcut akış)
                 var request = new TryOnRequestDto
                 {
                     ClothingImagePath = uploadedClothingUrl!,
                     ModelAssetId = selectedModelId!,
-                    Category = selectedCategory
+                    Category = selectedCategory,
+                    Background = selectedBackground,
+                    Lighting = selectedLighting
                 };
 
                 var response = await Http.PostAsJsonAsync("/api/tryon/generate", request);

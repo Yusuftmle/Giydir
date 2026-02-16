@@ -29,7 +29,8 @@ public class AuthController : BaseController
         Title = user.Title,
         BoutiqueName = user.BoutiqueName,
         Sector = user.Sector,
-        WebsiteUrl = user.WebsiteUrl
+        WebsiteUrl = user.WebsiteUrl,
+        Role = user.Role
     };
 
     [HttpPost("register")]
@@ -61,7 +62,7 @@ public class AuthController : BaseController
                 var cookieOptions = new CookieOptions
                 {
                     HttpOnly = false, // JavaScript'ten okunabilir olmalı (Blazor Server için)
-                    Secure = false, // Development için false, production'da true olmalı
+                    Secure = true, // HTTPS (ngrok) için true olmalı
                     SameSite = SameSiteMode.Lax,
                     Path = "/", // Root path'te erişilebilir olmalı
                     Expires = DateTimeOffset.UtcNow.AddDays(10)
@@ -112,7 +113,7 @@ public class AuthController : BaseController
                 var cookieOptions = new CookieOptions
                 {
                     HttpOnly = false, // JavaScript'ten okunabilir olmalı (Blazor Server için)
-                    Secure = false, // Development için false, production'da true olmalı
+                    Secure = true, // HTTPS (ngrok) için true olmalı
                     SameSite = SameSiteMode.Lax,
                     Path = "/", // Root path'te erişilebilir olmalı
                     Expires = DateTimeOffset.UtcNow.AddDays(10)
@@ -151,7 +152,7 @@ public class AuthController : BaseController
     /// JS tarafında localStorage/cookie zaten temizlendi, burada session temizlenip ana sayfaya yönlendirilir
     /// </summary>
     [HttpGet("signout")]
-    public async Task<IActionResult> SignOut()
+    public new async Task<IActionResult> SignOut()
     {
         _logger.LogInformation("[AuthController] SignOut (GET) çağrıldı");
         

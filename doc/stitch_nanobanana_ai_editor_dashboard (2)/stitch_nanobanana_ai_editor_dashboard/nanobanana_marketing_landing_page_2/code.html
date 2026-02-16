@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Boutique Project Collections | NanoBanana AI</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;family=Outfit:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#0071e3",
+                        "accent": "#6366f1",
+                        "background-dark": "#050505",
+                        "surface": "#0c0c0e",
+                        "card-overlay": "rgba(0, 0, 0, 0.4)",
+                    },
+                    fontFamily: {
+                        "display": ["Outfit", "Inter", "sans-serif"],
+                        "body": ["Inter", "sans-serif"]
+                    },
+                    letterSpacing: {
+                        "tighter-tight": "-0.04em",
+                        "luxury": "0.15em",
+                    }
+                },
+            },
+        }
+    </script>
+<style type="text/tailwindcss">
+        @layer base {
+            body { @apply font-body bg-background-dark text-white antialiased; }
+            h1, h2, h3 { @apply font-display tracking-tighter-tight; }
+        }
+        .glass-header {
+            background: rgba(5, 5, 5, 0.8);
+            backdrop-filter: saturate(180%) blur(20px);
+        }
+        .collection-card {
+            aspect-ratio: 3 / 4;
+            transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .collection-card:hover {
+            transform: translateY(-8px);
+        }
+        .collection-card:hover .overlay-details {
+            opacity: 1;
+        }
+        .luxury-filter {
+            @apply px-6 py-2 border border-white/10 rounded-full text-xs font-bold uppercase tracking-luxury hover:bg-white hover:text-black transition-all duration-300;
+        }
+        .gradient-mesh {
+            background: radial-gradient(circle at 50% -20%, rgba(0, 113, 227, 0.15) 0%, transparent 50%);
+        }
+    </style>
+</head>
+<body class="selection:bg-primary selection:text-white">
+<nav class="fixed top-0 w-full z-[100] glass-header border-b border-white/5">
+<div class="max-w-[1600px] mx-auto px-8 lg:px-16">
+<div class="flex items-center justify-between h-20">
+<div class="flex items-center gap-16">
+<div class="flex items-center gap-3">
+<div class="w-8 h-8 bg-white rounded flex items-center justify-center">
+<span class="text-black font-extrabold text-xs">NB</span>
+</div>
+<span class="font-bold text-lg tracking-tighter uppercase">NanoBanana</span>
+</div>
+<div class="hidden lg:flex items-center space-x-10">
+<a class="text-white text-xs font-bold uppercase tracking-luxury" href="#">Studio</a>
+<a class="text-white text-xs font-bold uppercase tracking-luxury border-b border-white pb-1" href="#">Collections</a>
+<a class="text-gray-500 hover:text-white text-xs font-bold uppercase tracking-luxury transition-colors" href="#">Models</a>
+<a class="text-gray-500 hover:text-white text-xs font-bold uppercase tracking-luxury transition-colors" href="#">Settings</a>
+</div>
+</div>
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-3 pr-8 border-r border-white/10">
+<div class="text-right">
+<p class="text-[10px] text-gray-500 font-bold uppercase tracking-widest leading-none">Credits</p>
+<p class="text-sm font-display font-bold">14,240</p>
+</div>
+<button class="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10">
+<span class="material-symbols-outlined text-sm">add</span>
+</button>
+</div>
+<div class="w-10 h-10 rounded-full bg-gradient-to-tr from-primary to-accent overflow-hidden border border-white/20">
+<img alt="User Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAhD9VGiO8ag91WK1M7Ybq2GH6_E3k__jGLPZcvM5oJZqNZF5aXjLEhvZG-OH2u4YX9P5zrO1wxa7emnynALXV4L3WKDWYZxwg6UNZ-h4agWkUhARY4aM-pl16a8nFtSZAhLAskIVColg1pY8z_9ETpRCnLk1VvcxMCX8SJE51mEcw59SfhfFxzpWFYbgxpkZ_tAQZXYbkNAWN6ekTmTjy1og5qBGVZpZAL1bN2dvkDxzjZAMVxs-t-gwUOjjBONY8O785LLeKF0c1c"/>
+</div>
+</div>
+</div>
+</div>
+</nav>
+<main class="pt-32 pb-24 gradient-mesh min-h-screen">
+<div class="max-w-[1600px] mx-auto px-8 lg:px-16">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-16 gap-8">
+<div>
+<nav class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-[0.2em] text-gray-500 mb-4">
+<span>Archive</span>
+<span class="material-symbols-outlined text-[10px]">chevron_right</span>
+<span class="text-white">2024 Collections</span>
+</nav>
+<h1 class="text-5xl md:text-7xl font-extrabold tracking-tighter-tight">Project History</h1>
+</div>
+<div class="flex items-center gap-4">
+<button class="px-8 py-4 bg-white text-black rounded-full font-bold flex items-center gap-3 hover:bg-gray-200 transition-all">
+<span class="material-symbols-outlined">add_circle</span>
+                    Create New Look
+                </button>
+</div>
+</div>
+<div class="flex flex-wrap items-center justify-between gap-6 mb-12 py-6 border-y border-white/5">
+<div class="flex flex-wrap items-center gap-4">
+<div class="relative group">
+<button class="luxury-filter flex items-center gap-2">
+                        Season <span class="material-symbols-outlined text-xs">keyboard_arrow_down</span>
+</button>
+</div>
+<div class="relative group">
+<button class="luxury-filter flex items-center gap-2">
+                        Model Type <span class="material-symbols-outlined text-xs">keyboard_arrow_down</span>
+</button>
+</div>
+<div class="relative group">
+<button class="luxury-filter flex items-center gap-2">
+                        Category <span class="material-symbols-outlined text-xs">keyboard_arrow_down</span>
+</button>
+</div>
+<div class="h-6 w-px bg-white/10 mx-2"></div>
+<button class="text-[10px] font-bold uppercase tracking-luxury text-primary">Clear All</button>
+</div>
+<div class="relative min-w-[300px]">
+<span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 text-lg">search</span>
+<input class="w-full bg-white/5 border border-white/10 rounded-full py-2.5 pl-12 pr-6 text-sm focus:outline-none focus:border-primary/50 placeholder:text-gray-600 transition-all" placeholder="Search boutique collections..." type="text"/>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+<div class="collection-card group relative overflow-hidden rounded-2xl bg-surface border border-white/5">
+<img alt="Campaign Look" class="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB4576V9dsgJLfg1CgnfbqGGOEkzOts1Kg3zDcynz-MVEMF_-TG9ur3Jvs_FIjh1-PuQJRTWVT9dODHsWatJ3MX2_Zv_-owutifDKYnvgFQe40nVkxSXKA0kXevvVI7xy_D-MdZWtx4E5teML-K3MfjGFhK6LnXyIgKb6OYTikurryQqYkazeoamMwBAISi8twIDnkmZxHNLV0oO8zbz4aQMK5AWiOdbsekSeAC87DAaO3s1Pf4MYPG1Fswxk7e7TN8xOe5Y-izDpzO"/>
+<div class="overlay-details absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 transition-opacity duration-500 flex flex-col justify-end p-8">
+<div class="flex items-center justify-between mb-4">
+<span class="text-[10px] font-bold uppercase tracking-luxury text-white/60">Campaign #824</span>
+<div class="flex gap-2">
+<button class="w-8 h-8 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center hover:bg-white/20">
+<span class="material-symbols-outlined text-sm">download</span>
+</button>
+<button class="w-8 h-8 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center hover:bg-white/20">
+<span class="material-symbols-outlined text-sm">more_horiz</span>
+</button>
+</div>
+</div>
+<h3 class="text-xl font-bold mb-2">Winter Silks Editorial</h3>
+<div class="flex items-center gap-6 pt-4 border-t border-white/10">
+<div>
+<p class="text-[9px] uppercase tracking-luxury text-gray-500 mb-1">Created</p>
+<p class="text-[11px] font-bold uppercase">Oct 12, 2023</p>
+</div>
+<div>
+<p class="text-[9px] uppercase tracking-luxury text-gray-500 mb-1">Credits</p>
+<p class="text-[11px] font-bold uppercase">45.0</p>
+</div>
+</div>
+</div>
+</div>
+<div class="collection-card group relative overflow-hidden rounded-2xl bg-surface border border-white/5">
+<img alt="Campaign Look" class="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAWtQ-1h33AEJvr4WOp7X6BXF5MrdoTFSwUbhBN5Q5TL3IZDMFF50eGRNevRyvUc0d7WxeZxXn5zWvClkAuZCEUjZBX5zU9tXIUVSxEtH_ZZQV_G7T248TlYfgLiInqRq6UfhS-7P9VinBy5UcSif-1089h6-fnRTATo7bQtbbSrXJC8PWRJa-VlaoOvkl6bxMxlkFXc2Nbal-w0Wm3CV0QMpWbsszkR-6pPvPAF9LUvN_sskz2wElKLS24gcitSSbkPLYAxv7G91aH"/>
+<div class="overlay-details absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 transition-opacity duration-500 flex flex-col justify-end p-8">
+<div class="flex items-center justify-between mb-4">
+<span class="text-[10px] font-bold uppercase tracking-luxury text-white/60">Campaign #821</span>
+<div class="flex gap-2">
+<button class="w-8 h-8 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center hover:bg-white/20">
+<span class="material-symbols-outlined text-sm">download</span>
+</button>
+<button class="w-8 h-8 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center hover:bg-white/20">
+<span class="material-symbols-outlined text-sm">more_horiz</span>
+</button>
+</div>
+</div>
+<h3 class="text-xl font-bold mb-2">Minimalist Denim Line</h3>
+<div class="flex items-center gap-6 pt-4 border-t border-white/10">
+<div>
+<p class="text-[9px] uppercase tracking-luxury text-gray-500 mb-1">Created</p>
+<p class="text-[11px] font-bold uppercase">Sep 28, 2023</p>
+</div>
+<div>
+<p class="text-[9px] uppercase tracking-luxury text-gray-500 mb-1">Credits</p>
+<p class="text-[11px] font-bold uppercase">12.5</p>
+</div>
+</div>
+</div>
+</div>
+<div class="collection-card group relative overflow-hidden rounded-2xl bg-surface border border-white/5">
+<img alt="Campaign Look" class="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3Q1mFKQMY0CgZYaW2YlV0yBCfjgXUCiOAvMShPJmD367xDnSwpIHRRmMIr0fKPEZ6tcbnj1k-FmI3z_2M61yfmTMBN-TcaW3uzQRjsGIN04nOJvi_7QjjDPJrDsLTPCCNpyZ5i45nxRzTUwJsaseZpqYSwGIxYCxBl3YeYig5PqaTI1oBOHGhVWC24Kn8s6_EweorXwuyos4q6MopTVMFXr8eO3Gf2wQuwXV1Y5KG4hI7MDcH9Dcl-CW4Q6qp3_oQ9zZ__wRdGpSR"/>
+<div class="overlay-details absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 transition-opacity duration-500 flex flex-col justify-end p-8">
+<div class="flex items-center justify-between mb-4">
+<span class="text-[10px] font-bold uppercase tracking-luxury text-white/60">Campaign #819</span>
+<div class="flex gap-2">
+<button class="w-8 h-8 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center hover:bg-white/20">
+<span class="material-symbols-outlined text-sm">download</span>
+</button>
+<button class="w-8 h-8 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center hover:bg-white/20">
+<span class="material-symbols-outlined text-sm">more_horiz</span>
+</button>
+</div>
+</div>
+<h3 class="text-xl font-bold mb-2">Boutique Store Launch</h3>
+<div class="flex items-center gap-6 pt-4 border-t border-white/10">
+<div>
+<p class="text-[9px] uppercase tracking-luxury text-gray-500 mb-1">Created</p>
+<p class="text-[11px] font-bold uppercase">Sep 15, 2023</p>
+</div>
+<div>
+<p class="text-[9px] uppercase tracking-luxury text-gray-500 mb-1">Credits</p>
+<p class="text-[11px] font-bold uppercase">24.0</p>
+</div>
+</div>
+</div>
+</div>
+<div class="collection-card group relative overflow-hidden rounded-2xl bg-surface border border-white/5">
+<img alt="Campaign Look" class="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBABPN0yy7FVFyFrMNQ8vRI7Er-e_mEjn4AntsxRYVj2Gc525TtlAweiJb7QftCcyAmyNciL9j03vNw9ig_qLTLTT1EM7MA-I0kHWV_1mLYzVwAsEjj40gBhL0jGwg6MC_TCN1euTlzAnFU4N0w-G_CjZd5LpXXFvVTK9MKhMfoaBS3WIZsPEtX0y6wMElJwcZfNTTaNdcU4MEPUSg3TpIC2DwDWmqIEWWLZvZyylMqa4LcJIN8w0_LyOF9AiLf3spwXCqHRgbqnOS6"/>
+<div class="overlay-details absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 transition-opacity duration-500 flex flex-col justify-end p-8">
+<div class="flex items-center justify-between mb-4">
+<span class="text-[10px] font-bold uppercase tracking-luxury text-white/60">Campaign #815</span>
+<div class="flex gap-2">
+<button class="w-8 h-8 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center hover:bg-white/20">
+<span class="material-symbols-outlined text-sm">download</span>
+</button>
+<button class="w-8 h-8 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center hover:bg-white/20">
+<span class="material-symbols-outlined text-sm">more_horiz</span>
+</button>
+</div>
+</div>
+<h3 class="text-xl font-bold mb-2">Velvet Texture Study</h3>
+<div class="flex items-center gap-6 pt-4 border-t border-white/10">
+<div>
+<p class="text-[9px] uppercase tracking-luxury text-gray-500 mb-1">Created</p>
+<p class="text-[11px] font-bold uppercase">Aug 22, 2023</p>
+</div>
+<div>
+<p class="text-[9px] uppercase tracking-luxury text-gray-500 mb-1">Credits</p>
+<p class="text-[11px] font-bold uppercase">8.2</p>
+</div>
+</div>
+</div>
+</div>
+<div class="collection-card group relative overflow-hidden rounded-2xl bg-surface border border-white/5">
+<img alt="Campaign Look" class="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCLz44UkykHIdjofiOlZHYWkjPrhrZBBsvGJj_5Qt4uDTH8lhpmr_qWfHYY8NZLhKStk0fWz1r8w3dBT-ywG5vDaq2KcPdvXppvNXoqw06-prlbHhyGLwY8G_SSznTh2bk0kFQpr8hsUE5-A8dPUwjLGJFlIjywvbC8c6a-B9Bz79yOv9oXNuQi0qlaXqezeGJQi73PF9veaulY1q2P0_5FWy5WKqiZepJd8nuQLiYBTkhmjEsKJJMqc2zCC9chYK5EMqSrJgFOrS6O"/>
+<div class="overlay-details absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 transition-opacity duration-500 flex flex-col justify-end p-8">
+<div class="flex items-center justify-between mb-4">
+<span class="text-[10px] font-bold uppercase tracking-luxury text-white/60">Campaign #812</span>
+<div class="flex gap-2">
+<button class="w-8 h-8 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center hover:bg-white/20">
+<span class="material-symbols-outlined text-sm">download</span>
+</button>
+<button class="w-8 h-8 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center hover:bg-white/20">
+<span class="material-symbols-outlined text-sm">more_horiz</span>
+</button>
+</div>
+</div>
+<h3 class="text-xl font-bold mb-2">Linen Breathable Line</h3>
+<div class="flex items-center gap-6 pt-4 border-t border-white/10">
+<div>
+<p class="text-[9px] uppercase tracking-luxury text-gray-500 mb-1">Created</p>
+<p class="text-[11px] font-bold uppercase">Aug 05, 2023</p>
+</div>
+<div>
+<p class="text-[9px] uppercase tracking-luxury text-gray-500 mb-1">Credits</p>
+<p class="text-[11px] font-bold uppercase">15.0</p>
+</div>
+</div>
+</div>
+</div>
+<div class="collection-card group relative overflow-hidden rounded-2xl bg-surface border border-white/5">
+<img alt="Campaign Look" class="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB3Q1mFKQMY0CgZYaW2YlV0yBCfjgXUCiOAvMShPJmD367xDnSwpIHRRmMIr0fKPEZ6tcbnj1k-FmI3z_2M61yfmTMBN-TcaW3uzQRjsGIN04nOJvi_7QjjDPJrDsLTPCCNpyZ5i45nxRzTUwJsaseZpqYSwGIxYCxBl3YeYig5PqaTI1oBOHGhVWC24Kn8s6_EweorXwuyos4q6MopTVMFXr8eO3Gf2wQuwXV1Y5KG4hI7MDcH9Dcl-CW4Q6qp3_oQ9zZ__wRdGpSR"/>
+<div class="overlay-details absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 transition-opacity duration-500 flex flex-col justify-end p-8">
+<div class="flex items-center justify-between mb-4">
+<span class="text-[10px] font-bold uppercase tracking-luxury text-white/60">Campaign #808</span>
+<div class="flex gap-2">
+<button class="w-8 h-8 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center hover:bg-white/20">
+<span class="material-symbols-outlined text-sm">download</span>
+</button>
+<button class="w-8 h-8 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center hover:bg-white/20">
+<span class="material-symbols-outlined text-sm">more_horiz</span>
+</button>
+</div>
+</div>
+<h3 class="text-xl font-bold mb-2">Shadow Play Concept</h3>
+<div class="flex items-center gap-6 pt-4 border-t border-white/10">
+<div>
+<p class="text-[9px] uppercase tracking-luxury text-gray-500 mb-1">Created</p>
+<p class="text-[11px] font-bold uppercase">Jul 18, 2023</p>
+</div>
+<div>
+<p class="text-[9px] uppercase tracking-luxury text-gray-500 mb-1">Credits</p>
+<p class="text-[11px] font-bold uppercase">31.0</p>
+</div>
+</div>
+</div>
+</div>
+<div class="collection-card group relative overflow-hidden rounded-2xl bg-surface border border-white/5">
+<img alt="Campaign Look" class="w-full h-full object-cover grayscale-[0.3] group-hover:grayscale-0 transition-all duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAtUpf41IPcDpPJpl9-Whk-7ftG2WwYVMA9ZvOpQzHGeK3JK6a7iyLMdShuUB5HJu-_J6C3OegVUIoRFfavc_Nwy4TzftyoYZXPYChPV5z6ePRF2Pz_Efi1pg81oIjp_kFeSlm0mlw76Gdk1TMuzM5VBhlpXNpBdocPmlmyb0TJz5Vra9vz8Ll4VGGYiL_A4_gV2tJlRCx2VHOGXGv-VLMboJky_XCZ-oUO9N9xpgmnThUqnmrk_3fKIQnfJV_YgNmG9jeQyCnhKr_H"/>
+<div class="overlay-details absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent opacity-0 transition-opacity duration-500 flex flex-col justify-end p-8">
+<div class="flex items-center justify-between mb-4">
+<span class="text-[10px] font-bold uppercase tracking-luxury text-white/60">Campaign #804</span>
+<div class="flex gap-2">
+<button class="w-8 h-8 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center hover:bg-white/20">
+<span class="material-symbols-outlined text-sm">download</span>
+</button>
+<button class="w-8 h-8 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center hover:bg-white/20">
+<span class="material-symbols-outlined text-sm">more_horiz</span>
+</button>
+</div>
+</div>
+<h3 class="text-xl font-bold mb-2">Summer Essentials</h3>
+<div class="flex items-center gap-6 pt-4 border-t border-white/10">
+<div>
+<p class="text-[9px] uppercase tracking-luxury text-gray-500 mb-1">Created</p>
+<p class="text-[11px] font-bold uppercase">Jun 30, 2023</p>
+</div>
+<div>
+<p class="text-[9px] uppercase tracking-luxury text-gray-500 mb-1">Credits</p>
+<p class="text-[11px] font-bold uppercase">5.5</p>
+</div>
+</div>
+</div>
+</div>
+<div class="collection-card group relative overflow-hidden rounded-2xl bg-surface border border-white/5 flex items-center justify-center cursor-pointer border-dashed border-white/20 hover:border-primary transition-colors">
+<div class="text-center">
+<div class="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4 mx-auto group-hover:bg-primary transition-colors">
+<span class="material-symbols-outlined text-3xl">add</span>
+</div>
+<p class="text-xs font-bold uppercase tracking-luxury">New Campaign</p>
+</div>
+</div>
+</div>
+<div class="mt-20 flex items-center justify-center gap-4">
+<button class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center text-gray-500 hover:text-white transition-colors">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<div class="flex items-center gap-2">
+<button class="w-12 h-12 rounded-full bg-white text-black font-bold">1</button>
+<button class="w-12 h-12 rounded-full border border-white/10 font-bold hover:bg-white/5">2</button>
+<button class="w-12 h-12 rounded-full border border-white/10 font-bold hover:bg-white/5">3</button>
+<span class="mx-2 text-gray-600">...</span>
+<button class="w-12 h-12 rounded-full border border-white/10 font-bold hover:bg-white/5">12</button>
+</div>
+<button class="w-12 h-12 rounded-full border border-white/10 flex items-center justify-center text-gray-500 hover:text-white transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</main>
+<footer class="py-12 bg-background-dark border-t border-white/5">
+<div class="max-w-[1600px] mx-auto px-8 lg:px-16 flex flex-col md:flex-row justify-between items-center gap-8">
+<div class="flex items-center gap-8">
+<div class="flex items-center gap-2">
+<div class="w-5 h-5 bg-white rounded-sm flex items-center justify-center">
+<span class="text-black font-extrabold text-[8px]">NB</span>
+</div>
+<span class="text-[10px] font-bold uppercase tracking-[0.3em]">NanoBanana Studio</span>
+</div>
+<p class="text-[10px] text-gray-600 uppercase tracking-luxury">© 2024 Global Systems Inc.</p>
+</div>
+<div class="flex items-center gap-12 text-[10px] font-bold uppercase tracking-luxury text-gray-500">
+<a class="hover:text-white transition-colors" href="#">Support</a>
+<a class="hover:text-white transition-colors" href="#">API Status</a>
+<a class="hover:text-white transition-colors" href="#">Privacy</a>
+<a class="hover:text-white transition-colors" href="#">Terms of Service</a>
+</div>
+</div>
+</footer>
+
+</body></html>

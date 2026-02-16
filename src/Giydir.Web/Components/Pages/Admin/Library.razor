@@ -1,0 +1,252 @@
+@page "/admin/library"
+@layout AdminLayout
+@inject ISavedPromptRepository PromptRepository
+@inject IModelAssetRepository ModelRepository
+@inject IAuthService AuthService
+@inject AuthenticationStateProvider AuthStateProvider
+@inject IJSRuntime JSRuntime
+@inject NavigationManager Navigation
+@attribute [Authorize(Roles = "Admin")]
+
+<div class="p-8 space-y-8 max-w-7xl mx-auto">
+    <header class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-extrabold tracking-tight">Studio Asset & Prompt Library</h1>
+            <p class="text-slate-500 mt-1">Manage your generated models, saved prompts, and active assets.</p>
+        </div>
+        <div class="flex items-center gap-3">
+             <button class="px-6 py-3 bg-primary text-background-dark rounded-xl hover:brightness-110 transition-all font-bold flex items-center gap-2 shadow-lg shadow-primary/20" @onclick='() => Navigation.NavigateTo("/admin/lab")'>
+                <span class="material-icons text-sm">add</span>
+                <span>New Creation</span>
+            </button>
+        </div>
+    </header>
+
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div class="bg-white dark:bg-panel-dark border border-slate-200 dark:border-border-dark rounded-xl p-6 relative overflow-hidden group">
+            <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                <span class="material-icons text-4xl text-primary">history_edu</span>
+            </div>
+            <p class="text-slate-500 text-sm font-medium">Saved Prompts</p>
+            <h3 class="text-3xl font-extrabold mt-2">@savedPrompts.Count</h3>
+        </div>
+        <div class="bg-white dark:bg-panel-dark border border-slate-200 dark:border-border-dark rounded-xl p-6 relative overflow-hidden group">
+            <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                <span class="material-icons text-4xl text-primary">inventory_2</span>
+            </div>
+            <p class="text-slate-500 text-sm font-medium">Published Models</p>
+            <h3 class="text-3xl font-extrabold mt-2 text-primary">@publishedModelsCount</h3>
+        </div>
+    </div>
+
+    <!-- Tabs navigation -->
+    <div class="flex items-center gap-6 border-b border-slate-200 dark:border-white/5 mb-6">
+        <button class="@(activeTab == "prompts" ? "text-primary border-b-2 border-primary" : "text-slate-500") pb-4 px-2 font-bold text-sm tracking-tight transition-all" @onclick='() => activeTab = "prompts"'>
+            Saved Prompts (@savedPrompts.Count)
+        </button>
+        <button class="@(activeTab == "models" ? "text-primary border-b-2 border-primary" : "text-slate-500") pb-4 px-2 font-bold text-sm tracking-tight transition-all" @onclick='() => activeTab = "models"'>
+            Published Models (@publishedModels.Count)
+        </button>
+    </div>
+
+    @if (isLoading)
+    {
+        <div class="flex flex-col items-center justify-center py-24 gap-4">
+            <div class="w-12 h-12 border-4 border-primary border-t-transparent rounded-full animate-spin"></div>
+            <p class="text-[10px] uppercase font-bold tracking-widest text-slate-500">Loading library assets...</p>
+        </div>
+    }
+    else
+    {
+        @if (activeTab == "prompts")
+        {
+            <div class="space-y-4 pb-12">
+                @if (savedPrompts.Count == 0)
+                {
+                    <div class="bg-white dark:bg-panel-dark border border-slate-200 dark:border-border-dark rounded-2xl p-16 text-center">
+                        <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <span class="material-icons text-3xl text-primary">inventory</span>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2">Library is Empty</h3>
+                        <p class="text-slate-500 max-w-xs mx-auto text-sm">No saved prompts yet. Head over to the Creation Lab to start building your AI model collection.</p>
+                        <button class="mt-8 text-primary font-bold text-xs uppercase tracking-widest hover:underline" @onclick='() => Navigation.NavigateTo("/admin/lab")'>Start Creating Now</button>
+                    </div>
+                }
+                else
+                {
+                    @foreach (var prompt in savedPrompts)
+                    {
+                        <div class="bg-white dark:bg-panel-dark border border-slate-200 dark:border-border-dark rounded-xl overflow-hidden group hover:border-primary/40 transition-all shadow-sm">
+                            <div class="p-5 flex flex-wrap lg:flex-nowrap items-center gap-6">
+                                <div class="relative w-24 h-24 flex-shrink-0 group-hover:scale-105 transition-transform">
+                                    @if (!string.IsNullOrEmpty(prompt.ResultImageUrl))
+                                    {
+                                        <img src="@prompt.ResultImageUrl" class="w-full h-full object-cover rounded-lg border border-white/5 dark:border-border-dark" />
+                                    }
+                                    else
+                                    {
+                                        <div class="w-full h-full bg-slate-100 dark:bg-background-dark rounded-lg flex items-center justify-center">
+                                            <span class="material-icons text-slate-400">image_not_supported</span>
+                                        </div>
+                                    }
+                                </div>
+                                
+                                <div class="flex-grow min-w-0">
+                                    <div class="flex items-center gap-3 mb-1">
+                                        <h4 class="text-lg font-bold truncate">@prompt.Name</h4>
+                                        <span class="px-2 py-0.5 bg-primary/10 text-primary text-[10px] font-bold uppercase rounded border border-primary/20">Prompt Asset</span>
+                                    </div>
+                                    <p class="text-slate-500 text-[10px] font-mono truncate uppercase tracking-tighter">ID: @prompt.Id | Created: @prompt.CreatedAt.ToString("MMM dd, yyyy HH:mm")</p>
+                                </div>
+
+                                <div class="flex-[2] min-w-0">
+                                    <label class="text-[9px] uppercase text-slate-400 font-bold mb-1.5 block tracking-widest leading-none">Creative Directing Prompt</label>
+                                    <div class="bg-slate-50 dark:bg-background-dark border border-slate-200 dark:border-border-dark rounded-lg p-3 font-mono text-xs text-slate-600 dark:text-primary/70 relative group/prompt">
+                                        <div class="truncate max-w-full">
+                                            @prompt.PromptText
+                                        </div>
+                                        <button class="absolute right-2 top-1/2 -translate-y-1/2 p-1.5 bg-white dark:bg-panel-dark border border-slate-200 dark:border-border-dark rounded opacity-0 group-hover/prompt:opacity-100 transition-opacity hover:text-primary shadow-sm" @onclick="() => CopyToClipboard(prompt.PromptText)">
+                                            <span class="material-icons text-[14px]">content_copy</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="flex items-center gap-2 pl-6 border-l border-slate-200 dark:border-border-dark">
+                                    <button class="p-2.5 rounded-lg bg-slate-100 dark:bg-background-dark text-slate-500 hover:text-primary transition-all hover:scale-105 shadow-sm" title="Launch Lab" @onclick="() => ReusePrompt(prompt)">
+                                        <span class="material-icons text-lg">rocket_launch</span>
+                                    </button>
+                                    <button class="p-2.5 rounded-lg bg-slate-50 dark:bg-background-dark text-slate-400 hover:text-red-500 transition-all" title="Archive" @onclick="() => DeletePrompt(prompt.Id)">
+                                        <span class="material-icons text-lg">delete_outline</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                }
+            </div>
+        }
+        else
+        {
+            <div class="space-y-4 pb-12">
+                @if (publishedModels.Count == 0)
+                {
+                    <div class="bg-white dark:bg-panel-dark border border-slate-200 dark:border-border-dark rounded-2xl p-16 text-center">
+                        <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <span class="material-icons text-3xl text-primary">theater_comedy</span>
+                        </div>
+                        <h3 class="text-lg font-bold mb-2">No Published Models</h3>
+                        <p class="text-slate-500 max-w-xs mx-auto text-sm">You haven't published any models to the boutique workspace yet.</p>
+                    </div>
+                }
+                else
+                {
+                    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        @foreach (var model in publishedModels)
+                        {
+                            <div class="bg-white dark:bg-panel-dark border border-slate-200 dark:border-border-dark rounded-2xl overflow-hidden group hover:border-primary/40 transition-all shadow-sm flex flex-col">
+                                <div class="relative aspect-[3/4] overflow-hidden bg-slate-100 dark:bg-background-dark/50">
+                                    <img src="@model.ThumbnailPath" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                                    
+                                    <div class="absolute top-4 right-4 flex gap-2">
+                                        <button class="w-8 h-8 rounded-full bg-primary/90 text-background-dark flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110 shadow-lg" 
+                                                title="Edit Model" @onclick="() => EditModel(model.Id)">
+                                            <span class="material-icons text-sm">edit</span>
+                                        </button>
+                                        <button class="w-8 h-8 rounded-full bg-red-500/90 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all hover:scale-110 shadow-lg" 
+                                                title="Delete Model" @onclick="() => DeleteModel(model.Id)">
+                                            <span class="material-icons text-sm">delete</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                
+                                <div class="p-4 flex-grow">
+                                    <div class="flex items-center justify-between mb-2">
+                                        <h4 class="font-bold text-sm truncate">@model.Name</h4>
+                                        <span class="px-2 py-0.5 bg-primary/10 text-primary text-[9px] font-bold uppercase rounded border border-primary/20">Model Asset</span>
+                                    </div>
+                                    <div class="flex flex-wrap gap-1.5 mt-3">
+                                        <span class="px-2 py-1 bg-slate-100 dark:bg-background-dark text-slate-500 text-[8px] font-bold uppercase rounded">@model.Gender</span>
+                                        <span class="px-2 py-1 bg-slate-100 dark:bg-background-dark text-slate-500 text-[8px] font-bold uppercase rounded">@model.Category</span>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        }
+    }
+</div>
+
+@code {
+    private List<SavedPrompt> savedPrompts = new();
+    private List<ModelAsset> publishedModels = new();
+    private int publishedModelsCount = 0;
+    private bool isLoading = true;
+    private string activeTab = "prompts";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        isLoading = true;
+        try
+        {
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+            var userIdClaim = user.FindFirst("sub")?.Value;
+
+            if (int.TryParse(userIdClaim, out var userId))
+            {
+                savedPrompts = await PromptRepository.GetByUserIdAsync(userId) ?? new();
+            }
+            
+            publishedModels = await ModelRepository.GetAllAsync();
+            publishedModelsCount = publishedModels.Count();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private async Task DeletePrompt(int id)
+    {
+        if (!await JSRuntime.InvokeAsync<bool>("confirm", "Bu promptu silmek istediğinize emin misiniz?")) return;
+
+        await PromptRepository.DeleteAsync(id);
+        await LoadData();
+    }
+
+    private async Task DeleteModel(string id)
+    {
+        if (!await JSRuntime.InvokeAsync<bool>("confirm", "Bu modeli butik kullanımından kaldırmak istediğinize emin misiniz?")) return;
+
+        await ModelRepository.DeleteAsync(id);
+        await LoadData();
+    }
+
+    private void EditModel(string id)
+    {
+        Navigation.NavigateTo($"/admin/lab?reuseModelId={id}");
+    }
+
+    private void ReusePrompt(SavedPrompt prompt)
+    {
+        // Lab sayfasına yönlendir ve promptu aktar
+        Navigation.NavigateTo($"/admin/lab?reuseId={prompt.Id}");
+    }
+
+    private async Task CopyToClipboard(string text)
+    {
+        await JSRuntime.InvokeVoidAsync("navigator.clipboard.writeText", text);
+    }
+}

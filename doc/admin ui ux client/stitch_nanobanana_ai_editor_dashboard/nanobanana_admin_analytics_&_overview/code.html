@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>NanoBanana Admin Analytics</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#7f13ec",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#0a060e",
+                        "panel-dark": "#120a1d",
+                        "border-dark": "#2a1b3d",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Manrope', sans-serif;
+        }
+        .cyber-gradient {
+            background: linear-gradient(135deg, rgba(127, 19, 236, 0.1) 0%, rgba(10, 6, 14, 0) 100%);
+        }
+        .chart-glow {
+            filter: drop-shadow(0 0 8px rgba(127, 19, 236, 0.4));
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a060e;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #2a1b3d;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #7f13ec;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 font-display transition-colors duration-300">
+<div class="flex h-screen overflow-hidden">
+<!-- Sidebar -->
+<aside class="w-64 flex-shrink-0 bg-white dark:bg-panel-dark border-r border-slate-200 dark:border-border-dark flex flex-col">
+<div class="p-6 flex items-center gap-3">
+<div class="w-10 h-10 bg-primary rounded flex items-center justify-center">
+<span class="material-icons text-white">dataset</span>
+</div>
+<div>
+<h1 class="font-extrabold text-lg tracking-tight">NanoBanana</h1>
+<p class="text-[10px] uppercase tracking-widest text-primary font-bold">Admin Portal</p>
+</div>
+</div>
+<nav class="flex-1 px-4 mt-4 space-y-1">
+<a class="flex items-center gap-3 px-4 py-3 rounded bg-primary text-white font-medium" href="#">
+<span class="material-icons text-sm">dashboard</span>
+<span>Analytics</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded text-slate-500 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-all" href="#">
+<span class="material-icons text-sm">inventory_2</span>
+<span>Asset Management</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded text-slate-500 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-all" href="#">
+<span class="material-icons text-sm">history_edu</span>
+<span>User Logs</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded text-slate-500 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-all" href="#">
+<span class="material-icons text-sm">people_outline</span>
+<span>User Directory</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 rounded text-slate-500 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-all" href="#">
+<span class="material-icons text-sm">payments</span>
+<span>Subscriptions</span>
+</a>
+</nav>
+<div class="p-4 border-t border-slate-200 dark:border-border-dark">
+<a class="flex items-center gap-3 px-4 py-3 rounded text-slate-500 dark:text-slate-400 hover:bg-primary/10 hover:text-primary transition-all" href="#">
+<span class="material-icons text-sm">settings</span>
+<span>Settings</span>
+</a>
+<div class="mt-4 p-4 rounded bg-primary/5 border border-primary/20">
+<p class="text-xs text-slate-400">System Status</p>
+<div class="flex items-center gap-2 mt-1">
+<div class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></div>
+<span class="text-xs font-semibold text-emerald-500 uppercase tracking-tighter">AI Core Online</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content -->
+<main class="flex-1 overflow-y-auto bg-background-light dark:bg-background-dark relative">
+<!-- Decorative background glow -->
+<div class="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/5 rounded-full blur-[120px] pointer-events-none"></div>
+<!-- Header -->
+<header class="sticky top-0 z-10 flex items-center justify-between px-8 py-4 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-md border-b border-slate-200 dark:border-border-dark">
+<div class="flex items-center flex-1 max-w-xl">
+<div class="relative w-full group">
+<span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-slate-100 dark:bg-panel-dark border-transparent focus:border-primary focus:ring-0 rounded text-sm transition-all" placeholder="Search analytics, models, or assets..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-6">
+<button class="relative text-slate-400 hover:text-primary transition-colors">
+<span class="material-icons">notifications</span>
+<span class="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full border-2 border-background-dark"></span>
+</button>
+<div class="h-8 w-[1px] bg-slate-200 dark:bg-border-dark"></div>
+<div class="flex items-center gap-3">
+<div class="text-right">
+<p class="text-xs font-bold">Admin Nano</p>
+<p class="text-[10px] text-slate-500">Super Admin</p>
+</div>
+<div class="w-10 h-10 rounded-lg bg-primary/20 border border-primary/40 flex items-center justify-center overflow-hidden">
+<img alt="Admin" class="w-full h-full object-cover" data-alt="Admin user profile photo" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAPv9qAy7ye_5hz8LOWhZvDcFFsgapvN0uM9DD7yJc45yixXN7TzNy8dI_FlFmFGK63uT9aVqUD2QTU19IOv732OOWo7bzHYgH4XTyDRqvDbhyRuem5OenKodhPfoKuV6-Tw8kw3ZRxhLefgHDlGN2AjVoUSS3LkwovfZv3mW7xehfK4GDep3_9tI_Du7gOQKeYX4A2XBdw1H-JNyag5eZ8Wjlkr0fadcKNxEe0RU_WeQYXOvS2ZQ8j18YsTBBVsBGfofG11vyTEE9g"/>
+</div>
+</div>
+</div>
+</header>
+<!-- Dashboard Body -->
+<div class="p-8 space-y-8 max-w-7xl mx-auto">
+<!-- KPI Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+<!-- Card 1 -->
+<div class="p-6 bg-white dark:bg-panel-dark border border-slate-200 dark:border-border-dark rounded-xl relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-icons text-6xl text-primary">groups</span>
+</div>
+<p class="text-slate-500 text-sm font-medium">Total Users</p>
+<div class="flex items-baseline gap-2 mt-2">
+<h3 class="text-3xl font-extrabold tracking-tight">12,450</h3>
+<span class="text-emerald-500 text-xs font-bold flex items-center gap-0.5">
+<span class="material-icons text-[14px]">trending_up</span>
+                                12%
+                            </span>
+</div>
+<div class="mt-4 h-1 w-full bg-slate-100 dark:bg-border-dark rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[70%]"></div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="p-6 bg-white dark:bg-panel-dark border border-slate-200 dark:border-border-dark rounded-xl relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-icons text-6xl text-primary">layers</span>
+</div>
+<p class="text-slate-500 text-sm font-medium">Active Projects</p>
+<div class="flex items-baseline gap-2 mt-2">
+<h3 class="text-3xl font-extrabold tracking-tight">1,208</h3>
+<span class="text-emerald-500 text-xs font-bold flex items-center gap-0.5">
+<span class="material-icons text-[14px]">trending_up</span>
+                                8.4%
+                            </span>
+</div>
+<div class="mt-4 h-1 w-full bg-slate-100 dark:bg-border-dark rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[45%]"></div>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="p-6 bg-white dark:bg-panel-dark border border-slate-200 dark:border-border-dark rounded-xl relative overflow-hidden group">
+<div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+<span class="material-icons text-6xl text-primary">account_balance_wallet</span>
+</div>
+<p class="text-slate-500 text-sm font-medium">Total Revenue</p>
+<div class="flex items-baseline gap-2 mt-2">
+<h3 class="text-3xl font-extrabold tracking-tight">$45,200</h3>
+<span class="text-primary text-xs font-bold flex items-center gap-0.5">
+<span class="material-icons text-[14px]">horizontal_rule</span>
+                                0.2%
+                            </span>
+</div>
+<div class="mt-4 h-1 w-full bg-slate-100 dark:bg-border-dark rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[85%]"></div>
+</div>
+</div>
+</div>
+<!-- Main Charts Row -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+<!-- Line Chart Placeholder -->
+<div class="lg:col-span-2 bg-white dark:bg-panel-dark border border-slate-200 dark:border-border-dark rounded-xl p-6">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h4 class="font-bold text-lg">User Activity &amp; Renders</h4>
+<p class="text-xs text-slate-500 mt-1">AI generation frequency over the last 30 days</p>
+</div>
+<select class="bg-slate-100 dark:bg-background-dark border-none rounded text-xs font-bold px-4 py-2 ring-0 focus:ring-1 focus:ring-primary">
+<option>Last 30 Days</option>
+<option>Last 7 Days</option>
+<option>Last 24 Hours</option>
+</select>
+</div>
+<!-- Mockup Line Chart -->
+<div class="h-[300px] w-full relative flex items-end justify-between gap-1 px-2">
+<div class="absolute inset-0 flex flex-col justify-between py-2 pointer-events-none">
+<div class="border-t border-slate-100 dark:border-border-dark/50 w-full"></div>
+<div class="border-t border-slate-100 dark:border-border-dark/50 w-full"></div>
+<div class="border-t border-slate-100 dark:border-border-dark/50 w-full"></div>
+<div class="border-t border-slate-100 dark:border-border-dark/50 w-full"></div>
+<div class="border-t border-slate-100 dark:border-border-dark/50 w-full"></div>
+</div>
+<!-- Mock Bars representing a trend line -->
+<div class="flex-1 bg-primary/20 rounded-t-sm h-[30%] relative group cursor-pointer hover:bg-primary/40 transition-all"></div>
+<div class="flex-1 bg-primary/20 rounded-t-sm h-[45%] relative group cursor-pointer hover:bg-primary/40 transition-all"></div>
+<div class="flex-1 bg-primary/30 rounded-t-sm h-[40%] relative group cursor-pointer hover:bg-primary/40 transition-all"></div>
+<div class="flex-1 bg-primary/40 rounded-t-sm h-[60%] relative group cursor-pointer hover:bg-primary/40 transition-all"></div>
+<div class="flex-1 bg-primary/50 rounded-t-sm h-[55%] relative group cursor-pointer hover:bg-primary/40 transition-all"></div>
+<div class="flex-1 bg-primary/60 rounded-t-sm h-[75%] relative group cursor-pointer hover:bg-primary/40 transition-all"></div>
+<div class="flex-1 bg-primary rounded-t-sm h-[90%] relative group cursor-pointer hover:bg-primary transition-all chart-glow"></div>
+<div class="flex-1 bg-primary/80 rounded-t-sm h-[80%] relative group cursor-pointer hover:bg-primary/90 transition-all"></div>
+<div class="flex-1 bg-primary/60 rounded-t-sm h-[65%] relative group cursor-pointer hover:bg-primary/70 transition-all"></div>
+<div class="flex-1 bg-primary/50 rounded-t-sm h-[70%] relative group cursor-pointer hover:bg-primary/60 transition-all"></div>
+<div class="flex-1 bg-primary/40 rounded-t-sm h-[50%] relative group cursor-pointer hover:bg-primary/50 transition-all"></div>
+<div class="flex-1 bg-primary/30 rounded-t-sm h-[40%] relative group cursor-pointer hover:bg-primary/40 transition-all"></div>
+</div>
+<div class="flex justify-between mt-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest px-2">
+<span>01 Oct</span>
+<span>10 Oct</span>
+<span>20 Oct</span>
+<span>30 Oct</span>
+</div>
+</div>
+<!-- Donut Chart Placeholder -->
+<div class="bg-white dark:bg-panel-dark border border-slate-200 dark:border-border-dark rounded-xl p-6">
+<h4 class="font-bold text-lg mb-1">Most Popular Models</h4>
+<p class="text-xs text-slate-500 mb-8">Model usage distribution</p>
+<div class="relative flex items-center justify-center py-6">
+<!-- Mockup Donut Chart SVG -->
+<svg class="w-48 h-48 transform -rotate-90">
+<circle class="text-slate-100 dark:text-border-dark" cx="96" cy="96" fill="transparent" r="80" stroke="currentColor" stroke-width="12"></circle>
+<circle class="text-primary chart-glow" cx="96" cy="96" fill="transparent" r="80" stroke="currentColor" stroke-dasharray="502" stroke-dashoffset="276" stroke-width="12"></circle>
+<circle class="text-primary/40" cx="96" cy="96" fill="transparent" r="80" stroke="currentColor" stroke-dasharray="502" stroke-dashoffset="420" stroke-width="12"></circle>
+</svg>
+<div class="absolute flex flex-col items-center">
+<span class="text-3xl font-extrabold tracking-tighter">45%</span>
+<span class="text-[10px] uppercase font-bold text-slate-500">Model A</span>
+</div>
+</div>
+<div class="mt-8 space-y-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded-full bg-primary"></div>
+<span class="text-sm font-medium">Model Alpha-9</span>
+</div>
+<span class="text-sm font-bold">45%</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded-full bg-primary/40"></div>
+<span class="text-sm font-medium">Model Beta-Studio</span>
+</div>
+<span class="text-sm font-bold">30%</span>
+</div>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-border-dark"></div>
+<span class="text-sm font-medium">Other Variants</span>
+</div>
+<span class="text-sm font-bold">25%</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Top Backgrounds List -->
+<div class="bg-white dark:bg-panel-dark border border-slate-200 dark:border-border-dark rounded-xl overflow-hidden">
+<div class="px-6 py-4 border-b border-slate-200 dark:border-border-dark flex items-center justify-between">
+<div>
+<h4 class="font-bold text-lg">Top Performing Backgrounds</h4>
+<p class="text-xs text-slate-500">Most utilized scenes in the virtual studio</p>
+</div>
+<button class="px-4 py-2 text-xs font-bold border border-primary/40 text-primary rounded hover:bg-primary/10 transition-colors">
+                            Manage Assets
+                        </button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left">
+<thead>
+<tr class="bg-slate-50 dark:bg-background-dark/50 text-slate-500 text-[10px] uppercase tracking-widest font-bold">
+<th class="px-6 py-4">Background Scene</th>
+<th class="px-6 py-4">Status</th>
+<th class="px-6 py-4">Use Count</th>
+<th class="px-6 py-4">Conversion</th>
+<th class="px-6 py-4 text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-slate-100 dark:divide-border-dark">
+<!-- Row 1 -->
+<tr class="hover:bg-slate-50 dark:hover:bg-primary/5 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded bg-slate-200 dark:bg-border-dark overflow-hidden flex-shrink-0">
+<img alt="Scene" class="w-full h-full object-cover" data-alt="Cyberpunk street style studio background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCGsOEP-xM1pvLI0KH73aEJxz2YvMlFkkRmhrs34oewaUWN7YhWqBoKiR3yKzAAi0VRnuYMihZvUloSNfM6lMq6HOAr1afp1EvzxPYRhKClkHVGlorWFRClwigyYcpOmHBCGQWRjxIY1mjpbiRaO1ROIw1hjITH9niUGN6sJM9IoMnPMXm54qlsWvl3Uwb4EfPF8lnGukK7ER8og_5YFmt5XpzjsbKwhqTvtRlgr8s_r_m19Md-AnQe2SNssGYVepXitoovIUbqIfwm"/>
+</div>
+<div>
+<p class="text-sm font-bold">Cyberpunk Street</p>
+<p class="text-[10px] text-slate-500">Neon / Urban Category</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 bg-emerald-500/10 text-emerald-500 text-[10px] font-bold rounded uppercase tracking-tighter">Active</span>
+</td>
+<td class="px-6 py-4 text-sm font-semibold">8,432</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="text-sm font-bold">12.4%</span>
+<span class="material-icons text-emerald-500 text-xs">arrow_upward</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="p-2 text-slate-400 hover:text-primary transition-colors">
+<span class="material-icons text-lg">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="hover:bg-slate-50 dark:hover:bg-primary/5 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded bg-slate-200 dark:bg-border-dark overflow-hidden flex-shrink-0">
+<img alt="Scene" class="w-full h-full object-cover" data-alt="Minimalist modern studio interior background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCsBPplv6gyJ89m3fh5-mlyAzAY9-sVbtBUBWZnNPTmwqv-haKmxPDruHO-vfpObPtCEmyk3HIksc5hPlMnO8miypjBCedZg-NPnryMdV2SCyEJvCo3N-eJ3tZmCUD0uZoY98uiJ50XCQZtHmrjARInaOMd2dRdFMHU6Gk-LOFCfebAkDxIlPh2niEe8uK90hlI9V8lV32JxstaDluLRmskaG0qIMFheceLeS3PIVw2I54Pqkf25VwlYn7kHnvmDMwOeCT-UEq22X13"/>
+</div>
+<div>
+<p class="text-sm font-bold">Minimalist Studio</p>
+<p class="text-[10px] text-slate-500">Corporate / Clean Category</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 bg-emerald-500/10 text-emerald-500 text-[10px] font-bold rounded uppercase tracking-tighter">Active</span>
+</td>
+<td class="px-6 py-4 text-sm font-semibold">6,102</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="text-sm font-bold">9.8%</span>
+<span class="material-icons text-primary text-xs">horizontal_rule</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="p-2 text-slate-400 hover:text-primary transition-colors">
+<span class="material-icons text-lg">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="hover:bg-slate-50 dark:hover:bg-primary/5 transition-colors group">
+<td class="px-6 py-4">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded bg-slate-200 dark:bg-border-dark overflow-hidden flex-shrink-0">
+<img alt="Scene" class="w-full h-full object-cover" data-alt="High-end boutique luxury retail background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCUXj557juCROoQSmY_joId0Wl8PYLN6di3bLjXoZ0q67KqRiXSRoFYd-jRRN2aA20NwEO5G6b0hZB3jFkI8qD710iNWBhu7R4iCyqwpMa_DDd83k9jnuS4mcxcLkXmCxM0yx__h5Ya3-VZmBMj6Llranf8CnYtSdWy7pdrz4gft9v1v7m6FgpCCyulxSgSE9v2dlKzyEg0EdnPvxwoQeZqnMTa_KqTb72eTA2ejjR-BMCRSamCj_tRKW_vR_hhJgnjUWQ5LjAAlEJ1"/>
+</div>
+<div>
+<p class="text-sm font-bold">High-End Boutique</p>
+<p class="text-[10px] text-slate-500">Retail / Luxury Category</p>
+</div>
+</div>
+</td>
+<td class="px-6 py-4">
+<span class="px-2 py-1 bg-primary/10 text-primary text-[10px] font-bold rounded uppercase tracking-tighter">New</span>
+</td>
+<td class="px-6 py-4 text-sm font-semibold">3,245</td>
+<td class="px-6 py-4">
+<div class="flex items-center gap-2">
+<span class="text-sm font-bold">15.2%</span>
+<span class="material-icons text-emerald-500 text-xs">arrow_upward</span>
+</div>
+</td>
+<td class="px-6 py-4 text-right">
+<button class="p-2 text-slate-400 hover:text-primary transition-colors">
+<span class="material-icons text-lg">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- Footer Meta -->
+<footer class="p-8 border-t border-slate-200 dark:border-border-dark flex items-center justify-between text-[10px] font-bold text-slate-500 uppercase tracking-widest">
+<div>© 2024 NanoBanana AI Studio. All systems operational.</div>
+<div class="flex gap-4">
+<a class="hover:text-primary" href="#">API Docs</a>
+<a class="hover:text-primary" href="#">System Logs</a>
+<a class="hover:text-primary" href="#">Server Health</a>
+</div>
+</footer>
+</main>
+</div>
+</body></html>

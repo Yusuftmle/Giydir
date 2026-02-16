@@ -1,44 +1,130 @@
 /* ============================================
    Giydir - AI Virtual Try-On Platform
-   Stitch Design System
+   Premium Studio Design System
    ============================================ */
 
-/* Custom scrollbar */
+/* Custom scrollbar - Premium Dark Theme */
 ::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
+    width: 4px;
+    height: 4px;
 }
 ::-webkit-scrollbar-track {
-    background: #101f22;
+    background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-    background: #2a3b40;
-    border-radius: 4px;
+    background: #1a1e26;
+    border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: #36494f;
+    background: #2a2e36;
 }
-.hide-scrollbar::-webkit-scrollbar {
+.hide-scrollbar::-webkit-scrollbar,
+.no-scrollbar::-webkit-scrollbar {
     display: none;
 }
-.hide-scrollbar {
+.hide-scrollbar,
+.no-scrollbar {
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
 
-/* Glassmorphism */
+/* Glassmorphism - Premium Studio Style */
 .glass {
-    background: rgba(16, 31, 34, 0.7);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .glass-panel {
-    background: rgba(16, 31, 34, 0.7);
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-card {
+    background: rgba(16, 31, 34, 0.6);
     backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(19, 200, 236, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Premium Studio Button */
+.glass-button {
+    background: rgba(18, 18, 18, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.glass-button:hover {
+    background: rgba(18, 18, 18, 0.95);
+}
+
+/* Step Label Styling */
+.step-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: rgb(100, 116, 139);
+    display: block;
+    margin-bottom: 0.5rem;
+}
+
+/* Canvas Grid for Preview */
+.canvas-grid {
+    background-size: 40px 40px;
+    background-image: radial-gradient(circle, #1a2e32 1px, transparent 1px);
+}
+
+/* Sidebar Active State */
+.sidebar-item-active {
+    color: #d4b38d;
+    background-color: rgba(212, 179, 141, 0.05);
+}
+
+/* Premium Input Styling */
+.input-premium {
+    width: 100%;
+    background: transparent;
+    border-top: 0;
+    border-left: 0;
+    border-right: 0;
+    border-bottom: 1px solid rgba(18, 18, 18, 0.1);
+    padding: 1rem 0;
+    outline: none;
+    transition: all 0.3s;
+    letter-spacing: 0.15em;
+}
+.input-premium:focus {
+    border-bottom-color: #121212;
+    box-shadow: none;
+}
+.input-premium::placeholder {
+    color: #9ca3af;
+}
+
+/* Editorial Image Effect */
+.editorial-image {
+    filter: grayscale(15%) contrast(105%);
+}
+
+/* Custom Slider for Atmospheric Controls */
+.custom-slider {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    background: #162b2f;
+    border-radius: 2px;
+    outline: none;
+}
+.custom-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 12px;
+    height: 12px;
+    background: #13c8ec;
+    border-radius: 50%;
+    cursor: pointer;
 }
 
 /* Comparison slider for landing page */
@@ -65,7 +151,7 @@
     width: 50%;
     background-size: cover;
     background-position: center;
-    border-right: 2px solid #13c8ec;
+    border-right: 2px solid #d4b38d;
     z-index: 10;
 }
 .slider-handle {
@@ -75,12 +161,12 @@
     transform: translateY(-50%);
     width: 40px;
     height: 40px;
-    background-color: #13c8ec;
+    background-color: #d4b38d;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 0 15px rgba(19, 200, 236, 0.5);
+    box-shadow: 0 0 15px rgba(212, 179, 141, 0.5);
     z-index: 20;
     cursor: ew-resize;
 }

@@ -132,7 +132,7 @@ public async Task<ActionResult<TryOnResponseDto>> Generate([FromBody] TryOnReque
 
             var predictionId = await _aiImageService.GenerateImageFromPromptAsync(
                 prompt,
-                "4:3",
+                "3:4",
                 "jpg");
 
             var generatedImage = new GeneratedImage

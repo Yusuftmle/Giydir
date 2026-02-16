@@ -1,0 +1,239 @@
+@page "/admin/dashboard"
+@layout AdminLayout
+@attribute [Authorize(Roles = "Admin")]
+
+<div class="p-8 space-y-8 max-w-7xl mx-auto">
+    <!-- KPI Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <!-- Card 1 -->
+        <div class="p-6 bg-white dark:bg-panel-dark border border-slate-200 dark:border-border-dark rounded-xl relative overflow-hidden group">
+            <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                <span class="material-icons text-6xl text-primary">groups</span>
+            </div>
+            <p class="text-slate-500 text-sm font-medium">Total Users</p>
+            <div class="flex items-baseline gap-2 mt-2">
+                <h3 class="text-3xl font-extrabold tracking-tight">12,450</h3>
+                <span class="text-emerald-500 text-xs font-bold flex items-center gap-0.5">
+                    <span class="material-icons text-[14px]">trending_up</span>
+                    12%
+                </span>
+            </div>
+            <div class="mt-4 h-1 w-full bg-slate-100 dark:bg-border-dark rounded-full overflow-hidden">
+                <div class="h-full bg-primary w-[70%]"></div>
+            </div>
+        </div>
+        <!-- Card 2 -->
+        <div class="p-6 bg-white dark:bg-panel-dark border border-slate-200 dark:border-border-dark rounded-xl relative overflow-hidden group">
+            <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                <span class="material-icons text-6xl text-primary">layers</span>
+            </div>
+            <p class="text-slate-500 text-sm font-medium">Active Projects</p>
+            <div class="flex items-baseline gap-2 mt-2">
+                <h3 class="text-3xl font-extrabold tracking-tight">1,208</h3>
+                <span class="text-emerald-500 text-xs font-bold flex items-center gap-0.5">
+                    <span class="material-icons text-[14px]">trending_up</span>
+                    8.4%
+                </span>
+            </div>
+            <div class="mt-4 h-1 w-full bg-slate-100 dark:bg-border-dark rounded-full overflow-hidden">
+                <div class="h-full bg-primary w-[45%]"></div>
+            </div>
+        </div>
+        <!-- Card 3 -->
+        <div class="p-6 bg-white dark:bg-panel-dark border border-slate-200 dark:border-border-dark rounded-xl relative overflow-hidden group">
+            <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                <span class="material-icons text-6xl text-primary">account_balance_wallet</span>
+            </div>
+            <p class="text-slate-500 text-sm font-medium">Total Revenue</p>
+            <div class="flex items-baseline gap-2 mt-2">
+                <h3 class="text-3xl font-extrabold tracking-tight">$45,200</h3>
+                <span class="text-primary text-xs font-bold flex items-center gap-0.5">
+                    <span class="material-icons text-[14px]">horizontal_rule</span>
+                    0.2%
+                </span>
+            </div>
+            <div class="mt-4 h-1 w-full bg-slate-100 dark:bg-border-dark rounded-full overflow-hidden">
+                <div class="h-full bg-primary w-[85%]"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Charts Row -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Line Chart Placeholder -->
+        <div class="lg:col-span-2 bg-white dark:bg-panel-dark border border-slate-200 dark:border-border-dark rounded-xl p-6">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <h4 class="font-bold text-lg">User Activity & Renders</h4>
+                    <p class="text-xs text-slate-500 mt-1">AI generation frequency over the last 30 days</p>
+                </div>
+                <select class="bg-slate-100 dark:bg-background-dark border-none rounded text-xs font-bold px-4 py-2 ring-0 focus:ring-1 focus:ring-primary">
+                    <option>Last 30 Days</option>
+                    <option>Last 7 Days</option>
+                    <option>Last 24 Hours</option>
+                </select>
+            </div>
+            <!-- Mockup Line Chart -->
+            <div class="h-[300px] w-full relative flex items-end justify-between gap-1 px-2">
+                <div class="absolute inset-0 flex flex-col justify-between py-2 pointer-events-none">
+                    <div class="border-t border-slate-100 dark:border-border-dark/50 w-full"></div>
+                    <div class="border-t border-slate-100 dark:border-border-dark/50 w-full"></div>
+                    <div class="border-t border-slate-100 dark:border-border-dark/50 w-full"></div>
+                    <div class="border-t border-slate-100 dark:border-border-dark/50 w-full"></div>
+                    <div class="border-t border-slate-100 dark:border-border-dark/50 w-full"></div>
+                </div>
+                <!-- Mock Bars representing a trend line -->
+                <div class="flex-1 bg-primary/20 rounded-t-sm h-[30%] relative group cursor-pointer hover:bg-primary/40 transition-all"></div>
+                <div class="flex-1 bg-primary/20 rounded-t-sm h-[45%] relative group cursor-pointer hover:bg-primary/40 transition-all"></div>
+                <div class="flex-1 bg-primary/30 rounded-t-sm h-[40%] relative group cursor-pointer hover:bg-primary/40 transition-all"></div>
+                <div class="flex-1 bg-primary/40 rounded-t-sm h-[60%] relative group cursor-pointer hover:bg-primary/40 transition-all"></div>
+                <div class="flex-1 bg-primary/50 rounded-t-sm h-[55%] relative group cursor-pointer hover:bg-primary/40 transition-all"></div>
+                <div class="flex-1 bg-primary/60 rounded-t-sm h-[75%] relative group cursor-pointer hover:bg-primary/40 transition-all"></div>
+                <div class="flex-1 bg-primary rounded-t-sm h-[90%] relative group cursor-pointer hover:bg-primary transition-all chart-glow"></div>
+                <div class="flex-1 bg-primary/80 rounded-t-sm h-[80%] relative group cursor-pointer hover:bg-primary/90 transition-all"></div>
+                <div class="flex-1 bg-primary/60 rounded-t-sm h-[65%] relative group cursor-pointer hover:bg-primary/70 transition-all"></div>
+                <div class="flex-1 bg-primary/50 rounded-t-sm h-[70%] relative group cursor-pointer hover:bg-primary/60 transition-all"></div>
+                <div class="flex-1 bg-primary/40 rounded-t-sm h-[50%] relative group cursor-pointer hover:bg-primary/50 transition-all"></div>
+                <div class="flex-1 bg-primary/30 rounded-t-sm h-[40%] relative group cursor-pointer hover:bg-primary/40 transition-all"></div>
+            </div>
+            <div class="flex justify-between mt-4 text-[10px] font-bold text-slate-500 uppercase tracking-widest px-2">
+                <span>01 Oct</span>
+                <span>10 Oct</span>
+                <span>20 Oct</span>
+                <span>30 Oct</span>
+            </div>
+        </div>
+        <!-- Donut Chart Placeholder -->
+        <div class="bg-white dark:bg-panel-dark border border-slate-200 dark:border-border-dark rounded-xl p-6">
+            <h4 class="font-bold text-lg mb-1">Most Popular Models</h4>
+            <p class="text-xs text-slate-500 mb-8">Model usage distribution</p>
+            <div class="relative flex items-center justify-center py-6">
+                <!-- Mockup Donut Chart SVG -->
+                <svg class="w-48 h-48 transform -rotate-90">
+                    <circle class="text-slate-100 dark:text-border-dark" cx="96" cy="96" fill="transparent" r="80" stroke="currentColor" stroke-width="12"></circle>
+                    <circle class="text-primary chart-glow" cx="96" cy="96" fill="transparent" r="80" stroke="currentColor" stroke-dasharray="502" stroke-dashoffset="276" stroke-width="12"></circle>
+                    <circle class="text-primary/40" cx="96" cy="96" fill="transparent" r="80" stroke="currentColor" stroke-dasharray="502" stroke-dashoffset="420" stroke-width="12"></circle>
+                </svg>
+                <div class="absolute flex flex-col items-center">
+                    <span class="text-3xl font-extrabold tracking-tighter">45%</span>
+                    <span class="text-[10px] uppercase font-bold text-slate-500">Model A</span>
+                </div>
+            </div>
+            <div class="mt-8 space-y-4">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <div class="w-2.5 h-2.5 rounded-full bg-primary"></div>
+                        <span class="text-sm font-medium">Model Alpha-9</span>
+                    </div>
+                    <span class="text-sm font-bold">45%</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <div class="w-2.5 h-2.5 rounded-full bg-primary/40"></div>
+                        <span class="text-sm font-medium">Model Beta-Studio</span>
+                    </div>
+                    <span class="text-sm font-bold">30%</span>
+                </div>
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                        <div class="w-2.5 h-2.5 rounded-full bg-slate-300 dark:bg-border-dark"></div>
+                        <span class="text-sm font-medium">Other Variants</span>
+                    </div>
+                    <span class="text-sm font-bold">25%</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Backgrounds List -->
+    <div class="bg-white dark:bg-panel-dark border border-slate-200 dark:border-border-dark rounded-xl overflow-hidden">
+        <div class="px-6 py-4 border-b border-slate-200 dark:border-border-dark flex items-center justify-between">
+            <div>
+                <h4 class="font-bold text-lg">Top Performing Backgrounds</h4>
+                <p class="text-xs text-slate-500">Most utilized scenes in the virtual studio</p>
+            </div>
+            <button class="px-4 py-2 text-xs font-bold border border-primary/40 text-primary rounded hover:bg-primary/10 transition-colors">
+                Manage Assets
+            </button>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left">
+                <thead>
+                    <tr class="bg-slate-50 dark:bg-background-dark/50 text-slate-500 text-[10px] uppercase tracking-widest font-bold">
+                        <th class="px-6 py-4">Background Scene</th>
+                        <th class="px-6 py-4">Status</th>
+                        <th class="px-6 py-4">Use Count</th>
+                        <th class="px-6 py-4">Conversion</th>
+                        <th class="px-6 py-4 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-100 dark:divide-border-dark">
+                    <!-- Row 1 -->
+                    <tr class="hover:bg-slate-50 dark:hover:bg-primary/5 transition-colors group">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 rounded bg-slate-200 dark:bg-border-dark overflow-hidden flex-shrink-0">
+                                    <img src="https://images.unsplash.com/photo-1542332213-9b5a5a3fad35?w=200&h=200&fit=crop" class="w-full h-full object-cover" />
+                                </div>
+                                <div>
+                                    <p class="text-sm font-bold">Cyberpunk Street</p>
+                                    <p class="text-[10px] text-slate-500">Neon / Urban Category</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-1 bg-emerald-500/10 text-emerald-500 text-[10px] font-bold rounded uppercase tracking-tighter">Active</span>
+                        </td>
+                        <td class="px-6 py-4 text-sm font-semibold">8,432</td>
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm font-bold">12.4%</span>
+                                <span class="material-icons text-emerald-500 text-xs">arrow_upward</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <button class="p-2 text-slate-400 hover:text-primary transition-colors">
+                                <span class="material-icons text-lg">more_vert</span>
+                            </button>
+                        </td>
+                    </tr>
+                    <!-- Row 2 -->
+                    <tr class="hover:bg-slate-50 dark:hover:bg-primary/5 transition-colors group">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                <div class="w-12 h-12 rounded bg-slate-200 dark:bg-border-dark overflow-hidden flex-shrink-0">
+                                    <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=200&h=200&fit=crop" class="w-full h-full object-cover" />
+                                </div>
+                                <div>
+                                    <p class="text-sm font-bold">Minimalist Studio</p>
+                                    <p class="text-[10px] text-slate-500">Corporate / Clean Category</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4">
+                            <span class="px-2 py-1 bg-emerald-500/10 text-emerald-500 text-[10px] font-bold rounded uppercase tracking-tighter">Active</span>
+                        </td>
+                        <td class="px-6 py-4 text-sm font-semibold">6,102</td>
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-2">
+                                <span class="text-sm font-bold">9.8%</span>
+                                <span class="material-icons text-primary text-xs">horizontal_rule</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <button class="p-2 text-slate-400 hover:text-primary transition-colors">
+                                <span class="material-icons text-lg">more_vert</span>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .chart-glow {
+        filter: drop-shadow(0 0 8px rgba(127, 19, 236, 0.4));
+    }
+</style>

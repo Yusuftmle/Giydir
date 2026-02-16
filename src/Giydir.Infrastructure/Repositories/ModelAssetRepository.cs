@@ -14,6 +14,18 @@ public class ModelAssetRepository : IModelAssetRepository
         _context = context;
     }
 
+    public async Task UpdateAsync(ModelAsset model)
+    {
+        _context.ModelAssets.Update(model);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task CreateAsync(ModelAsset model)
+    {
+        _context.ModelAssets.Add(model);
+        await _context.SaveChangesAsync();
+    }
+
     public async Task<List<ModelAsset>> GetAllAsync()
     {
         return await _context.ModelAssets
@@ -26,7 +38,18 @@ public class ModelAssetRepository : IModelAssetRepository
     {
         return await _context.ModelAssets.FindAsync(id);
     }
+
+    public async Task DeleteAsync(string id)
+    {
+        var model = await GetByIdAsync(id);
+        if (model != null)
+        {
+            _context.ModelAssets.Remove(model);
+            await _context.SaveChangesAsync();
+        }
+    }
 }
+
 
 
 

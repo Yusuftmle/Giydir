@@ -1,0 +1,446 @@
+@page "/admin/lab"
+@layout AdminLayout
+@attribute [Authorize(Roles = "Admin")]
+@using Giydir.Core.DTOs
+@using Giydir.Core.Entities
+@inject IAIImageGenerationService AIImageService
+@inject ISavedPromptRepository PromptRepository
+@inject IModelAssetRepository ModelRepository
+@inject IAuthService AuthService
+@inject AuthenticationStateProvider AuthStateProvider
+@inject IJSRuntime JSRuntime
+@inject NavigationManager Navigation
+@inject IImageDownloadService ImageDownloadService
+
+<div class="flex flex-1 overflow-hidden h-full">
+    <!-- Left Sidebar: Wardrobe & Directing -->
+    <aside class="w-80 border-r border-slate-200 dark:border-white/5 bg-white dark:bg-panel-dark flex flex-col">
+        <div class="p-4 border-b border-white/5 flex items-center justify-between">
+            <h2 class="font-bold text-[11px] uppercase tracking-widest text-slate-400">Technical Directing</h2>
+            <button class="p-1 hover:bg-white/5 rounded text-slate-400"><span class="material-icons text-sm">settings</span></button>
+        </div>
+        <div class="flex-1 overflow-y-auto px-4 py-6 space-y-6 no-scrollbar">
+            <div class="space-y-4">
+                <div>
+                    <label class="text-[10px] uppercase font-bold text-slate-500 mb-2 block tracking-wider">Model Prompt</label>
+                    <textarea @bind="request.Prompt" 
+                              class="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-xs font-mono text-primary outline-none focus:ring-1 focus:ring-primary h-48 placeholder-slate-700"
+                              placeholder="hyper-realistic editorial photography of a female model..."></textarea>
+                </div>
+                <div>
+                    <label class="text-[10px] uppercase font-bold text-slate-500 mb-2 block tracking-wider">Negative Prompt</label>
+                    <textarea @bind="request.NegativePrompt" 
+                              class="w-full bg-black/40 border border-white/10 rounded-xl p-4 text-xs font-mono text-slate-500 outline-none focus:ring-1 focus:ring-primary h-24 placeholder-slate-700"
+                              placeholder="blurry, distorted, low quality..."></textarea>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                         <label class="text-[10px] uppercase font-bold text-slate-500 mb-2 block tracking-wider">Aspect Ratio</label>
+                         <select @bind="request.AspectRatio" class="w-full bg-black/40 border border-white/10 rounded-lg p-2 text-[10px] font-bold text-slate-400 outline-none appearance-none">
+                             <option value="3:4">3:4 (Portrait)</option>
+                             <option value="1:1">1:1 (Square)</option>
+                             <option value="9:16">9:16 (Story)</option>
+                         </select>
+                    </div>
+                </div>
+            </div>
+            
+            <button @onclick="GenerateModel" disabled="@isGenerating" 
+                    class="w-full bg-primary text-background-dark py-4 rounded-xl font-bold flex items-center justify-center gap-3 shadow-xl hover:brightness-110 transition-all disabled:opacity-50">
+                @if (isGenerating)
+                {
+                    <span class="animate-spin material-icons">refresh</span>
+                    <span>Generating...</span>
+                }
+                else
+                {
+                    <span class="material-icons">auto_fix_high</span>
+                    <span>Generate Preview</span>
+                }
+            </button>
+        </div>
+        <div class="p-4 border-t border-white/5">
+            <div class="bg-black/20 rounded-lg p-3 border border-white/5">
+                <div class="flex items-center gap-2 mb-1">
+                    <span class="material-icons text-primary text-xs">info</span>
+                    <span class="text-[9px] font-bold uppercase tracking-widest text-slate-400">Engine V2.4</span>
+                </div>
+                <p class="text-[10px] text-slate-500 leading-tight">Stable Diffusion XL based creative core enabled.</p>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Center Canvas -->
+    <main class="flex-1 bg-background-light dark:bg-background-dark relative flex flex-col overflow-hidden canvas-grid p-12">
+        <div class="flex-1 flex items-center justify-center relative">
+            @if (!string.IsNullOrEmpty(previewImageUrl))
+            {
+                <div class="relative max-w-[500px] w-full aspect-[3/4] bg-panel-dark rounded-2xl shadow-[0_40px_100px_rgba(0,0,0,0.8)] overflow-hidden ring-1 ring-white/10">
+                    <img src="@previewImageUrl" class="w-full h-full object-cover" />
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent"></div>
+                    
+                    <div class="absolute top-6 left-6 flex items-center gap-3">
+                        <div class="bg-black/80 backdrop-blur-md border border-white/10 px-3 py-1.5 rounded-full flex items-center gap-2">
+                            <div class="w-2 h-2 rounded-full bg-primary shadow-[0_0_8px_#13c8ec]"></div>
+                            <span class="text-[10px] font-bold text-white uppercase tracking-widest">Master Preview</span>
+                        </div>
+                    </div>
+                </div>
+            }
+            else if (isGenerating)
+            {
+                 <div class="flex flex-col items-center gap-4">
+                     <div class="w-16 h-16 border-4 border-primary border-t-transparent rounded-full animate-spin shadow-[0_0_20px_rgba(19,200,236,0.2)]"></div>
+                     <p class="text-[10px] uppercase font-bold tracking-widest text-slate-500 animate-pulse">AI is dreaming up your model...</p>
+                 </div>
+            }
+            else
+            {
+                <div class="text-center space-y-4 opacity-30 group cursor-default">
+                    <span class="material-icons text-6xl group-hover:scale-110 transition-transform">linked_camera</span>
+                    <p class="text-xs uppercase font-bold tracking-widest">Enter a prompt to begin creation</p>
+                </div>
+            }
+        </div>
+    </main>
+
+    <!-- Right Sidebar: Registry & Metadata -->
+    <aside class="w-96 border-l border-slate-200 dark:border-white/5 bg-white dark:bg-panel-dark flex flex-col">
+        <div class="p-5 border-b border-white/5 flex items-center justify-between">
+            <h2 class="font-bold text-sm tracking-tight text-primary">Publishing & Registry</h2>
+            <span class="material-icons text-slate-500">theater_comedy</span>
+        </div>
+        
+        <div class="flex-1 overflow-y-auto p-6 space-y-8 no-scrollbar">
+            @if (!string.IsNullOrEmpty(previewImageUrl))
+            {
+                <div class="space-y-6">
+                     <div>
+                        <label class="text-[10px] uppercase font-bold text-slate-500 mb-3 block tracking-wider">Model Identity</label>
+                        <input @bind="publishRequest.Name" type="text" placeholder="e.g. Elena Rossi" 
+                               class="w-full bg-black/20 border border-white/10 rounded-xl p-3 text-sm focus:ring-1 focus:ring-primary outline-none text-white" />
+                    </div>
+                    
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-[10px] uppercase font-bold text-slate-500 mb-3 block tracking-wider">Gender</label>
+                            <select @bind="publishRequest.Gender" class="w-full bg-black/20 border border-white/10 rounded-xl p-3 text-xs outline-none text-slate-300 appearance-none">
+                                <option>Female</option>
+                                <option>Male</option>
+                                <option>Unisex</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="text-[10px] uppercase font-bold text-slate-500 mb-3 block tracking-wider">Category</label>
+                            <select @bind="publishRequest.Category" class="w-full bg-black/20 border border-white/10 rounded-xl p-3 text-xs outline-none text-slate-300 appearance-none">
+                                <option>Studio / Casual</option>
+                                <option>Professional</option>
+                                <option>Streetwear</option>
+                                <option>Luxury</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <label class="text-[10px] uppercase font-bold text-slate-500 block tracking-wider">Atmosphere Calibration</label>
+                        <div class="space-y-3">
+                             <input @bind="publishRequest.DefaultBackground" type="text" placeholder="Background (e.g. Milan Street)" 
+                                   class="w-full bg-black/20 border border-white/10 rounded-xl p-3 text-xs focus:ring-1 focus:ring-primary outline-none text-white" />
+                             <input @bind="publishRequest.DefaultLighting" type="text" placeholder="Lighting (e.g. Golden Hour)" 
+                                   class="w-full bg-black/20 border border-white/10 rounded-xl p-3 text-xs focus:ring-1 focus:ring-primary outline-none text-white" />
+                        </div>
+                    </div>
+
+                    <div class="pt-4 space-y-3">
+                        <button @onclick="SavePrompt" disabled="@isDownloading" class="w-full bg-white/5 border border-white/10 text-white py-3 rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition-all disabled:opacity-50">
+                            @if (isDownloading) { <span>💾 Saving Image...</span> } else { <span>Save to Library</span> }
+                        </button>
+                        <button @onclick="PublishModel" disabled="@isDownloading" class="w-full bg-primary text-background-dark py-4 rounded-xl text-xs font-bold uppercase tracking-widest hover:brightness-110 transition-all shadow-lg shadow-primary/20 disabled:opacity-50">
+                            @if (isDownloading) { <span>💾 Processing...</span> } else { <span>Deploy to Giydir.ai</span> }
+                        </button>
+                    </div>
+                </div>
+            }
+            else
+            {
+                <div class="flex flex-col items-center justify-center h-full text-center space-y-4 opacity-30">
+                    <span class="material-icons text-4xl">inventory</span>
+                    <p class="text-xs uppercase font-bold tracking-widest">Preview a result to configure publishing</p>
+                </div>
+            }
+        </div>
+    </aside>
+</div>
+
+<style>
+    .canvas-grid {
+        background-size: 40px 40px;
+        background-image: radial-gradient(circle, #1a2e32 1px, transparent 1px);
+    }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+</style>
+
+@code {
+    [SupplyParameterFromQuery]
+    public string? reuseId { get; set; }
+
+    [Parameter]
+    [SupplyParameterFromQuery]
+    public string? reuseModelId { get; set; }
+
+    private AdminGenerateModelRequestDto request = new();
+    private AdminPublishModelRequestDto publishRequest = new();
+    private bool isGenerating = false;
+    private string? previewImageUrl;
+    private string? currentPredictionId;
+    private int? editingPromptId;
+    private string? editingModelId;
+    private bool isDownloading = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var userIdClaim = user.FindFirst("sub")?.Value;
+
+        if (!string.IsNullOrEmpty(reuseId) && int.TryParse(reuseId, out var id))
+        {
+            try
+            {
+                if (int.TryParse(userIdClaim, out var userId))
+                {
+                    var userPrompts = await PromptRepository.GetByUserIdAsync(userId);
+                    var existing = userPrompts?.FirstOrDefault(p => p.Id == id);
+                    if (existing != null)
+                    {
+                        editingPromptId = existing.Id;
+                        request.Prompt = existing.PromptText;
+                        request.NegativePrompt = existing.NegativePrompt;
+                        previewImageUrl = existing.ResultImageUrl;
+                        publishRequest.Name = existing.Name ?? string.Empty;
+                        publishRequest.ImageUrl = previewImageUrl ?? string.Empty;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Reuse load error: {ex.Message}");
+            }
+        }
+        else if (!string.IsNullOrEmpty(reuseModelId))
+        {
+            try
+            {
+                var existing = await ModelRepository.GetByIdAsync(reuseModelId);
+                if (existing != null)
+                {
+                    editingModelId = existing.Id;
+                    publishRequest.Name = existing.Name;
+                    publishRequest.Gender = existing.Gender;
+                    publishRequest.Category = existing.Category;
+                    publishRequest.DefaultBackground = existing.DefaultBackground;
+                    publishRequest.DefaultLighting = existing.DefaultLighting;
+                    previewImageUrl = existing.FullImagePath;
+                    publishRequest.ImageUrl = previewImageUrl;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Model reuse load error: {ex.Message}");
+            }
+        }
+    }
+
+    private async Task GenerateModel()
+    {
+        if (string.IsNullOrWhiteSpace(request.Prompt)) return;
+        
+        isGenerating = true;
+        previewImageUrl = null;
+        StateHasChanged();
+
+        try
+        {
+            // Servisi doğrudan çağır - basit ve güvenilir
+            currentPredictionId = await AIImageService.GenerateImageFromPromptAsync(
+                request.Prompt, 
+                request.AspectRatio, 
+                "jpg", // Default format
+                null, // No initial image for now
+                request.NegativePrompt);
+            
+            if (!string.IsNullOrEmpty(currentPredictionId))
+            {
+                await StartPolling();
+            }
+            else
+            {
+                await JSRuntime.InvokeVoidAsync("alert", "Hata: AI motorundan yanıt alınamadı.");
+                isGenerating = false;
+            }
+        }
+        catch (Exception ex)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", $"Bir hata oluştu: {ex.Message}");
+            isGenerating = false;
+        }
+    }
+
+    private async Task StartPolling()
+    {
+        while (isGenerating && !string.IsNullOrEmpty(currentPredictionId))
+        {
+            await Task.Delay(2000);
+            var statusResp = await AIImageService.CheckStatusAsync(currentPredictionId);
+            
+            if (statusResp?.Status == "succeeded" && !string.IsNullOrEmpty(statusResp.OutputUrl))
+            {
+                previewImageUrl = statusResp.OutputUrl;
+                publishRequest.ImageUrl = previewImageUrl ?? string.Empty;
+                isGenerating = false;
+                break;
+            }
+            else if (statusResp?.Status == "failed" || statusResp?.Status == "canceled")
+            {
+                await JSRuntime.InvokeVoidAsync("alert", $"AI üretimi başarısız oldu: {statusResp?.Error}");
+                isGenerating = false;
+                break;
+            }
+        }
+        StateHasChanged();
+    }
+
+    private async Task SavePrompt()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+        var userIdClaim = user.FindFirst("sub")?.Value;
+
+        if (string.IsNullOrEmpty(userIdClaim) || !int.TryParse(userIdClaim, out var userId))
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "Oturumunuz kapalı veya kullanıcı bilgilerine erişilemiyor.");
+            return;
+        }
+
+        try {
+            isDownloading = true;
+            StateHasChanged();
+            
+            var localPath = await EnsureLocalImage(previewImageUrl);
+            if (localPath != null) {
+                previewImageUrl = localPath;
+                publishRequest.ImageUrl = localPath;
+            }
+
+            if (editingPromptId.HasValue)
+            {
+                var existing = await PromptRepository.GetByIdAsync(editingPromptId.Value);
+                if (existing != null)
+                {
+                    existing.Name = !string.IsNullOrEmpty(publishRequest.Name) ? publishRequest.Name : "Untitled Model";
+                    existing.PromptText = request.Prompt;
+                    existing.NegativePrompt = request.NegativePrompt;
+                    existing.ResultImageUrl = previewImageUrl;
+                    await PromptRepository.UpdateAsync(existing);
+                    await JSRuntime.InvokeVoidAsync("alert", "Prompt güncellendi!");
+                    return;
+                }
+            }
+
+            var savedPrompt = new SavedPrompt
+            {
+                Name = !string.IsNullOrEmpty(publishRequest.Name) ? publishRequest.Name : "Untitled Model",
+                PromptText = request.Prompt,
+                NegativePrompt = request.NegativePrompt,
+                ResultImageUrl = previewImageUrl,
+                CreatedAt = DateTime.UtcNow,
+                CreatedByUserId = userId
+            };
+
+            await PromptRepository.CreateAsync(savedPrompt);
+            await JSRuntime.InvokeVoidAsync("alert", "Prompt kütüphaneye kaydedildi!");
+        } catch (Exception ex) {
+            await JSRuntime.InvokeVoidAsync("alert", $"Kaydetme hatası: {ex.Message}");
+        } finally {
+            isDownloading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task PublishModel()
+    {
+        if (string.IsNullOrEmpty(publishRequest.Name))
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "Lütfen model adı giriniz.");
+            return;
+        }
+
+        try {
+            isDownloading = true;
+            StateHasChanged();
+
+            var localPath = await EnsureLocalImage(previewImageUrl);
+            if (localPath != null) {
+                previewImageUrl = localPath;
+                publishRequest.ImageUrl = localPath;
+            }
+
+            if (!string.IsNullOrEmpty(editingModelId))
+            {
+                var existing = await ModelRepository.GetByIdAsync(editingModelId);
+                if (existing != null)
+                {
+                    existing.Name = publishRequest.Name;
+                    existing.FullImagePath = publishRequest.ImageUrl;
+                    existing.ThumbnailPath = publishRequest.ImageUrl;
+                    existing.Gender = publishRequest.Gender;
+                    existing.Category = publishRequest.Category;
+                    existing.DefaultBackground = publishRequest.DefaultBackground;
+                    existing.DefaultLighting = publishRequest.DefaultLighting;
+                    
+                    await ModelRepository.UpdateAsync(existing);
+                    await JSRuntime.InvokeVoidAsync("alert", "Model güncellendi!");
+                    Navigation.NavigateTo("/admin/library");
+                    return;
+                }
+            }
+
+            var modelAsset = new ModelAsset
+            {
+                Id = Guid.NewGuid().ToString().Substring(0, 8), // Generate a simple ID for now
+                Name = publishRequest.Name,
+                FullImagePath = publishRequest.ImageUrl,
+                ThumbnailPath = publishRequest.ImageUrl, // Assuming thumbnail is same as full image for now
+                Gender = publishRequest.Gender,
+                Category = publishRequest.Category,
+                DefaultBackground = publishRequest.DefaultBackground,
+                DefaultLighting = publishRequest.DefaultLighting
+            };
+
+            await ModelRepository.CreateAsync(modelAsset);
+            await JSRuntime.InvokeVoidAsync("alert", "Model başarıyla yayınlandı!");
+            Navigation.NavigateTo("/admin/library");
+        } catch (Exception ex) {
+            await JSRuntime.InvokeVoidAsync("alert", $"Yayınlama hatası: {ex.Message}");
+        } finally {
+            isDownloading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task<string?> EnsureLocalImage(string? url)
+    {
+        if (string.IsNullOrEmpty(url) || !url.StartsWith("http")) return url;
+
+        try
+        {
+            // Replicate links expire, so we MUST download and save locally
+            return await ImageDownloadService.DownloadAndSaveAsync(url);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Image download failed: {ex.Message}");
+            return url; // Fallback to original URL if download fails
+        }
+    }
+}

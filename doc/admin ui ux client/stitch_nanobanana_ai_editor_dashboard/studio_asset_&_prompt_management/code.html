@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Asset Management | Virtual Try-On Studio</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#4913ec",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#151022",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        body { font-family: 'Manrope', sans-serif; }
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #4913ec44; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #4913ec; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-900 dark:text-slate-100 min-h-screen font-display">
+<!-- Sidebar (Simplified for Desktop) -->
+<aside class="fixed left-0 top-0 h-full w-20 flex flex-col items-center py-8 bg-white/5 border-r border-primary/10 backdrop-blur-xl z-50">
+<div class="mb-10 text-primary">
+<span class="material-icons text-4xl">Auto_awesome</span>
+</div>
+<nav class="flex flex-col gap-8">
+<a class="p-3 rounded-xl hover:bg-primary/20 text-slate-400 transition-all" href="#"><span class="material-icons">dashboard</span></a>
+<a class="p-3 rounded-xl bg-primary text-white shadow-lg shadow-primary/30 transition-all" href="#"><span class="material-icons">inventory_2</span></a>
+<a class="p-3 rounded-xl hover:bg-primary/20 text-slate-400 transition-all" href="#"><span class="material-icons">auto_fix_high</span></a>
+<a class="p-3 rounded-xl hover:bg-primary/20 text-slate-400 transition-all" href="#"><span class="material-icons">settings</span></a>
+</nav>
+<div class="mt-auto">
+<img class="w-10 h-10 rounded-full border border-primary/20" data-alt="Admin user avatar" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCjBssFpIQRrk4TrueCnrh8sDvvZgrgo9ge-CYF6UzYfDoOyT5mn0mi4GHCUxdBKCYyvP4CqdyE2Ch91gY5h1zCzfm7Yz3AkD5z0WH6xfYJURTNEPnM0_-Kt20kSK8wjVMqwFlEjT-CYbDqKtXzdRS3b__e4c04dKHOhv65E-LlUVjV09_uXQZuYUeSpb0oBfw1aLyBGg_WR91qAQaHj_KIaYZWdkj_g3w9YRdCYDA8qmWZEFUhvERwYPO2KMWUzNUBngKwSXhtUSgl"/>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-20 p-8">
+<!-- Header Section -->
+<header class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
+<div>
+<h1 class="text-3xl font-bold tracking-tight">Asset Management</h1>
+<p class="text-slate-400 mt-1">Configure models, environments, and lighting for the AI studio.</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="px-5 py-2.5 bg-white/5 border border-primary/20 rounded-lg hover:bg-white/10 transition-all flex items-center gap-2">
+<span class="material-icons text-sm">history</span>
+<span>Audit Log</span>
+</button>
+<button class="px-5 py-2.5 bg-primary text-white rounded-lg hover:bg-primary/90 transition-all flex items-center gap-2 shadow-lg shadow-primary/20">
+<span class="material-icons text-sm">add</span>
+<span>Add New Asset</span>
+</button>
+</div>
+</header>
+<!-- Stats Overview -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+<div class="bg-white/5 border border-primary/10 rounded-xl p-6 backdrop-blur-sm">
+<p class="text-slate-400 text-sm font-medium">Total Assets</p>
+<h3 class="text-2xl font-bold mt-2">142</h3>
+</div>
+<div class="bg-white/5 border border-primary/10 rounded-xl p-6 backdrop-blur-sm">
+<p class="text-slate-400 text-sm font-medium">Active Models</p>
+<h3 class="text-2xl font-bold mt-2 text-primary">28</h3>
+</div>
+<div class="bg-white/5 border border-primary/10 rounded-xl p-6 backdrop-blur-sm">
+<p class="text-slate-400 text-sm font-medium">Lighting Profiles</p>
+<h3 class="text-2xl font-bold mt-2">14</h3>
+</div>
+<div class="bg-white/5 border border-primary/10 rounded-xl p-6 backdrop-blur-sm">
+<p class="text-slate-400 text-sm font-medium">API Uptime</p>
+<div class="flex items-center gap-2 mt-2">
+<span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+<h3 class="text-2xl font-bold uppercase text-emerald-500">99.9%</h3>
+</div>
+</div>
+</div>
+<!-- Filter & Search Bar -->
+<div class="bg-white/5 border border-primary/10 rounded-xl p-4 mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
+<div class="flex items-center gap-2 p-1 bg-white/5 rounded-lg">
+<button class="px-4 py-1.5 rounded-md bg-primary text-white text-sm font-medium">All Assets</button>
+<button class="px-4 py-1.5 rounded-md hover:bg-white/10 text-slate-400 text-sm font-medium">Models</button>
+<button class="px-4 py-1.5 rounded-md hover:bg-white/10 text-slate-400 text-sm font-medium">Backgrounds</button>
+<button class="px-4 py-1.5 rounded-md hover:bg-white/10 text-slate-400 text-sm font-medium">Lighting</button>
+</div>
+<div class="relative w-full md:w-96">
+<span class="material-icons absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
+<input class="w-full bg-white/5 border border-primary/20 rounded-lg pl-10 pr-4 py-2 focus:ring-primary focus:border-primary outline-none transition-all" placeholder="Search prompts, IDs or tags..." type="text"/>
+</div>
+</div>
+<!-- Hybrid Asset List -->
+<div class="space-y-4">
+<!-- Asset Item 1 -->
+<div class="bg-white/5 border border-primary/10 rounded-xl overflow-hidden group hover:border-primary/40 transition-all">
+<div class="p-5 flex flex-wrap lg:flex-nowrap items-center gap-6">
+<!-- Thumbnail -->
+<div class="relative w-24 h-24 flex-shrink-0">
+<img class="w-full h-full object-cover rounded-lg border border-primary/20" data-alt="High-fashion model portrait for AI asset" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBdZQrifLk3mYUDfIGs2maUL1vpOrI-ujas37CSTPJyKhkpyYD_01dyZJhBfPuRa9ahdsvejk4nfaDT8q5mZCZuni4z_XVhXU2eAIQgnogiJxsEEl5Lgdvra25MZ1ZcVqHzvXuowCkvqBUMI1Hl0dTz3TaHfo9_0p_OIxiWMTBTtHfaMQAeJYaBkoYeJ1H5EuWxXDfGf3DN0IoF3bqNTRJm4UjHhUWj4rnTbw7vRVzqK7DhxUHyHtIjIZEFzzP-A7DtWQjJxKOW8hlA"/>
+<div class="absolute inset-0 bg-primary/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity cursor-pointer rounded-lg">
+<span class="material-icons text-white">edit</span>
+</div>
+</div>
+<!-- Main Info -->
+<div class="flex-grow min-w-0">
+<div class="flex items-center gap-3 mb-1">
+<h4 class="text-lg font-semibold truncate">European Male - Modern Studio</h4>
+<span class="px-2 py-0.5 bg-primary/20 text-primary text-[10px] font-bold uppercase rounded border border-primary/30">Model</span>
+</div>
+<p class="text-slate-400 text-xs font-mono truncate mb-3">ID: mod_9a22_44f1_b998</p>
+<div class="flex flex-wrap gap-2">
+<span class="px-2 py-1 bg-white/5 text-slate-300 text-[10px] rounded uppercase">Candid</span>
+<span class="px-2 py-1 bg-white/5 text-slate-300 text-[10px] rounded uppercase">Natural Light</span>
+<span class="px-2 py-1 bg-white/5 text-slate-300 text-[10px] rounded uppercase">Streetwear</span>
+</div>
+</div>
+<!-- Metadata Section (API Prompts) -->
+<div class="flex-[2] min-w-0">
+<label class="text-[10px] uppercase text-slate-500 font-bold mb-1 block">Replicate API Prompt Snippet</label>
+<div class="bg-black/40 border border-primary/10 rounded-lg p-3 font-mono text-xs text-primary/80 overflow-hidden relative">
+<div class="truncate max-w-full">
+                                "prompt": "hyper-realistic editorial photography of a male model, wearing [CLOTHING], cinematic studio lighting, shot on Sony A7R IV, 85mm f1.8, high fidelity textures..."
+                            </div>
+<button class="absolute right-2 top-2 text-slate-500 hover:text-white transition-colors">
+<span class="material-icons text-sm">content_copy</span>
+</button>
+</div>
+</div>
+<!-- Toggles & Actions -->
+<div class="flex items-center gap-8 pl-6 border-l border-primary/10">
+<div class="flex flex-col items-center gap-2">
+<span class="text-[10px] uppercase text-slate-500 font-bold">Featured</span>
+<button class="text-amber-500 hover:scale-110 transition-transform">
+<span class="material-icons">star</span>
+</button>
+</div>
+<div class="flex flex-col items-center gap-2">
+<span class="text-[10px] uppercase text-slate-500 font-bold">Active</span>
+<div class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</div>
+</div>
+<button class="p-2 text-slate-500 hover:text-red-400 transition-colors">
+<span class="material-icons">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Asset Item 2 -->
+<div class="bg-white/5 border border-primary/10 rounded-xl overflow-hidden group hover:border-primary/40 transition-all">
+<div class="p-5 flex flex-wrap lg:flex-nowrap items-center gap-6">
+<!-- Thumbnail -->
+<div class="relative w-24 h-24 flex-shrink-0">
+<img class="w-full h-full object-cover rounded-lg border border-primary/20" data-alt="Abstract minimalist background for studio" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBpIY-PHtJRXi9KpYNoIEvSYdfN_KGZwfGge67NegVO1tXjg3T-HDrmm_QbUdI7rzsxM8H3IQdcEjea59qugNFbKMyJDGAmBBbo2Xm9a0pOh0t-4RaxtQIfYmnXNVLBIhcpY3tPojb-76Pr1RyWMK1RaCSyqvXRr8_clwFtV1iB3XrM7DvsJxu6mj0xtwQuGSJe8JG8Mrc9tht3IQDKc3jVJicxwHcTMokdHsR7besoVw-GQq18FGQ4xmLYAYLQT_9K2kv6K5S91V0V"/>
+<div class="absolute inset-0 bg-primary/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity cursor-pointer rounded-lg">
+<span class="material-icons text-white">edit</span>
+</div>
+</div>
+<!-- Main Info -->
+<div class="flex-grow min-w-0">
+<div class="flex items-center gap-3 mb-1">
+<h4 class="text-lg font-semibold truncate">Minimalist Zen Loft</h4>
+<span class="px-2 py-0.5 bg-slate-700 text-slate-200 text-[10px] font-bold uppercase rounded border border-white/10">Background</span>
+</div>
+<p class="text-slate-400 text-xs font-mono truncate mb-3">ID: bg_f00d_112e_a091</p>
+<div class="flex flex-wrap gap-2">
+<span class="px-2 py-1 bg-white/5 text-slate-300 text-[10px] rounded uppercase">Interior</span>
+<span class="px-2 py-1 bg-white/5 text-slate-300 text-[10px] rounded uppercase">Scandi</span>
+<span class="px-2 py-1 bg-white/5 text-slate-300 text-[10px] rounded uppercase">Soft Shadow</span>
+</div>
+</div>
+<!-- Metadata Section (API Prompts) -->
+<div class="flex-[2] min-w-0">
+<label class="text-[10px] uppercase text-slate-500 font-bold mb-1 block">Replicate API Prompt Snippet</label>
+<div class="bg-black/40 border border-primary/10 rounded-lg p-3 font-mono text-xs text-primary/80 overflow-hidden relative">
+<div class="truncate max-w-full">
+                                "negative_prompt": "clutter, messy, vibrant colors, low quality, blurry, distorted window frames, people in background..."
+                            </div>
+<button class="absolute right-2 top-2 text-slate-500 hover:text-white transition-colors">
+<span class="material-icons text-sm">content_copy</span>
+</button>
+</div>
+</div>
+<!-- Toggles & Actions -->
+<div class="flex items-center gap-8 pl-6 border-l border-primary/10">
+<div class="flex flex-col items-center gap-2">
+<span class="text-[10px] uppercase text-slate-500 font-bold">Featured</span>
+<button class="text-slate-600 hover:text-amber-500 transition-colors">
+<span class="material-icons">star_border</span>
+</button>
+</div>
+<div class="flex flex-col items-center gap-2">
+<span class="text-[10px] uppercase text-slate-500 font-bold">Active</span>
+<div class="relative inline-flex items-center cursor-pointer">
+<input checked="" class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</div>
+</div>
+<button class="p-2 text-slate-500 hover:text-red-400 transition-colors">
+<span class="material-icons">delete</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Asset Item 3 -->
+<div class="bg-white/5 border border-primary/10 rounded-xl overflow-hidden group hover:border-primary/40 transition-all opacity-75 grayscale hover:grayscale-0 hover:opacity-100">
+<div class="p-5 flex flex-wrap lg:flex-nowrap items-center gap-6">
+<!-- Thumbnail -->
+<div class="relative w-24 h-24 flex-shrink-0">
+<img class="w-full h-full object-cover rounded-lg border border-primary/20" data-alt="Camera lens and lighting gear setup" src="https://lh3.googleusercontent.com/aida-public/AB6AXuARQKnSgBsuB0qlHT7Ud01rAe_yuXQesFpx1sXJyXPW3niv1IkyZoWhplll4m2NYnrxqmqea0vMoL2NUz2zSffw6xnqPPv_3HuNIc1uNjjn_UcUGovbJ4t5qp2uHWmOmFIB80NR5qVB_7rz1Mq-_nD44NpxbFqcZFO0ls56KKng4z16M-QtjTxgbutKbDuCoD1pA0Wtm_0NyA5Gi4s6aVDiq3CX3n3ZEV8oUorIpVYm6OnQYsM2bfLHM-sJr3irWi4S9tmq1KzWS5Ix"/>
+<div class="absolute inset-0 bg-primary/40 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity cursor-pointer rounded-lg">
+<span class="material-icons text-white">edit</span>
+</div>
+</div>
+<!-- Main Info -->
+<div class="flex-grow min-w-0">
+<div class="flex items-center gap-3 mb-1">
+<h4 class="text-lg font-semibold truncate">Golden Hour Rim Light</h4>
+<span class="px-2 py-0.5 bg-amber-500/20 text-amber-500 text-[10px] font-bold uppercase rounded border border-amber-500/30">Lighting</span>
+</div>
+<p class="text-slate-400 text-xs font-mono truncate mb-3">ID: lt_9312_11b2_cc01</p>
+<div class="flex flex-wrap gap-2">
+<span class="px-2 py-1 bg-white/5 text-slate-300 text-[10px] rounded uppercase">Warm</span>
+<span class="px-2 py-1 bg-white/5 text-slate-300 text-[10px] rounded uppercase">Directional</span>
+</div>
+</div>
+<!-- Metadata Section (API Prompts) -->
+<div class="flex-[2] min-w-0">
+<label class="text-[10px] uppercase text-slate-500 font-bold mb-1 block">Replicate API Prompt Snippet</label>
+<div class="bg-black/40 border border-primary/10 rounded-lg p-3 font-mono text-xs text-primary/80 overflow-hidden relative">
+<div class="truncate max-w-full">
+                                "parameters": {"light_temp": "3200k", "intensity": 0.85, "angle": 45}
+                            </div>
+<button class="absolute right-2 top-2 text-slate-500 hover:text-white transition-colors">
+<span class="material-icons text-sm">content_copy</span>
+</button>
+</div>
+</div>
+<!-- Toggles & Actions -->
+<div class="flex items-center gap-8 pl-6 border-l border-primary/10">
+<div class="flex flex-col items-center gap-2">
+<span class="text-[10px] uppercase text-slate-500 font-bold">Featured</span>
+<button class="text-slate-600 hover:text-amber-500 transition-colors">
+<span class="material-icons">star_border</span>
+</button>
+</div>
+<div class="flex flex-col items-center gap-2">
+<span class="text-[10px] uppercase text-slate-500 font-bold">Active</span>
+<div class="relative inline-flex items-center cursor-pointer">
+<input class="sr-only peer" type="checkbox"/>
+<div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+</div>
+</div>
+<button class="p-2 text-slate-500 hover:text-red-400 transition-colors">
+<span class="material-icons">delete</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Pagination -->
+<div class="mt-8 flex items-center justify-between border-t border-primary/10 pt-6">
+<p class="text-sm text-slate-400">Showing <span class="text-white font-medium">1-10</span> of <span class="text-white font-medium">142</span> assets</p>
+<div class="flex gap-2">
+<button class="p-2 bg-white/5 rounded-lg border border-primary/10 hover:bg-white/10 transition-colors disabled:opacity-30" disabled="">
+<span class="material-icons">chevron_left</span>
+</button>
+<button class="px-4 py-2 bg-primary text-white rounded-lg font-medium">1</button>
+<button class="px-4 py-2 bg-white/5 hover:bg-white/10 text-slate-300 rounded-lg font-medium transition-colors">2</button>
+<button class="px-4 py-2 bg-white/5 hover:bg-white/10 text-slate-300 rounded-lg font-medium transition-colors">3</button>
+<button class="p-2 bg-white/5 rounded-lg border border-primary/10 hover:bg-white/10 transition-colors">
+<span class="material-icons">chevron_right</span>
+</button>
+</div>
+</div>
+</main>
+<!-- Slide-over Drawer Mockup (Invisible by default, used for design context) -->
+<!-- This represents the 'Add New Asset' form flow -->
+<div class="fixed inset-y-0 right-0 w-[450px] bg-background-dark border-l border-primary/20 shadow-2xl z-[60] p-8 hidden">
+<div class="flex items-center justify-between mb-8">
+<h2 class="text-xl font-bold">New Studio Asset</h2>
+<button class="p-2 hover:bg-white/10 rounded-full transition-colors"><span class="material-icons">close</span></button>
+</div>
+<div class="space-y-6">
+<div>
+<label class="block text-xs font-bold uppercase text-slate-500 mb-2">Asset Thumbnail</label>
+<div class="border-2 border-dashed border-primary/20 rounded-xl h-40 flex flex-col items-center justify-center bg-white/5 hover:bg-white/10 transition-all cursor-pointer">
+<span class="material-icons text-primary text-3xl mb-2">cloud_upload</span>
+<p class="text-sm text-slate-400">Drag &amp; drop or <span class="text-primary font-bold">browse</span></p>
+</div>
+</div>
+<div>
+<label class="block text-xs font-bold uppercase text-slate-500 mb-2">Asset Name</label>
+<input class="w-full bg-white/5 border border-primary/20 rounded-lg px-4 py-2 focus:ring-primary focus:border-primary outline-none" type="text"/>
+</div>
+<div class="grid grid-cols-2 gap-4">
+<div>
+<label class="block text-xs font-bold uppercase text-slate-500 mb-2">Category</label>
+<select class="w-full bg-white/5 border border-primary/20 rounded-lg px-4 py-2 focus:ring-primary focus:border-primary outline-none">
+<option>Model</option>
+<option>Background</option>
+<option>Lighting</option>
+</select>
+</div>
+<div>
+<label class="block text-xs font-bold uppercase text-slate-500 mb-2">Version</label>
+<input class="w-full bg-white/5 border border-primary/20 rounded-lg px-4 py-2 focus:ring-primary focus:border-primary outline-none" type="text" value="v1.4.2"/>
+</div>
+</div>
+<div>
+<label class="block text-xs font-bold uppercase text-slate-500 mb-2">Replicate Prompt Details</label>
+<textarea class="w-full bg-white/5 border border-primary/20 rounded-lg px-4 py-2 focus:ring-primary focus:border-primary outline-none font-mono text-sm" placeholder='{"prompt": "...", "num_outputs": 1}' rows="4"></textarea>
+</div>
+<div class="pt-6 border-t border-primary/10 flex gap-4">
+<button class="flex-1 py-3 bg-primary text-white rounded-lg font-bold shadow-lg shadow-primary/20 hover:bg-primary/90 transition-all">Save Asset</button>
+<button class="flex-1 py-3 bg-white/5 text-slate-300 rounded-lg font-bold hover:bg-white/10 transition-all">Cancel</button>
+</div>
+</div>
+</div>
+</body></html>

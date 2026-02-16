@@ -6,68 +6,68 @@
 {
     <div class="flex items-center justify-center py-12">
         <div class="relative w-12 h-12">
-            <div class="absolute inset-0 border-4 border-gray-700 rounded-full"></div>
-            <div class="absolute inset-0 border-4 border-primary rounded-full border-t-transparent animate-spin"></div>
+            <div class="absolute inset-0 border-4 border-slate-700 rounded-full"></div>
+            <div class="absolute inset-0 border-4 border-[#d4b38d] rounded-full border-t-transparent animate-spin"></div>
         </div>
     </div>
 }
 else if (models.Count == 0)
 {
-    <div class="text-center py-12 text-gray-400">
-        <span class="material-icons-outlined text-4xl">person_off</span>
+    <div class="text-center py-12 text-slate-400">
+        <span class="material-symbols-outlined text-4xl">person_off</span>
         <p class="mt-3 text-sm">Henüz model pozu eklenmemiş</p>
     </div>
 }
 else
 {
     <!-- Filter Chips -->
-    <div class="flex gap-2 overflow-x-auto hide-scrollbar pb-4">
-        <button class="flex-none px-4 py-1.5 rounded-full text-sm transition-all @(genderFilter == "All" ? "bg-primary text-background-dark font-medium shadow-sm" : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-primary dark:hover:border-primary")"
-                @onclick='() => genderFilter = "All"'>Tüm Modeller</button>
-        <button class="flex-none px-4 py-1.5 rounded-full text-sm transition-all @(genderFilter == "Female" ? "bg-primary text-background-dark font-medium shadow-sm" : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-primary dark:hover:border-primary")"
-                @onclick='() => genderFilter = "Female"'>Kadın</button>
-        <button class="flex-none px-4 py-1.5 rounded-full text-sm transition-all @(genderFilter == "Male" ? "bg-primary text-background-dark font-medium shadow-sm" : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-primary dark:hover:border-primary")"
-                @onclick='() => genderFilter = "Male"'>Erkek</button>
+    <div class="flex gap-2 overflow-x-auto no-scrollbar pb-4">
+        <button class="flex-none px-4 py-1.5 rounded-full text-[10px] font-bold tracking-widest uppercase transition-all @(genderFilter == "All" ? "bg-white/5 text-[#d4b38d] border border-[#d4b38d]/30" : "bg-white/[0.02] border border-white/10 text-slate-500 hover:border-white/20")"
+                @onclick='() => genderFilter = "All"'>All Models</button>
+        <button class="flex-none px-4 py-1.5 rounded-full text-[10px] font-bold tracking-widest uppercase transition-all @(genderFilter == "Female" ? "bg-white/5 text-[#d4b38d] border border-[#d4b38d]/30" : "bg-white/[0.02] border border-white/10 text-slate-500 hover:border-white/20")"
+                @onclick='() => genderFilter = "Female"'>Female</button>
+        <button class="flex-none px-4 py-1.5 rounded-full text-[10px] font-bold tracking-widest uppercase transition-all @(genderFilter == "Male" ? "bg-white/5 text-[#d4b38d] border border-[#d4b38d]/30" : "bg-white/[0.02] border border-white/10 text-slate-500 hover:border-white/20")"
+                @onclick='() => genderFilter = "Male"'>Male</button>
     </div>
 
-    <!-- Model Grid -->
-    <div class="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+    <!-- Model Grid - Horizontal Scroll -->
+    <div @ref="scrollContainer" class="flex gap-4 overflow-x-auto no-scrollbar pb-2 cursor-grab active:cursor-grabbing">
         @foreach (var model in FilteredModels)
         {
             @if (model.Id == SelectedModelId)
             {
                 <!-- Selected Model Card -->
-                <div class="group relative aspect-[3/4] rounded-xl overflow-hidden cursor-pointer ring-4 ring-primary shadow-xl shadow-primary/20"
+                <div class="flex-none w-36 aspect-[3/4] rounded-xl overflow-hidden relative ring-2 ring-[#d4b38d] group cursor-pointer"
                      @onclick="() => SelectModel(model.Id)">
-                    <div class="w-full h-full bg-gradient-to-br from-primary/20 to-blue-600/20 flex items-center justify-center">
-                        <span class="material-icons-outlined text-4xl text-primary/60">person</span>
+                    <img src="@model.ThumbnailPath" class="w-full h-full object-cover" alt="@model.Name"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" loading="lazy" />
+                    <div class="absolute inset-0 bg-gradient-to-br from-slate-700 to-slate-800 hidden items-center justify-center">
+                        <span class="material-symbols-outlined text-4xl text-[#d4b38d]/60">person</span>
                     </div>
-                    <img src="@model.ThumbnailPath" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 z-10" alt="@model.Name"
-                         onerror="this.style.display='none'; this.parentElement.querySelector('div').style.display='flex';" loading="lazy" />
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-90"></div>
-                    <div class="absolute top-3 right-3 bg-primary text-background-dark rounded-full p-1 shadow-lg">
-                        <span class="material-icons-outlined text-sm font-bold block">check</span>
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
+                    <div class="absolute bottom-3 left-3">
+                        <p class="text-xs font-bold text-white tracking-wide">@model.Name</p>
+                        <p class="text-[8px] text-[#d4b38d] uppercase font-bold tracking-widest mt-0.5">@model.Category</p>
                     </div>
-                    <div class="absolute bottom-0 left-0 w-full p-4">
-                        <p class="text-white font-bold text-lg leading-tight m-0">@model.Name</p>
-                        <p class="text-gray-300 text-xs mt-0.5 m-0">@model.Category</p>
+                    <div class="absolute top-3 right-3">
+                        <span class="material-symbols-outlined text-[#d4b38d] text-xl">check_circle</span>
                     </div>
                 </div>
             }
             else
             {
                 <!-- Normal Model Card -->
-                <div class="group relative aspect-[3/4] rounded-xl overflow-hidden cursor-pointer bg-gray-200 dark:bg-gray-800 hover:ring-2 hover:ring-primary/50 transition-all"
+                <div class="flex-none w-36 aspect-[3/4] rounded-xl overflow-hidden relative glass-panel group cursor-pointer hover:border-[#d4b38d]/30 transition-all"
                      @onclick="() => SelectModel(model.Id)">
-                    <div class="w-full h-full bg-gradient-to-br from-gray-700 to-gray-800 flex items-center justify-center">
-                        <span class="material-icons-outlined text-4xl text-gray-600">person</span>
+                    <img src="@model.ThumbnailPath" class="w-full h-full object-cover opacity-60 group-hover:opacity-90" alt="@model.Name"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" loading="lazy" />
+                    <div class="absolute inset-0 bg-gradient-to-br from-slate-700 to-slate-800 hidden items-center justify-center">
+                        <span class="material-symbols-outlined text-4xl text-slate-600">person</span>
                     </div>
-                    <img src="@model.ThumbnailPath" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 z-10" alt="@model.Name"
-                         onerror="this.style.display='none'; this.parentElement.querySelector('div').style.display='flex';" loading="lazy" />
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                    <div class="absolute bottom-0 left-0 w-full p-4 translate-y-4 group-hover:translate-y-0 transition-transform duration-300 opacity-0 group-hover:opacity-100">
-                        <p class="text-white font-bold text-lg leading-tight m-0">@model.Name</p>
-                        <p class="text-gray-300 text-xs mt-0.5 m-0">@model.Category</p>
+                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent"></div>
+                    <div class="absolute bottom-3 left-3">
+                        <p class="text-xs font-bold text-white tracking-wide">@model.Name</p>
+                        <p class="text-[8px] text-slate-400 uppercase font-bold tracking-widest mt-0.5">@model.Category</p>
                     </div>
                 </div>
             }
@@ -107,9 +107,20 @@ else
         }
     }
 
-    private async Task SelectModel(string modelId)
+    private ElementReference scrollContainer;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("setupHorizontalScroll", scrollContainer);
+        }
+    }
+
+    private async Task SelectModel(string? modelId)
     {
         SelectedModelId = modelId;
         await SelectedModelIdChanged.InvokeAsync(modelId);
     }
 }
+@inject IJSRuntime JSRuntime

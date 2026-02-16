@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Admin Personal Prompt Library | AI Virtual Try-On Studio</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "primary": "#13c8ec",
+              "background-light": "#f6f8f8",
+              "background-dark": "#05090a", 
+              "panel-dark": "#0c1416",
+              "surface-dark": "#121d20",
+            },
+            fontFamily: {
+              "display": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style type="text/tailwindcss">
+        body { font-family: 'Inter', sans-serif; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .glass-card {
+            background: rgba(16, 31, 34, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+        .prompt-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 1.5rem;
+        }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-slate-800 dark:text-slate-200 h-screen flex flex-col overflow-hidden font-display">
+<header class="h-14 border-b border-slate-200 dark:border-white/5 flex items-center justify-between px-4 bg-background-light dark:bg-panel-dark z-50">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 bg-primary rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-background-dark text-xl font-bold">folder_shared</span>
+</div>
+<span class="font-bold tracking-tight text-lg uppercase">Admin<span class="text-primary text-sm ml-1 font-medium">Prompt Library</span></span>
+</div>
+<div class="h-6 w-[1px] bg-white/10"></div>
+<div class="flex items-center gap-2 text-sm text-slate-400">
+<span class="text-slate-500">Asset Management</span>
+<span class="material-icons-outlined text-sm">chevron_right</span>
+<span class="text-slate-100 font-medium">Personal Collection</span>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 text-lg">search</span>
+<input class="bg-surface-dark border-white/10 rounded-lg pl-10 pr-4 py-1.5 text-sm w-80 focus:ring-primary focus:border-primary" placeholder="Search prompts, tags, or IDs..." type="text"/>
+</div>
+<div class="h-6 w-[1px] bg-white/10"></div>
+<button class="bg-primary text-background-dark px-4 py-2 rounded-lg text-sm font-bold flex items-center gap-2 hover:brightness-110 transition-all">
+<span class="material-symbols-outlined text-sm">add_circle</span>
+            New Prompt
+        </button>
+</div>
+</header>
+<div class="flex flex-1 overflow-hidden">
+<aside class="w-64 border-r border-slate-200 dark:border-white/5 bg-background-light dark:bg-panel-dark flex flex-col">
+<div class="p-4 border-b border-white/5">
+<h2 class="font-bold text-[11px] uppercase tracking-widest text-slate-400">Library Categories</h2>
+</div>
+<div class="flex-1 overflow-y-auto p-2 space-y-1 no-scrollbar">
+<button class="w-full flex items-center justify-between px-3 py-2 rounded-lg bg-primary/10 text-primary group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-xl">all_inclusive</span>
+<span class="text-sm font-medium">All Assets</span>
+</div>
+<span class="text-[10px] font-bold opacity-60">124</span>
+</button>
+<button class="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white/5 text-slate-400 group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-xl text-slate-500">deck</span>
+<span class="text-sm font-medium group-hover:text-slate-200 transition-colors">Outdoor Scenarios</span>
+</div>
+<span class="text-[10px] font-bold opacity-60">42</span>
+</button>
+<button class="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white/5 text-slate-400 group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-xl text-slate-500">lightbulb</span>
+<span class="text-sm font-medium group-hover:text-slate-200 transition-colors">Studio Lighting</span>
+</div>
+<span class="text-[10px] font-bold opacity-60">28</span>
+</button>
+<button class="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white/5 text-slate-400 group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-xl text-slate-500">groups</span>
+<span class="text-sm font-medium group-hover:text-slate-200 transition-colors">Model Archetypes</span>
+</div>
+<span class="text-[10px] font-bold opacity-60">35</span>
+</button>
+<button class="w-full flex items-center justify-between px-3 py-2 rounded-lg hover:bg-white/5 text-slate-400 group">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-xl text-slate-500">auto_awesome</span>
+<span class="text-sm font-medium group-hover:text-slate-200 transition-colors">VFX &amp; Atmosphere</span>
+</div>
+<span class="text-[10px] font-bold opacity-60">19</span>
+</button>
+<div class="pt-6 px-3">
+<h3 class="text-[10px] uppercase font-bold text-slate-500 mb-4 tracking-wider">Quick Filters</h3>
+<div class="space-y-3">
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="rounded border-white/10 bg-white/5 text-primary focus:ring-primary w-4 h-4" type="checkbox"/>
+<span class="text-xs text-slate-400 group-hover:text-slate-200">High Fidelity Only</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="rounded border-white/10 bg-white/5 text-primary focus:ring-primary w-4 h-4" type="checkbox"/>
+<span class="text-xs text-slate-400 group-hover:text-slate-200">Used Recently</span>
+</label>
+<label class="flex items-center gap-3 cursor-pointer group">
+<input class="rounded border-white/10 bg-white/5 text-primary focus:ring-primary w-4 h-4" type="checkbox"/>
+<span class="text-xs text-slate-400 group-hover:text-slate-200">Experimental</span>
+</label>
+</div>
+</div>
+</div>
+<div class="p-4 border-t border-white/5">
+<div class="bg-surface-dark rounded-lg p-3 border border-white/5">
+<div class="flex items-center gap-2 mb-2">
+<span class="material-symbols-outlined text-primary text-xs">storage</span>
+<span class="text-[9px] font-bold uppercase tracking-widest text-slate-400">Library Storage</span>
+</div>
+<div class="w-full h-1 bg-white/10 rounded-full mb-1">
+<div class="h-full bg-primary w-[65%]"></div>
+</div>
+<div class="text-[9px] text-slate-500">6.2GB of 10GB used</div>
+</div>
+</div>
+</aside>
+<main class="flex-1 bg-background-light dark:bg-background-dark overflow-y-auto p-6 no-scrollbar">
+<div class="flex items-center justify-between mb-8">
+<div>
+<h1 class="text-2xl font-bold tracking-tight">Saved AI Prompts</h1>
+<p class="text-sm text-slate-500 mt-1">Manage and orchestrate high-fidelity generative sequences for studio shoots.</p>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 hover:bg-white/5 rounded-lg text-slate-400"><span class="material-symbols-outlined">grid_view</span></button>
+<button class="p-2 hover:bg-white/5 rounded-lg text-slate-400"><span class="material-symbols-outlined">format_list_bulleted</span></button>
+<div class="h-6 w-[1px] bg-white/10 mx-2"></div>
+<select class="bg-panel-dark border-white/10 rounded-lg text-xs font-bold uppercase py-2 pl-3 pr-8 focus:ring-primary">
+<option>Recently Created</option>
+<option>Most Used</option>
+<option>A-Z</option>
+</select>
+</div>
+</div>
+<div class="prompt-grid">
+<div class="bg-panel-dark border border-white/5 rounded-xl overflow-hidden group hover:border-primary/30 transition-all flex flex-col shadow-lg">
+<div class="relative aspect-video overflow-hidden">
+<img alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDM0SjBQDl8HmKW6yBz76FM2CPfPaPiNNw4K82E7g8RpAWAVprf8eFGw7IRXyNeMaHaNvRs2cTkHdfqaGNV2CJPIvO08obraxNNBbGuIPwJpHsD48_CGnYT_Ye3TYUAh-Cd8zMhWTHlzvlrcCJChI4TJuxtF3939xST5nJWqRvSnYNRW-1f1uihjLN94wuOdR9mC0k1qPRhCfju42HL9APNofwqkcBlygkTPJk3fDWdVTxXY9VwYm7bRcwdtdTAzgdqVXa4EsQksq-Q"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+<div class="absolute top-3 left-3 flex gap-2">
+<span class="bg-black/60 backdrop-blur-md text-[9px] font-bold text-primary uppercase px-2 py-0.5 rounded border border-primary/20">Outdoor</span>
+<span class="bg-black/60 backdrop-blur-md text-[9px] font-bold text-slate-300 uppercase px-2 py-0.5 rounded border border-white/10">Summer 24</span>
+</div>
+</div>
+<div class="p-4 flex-1 flex flex-col">
+<div class="flex items-start justify-between mb-3">
+<h3 class="font-bold text-sm tracking-tight text-white uppercase">Milanese Runway Walk</h3>
+<span class="text-[10px] text-slate-500 font-mono tracking-tighter">#PR-8821</span>
+</div>
+<div class="bg-black/30 border border-white/5 rounded-lg p-3 mb-4 flex-1">
+<p class="text-[11px] text-slate-400 leading-relaxed italic line-clamp-3">
+                            "A cinematic full body shot of a professional model walking on a sun-drenched cobblestone street in Milan, soft morning light, shallow depth of field, high-fashion editorial style, 8k resolution, photorealistic fabric textures..."
+                        </p>
+</div>
+<div class="flex items-center gap-2 mt-auto">
+<button class="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5">
+<span class="material-symbols-outlined text-sm">edit</span> Edit
+                        </button>
+<button class="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5">
+<span class="material-symbols-outlined text-sm">content_copy</span> Clone
+                        </button>
+<button class="flex-[1.5] bg-primary text-background-dark py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider hover:brightness-110 transition-all flex items-center justify-center gap-1.5 shadow-lg shadow-primary/10">
+<span class="material-symbols-outlined text-sm">science</span> Use in Lab
+                        </button>
+</div>
+</div>
+</div>
+<div class="bg-panel-dark border border-white/5 rounded-xl overflow-hidden group hover:border-primary/30 transition-all flex flex-col shadow-lg">
+<div class="relative aspect-video overflow-hidden">
+<img alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdWt-7Jh1ZoK0cdRsTJZW636JR2XU1iO8NDMuiUNnh79NDHVA8D2WraDDnPcvbWay5qMXlfgUvmZ1PbWxhYEyA5DurtXP0cvILeSYS7_JvynZMT6-tTM1bwEjFnolTGVdKW2QcM90UJ-MSjg8f1tiw2nLw4Z3bmqw1bol9KtyziHz4gSdaLUcUXrdaDruRYB7WJaU2tHdaqNCWJQN5hdBsf4GM7z-l0KbeL-HSLJXoWwZnvml5l0vp7_Ah6D2gyb65dAgs4tLrEM8n"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+<div class="absolute top-3 left-3 flex gap-2">
+<span class="bg-black/60 backdrop-blur-md text-[9px] font-bold text-primary uppercase px-2 py-0.5 rounded border border-primary/20">Archetype</span>
+<span class="bg-black/60 backdrop-blur-md text-[9px] font-bold text-slate-300 uppercase px-2 py-0.5 rounded border border-white/10">Formal</span>
+</div>
+</div>
+<div class="p-4 flex-1 flex flex-col">
+<div class="flex items-start justify-between mb-3">
+<h3 class="font-bold text-sm tracking-tight text-white uppercase">The Nordic Minimalist</h3>
+<span class="text-[10px] text-slate-500 font-mono tracking-tighter">#PR-8825</span>
+</div>
+<div class="bg-black/30 border border-white/5 rounded-lg p-3 mb-4 flex-1">
+<p class="text-[11px] text-slate-400 leading-relaxed italic line-clamp-3">
+                            "Studio portrait of a tall male model with sharp features, high-key lighting, minimalist concrete background, neutral tones, hyper-detailed skin texture, looking directly at camera, volumetric lighting..."
+                        </p>
+</div>
+<div class="flex items-center gap-2 mt-auto">
+<button class="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5">
+<span class="material-symbols-outlined text-sm">edit</span> Edit
+                        </button>
+<button class="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5">
+<span class="material-symbols-outlined text-sm">content_copy</span> Clone
+                        </button>
+<button class="flex-[1.5] bg-primary text-background-dark py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider hover:brightness-110 transition-all flex items-center justify-center gap-1.5 shadow-lg shadow-primary/10">
+<span class="material-symbols-outlined text-sm">science</span> Use in Lab
+                        </button>
+</div>
+</div>
+</div>
+<div class="bg-panel-dark border border-white/5 rounded-xl overflow-hidden group hover:border-primary/30 transition-all flex flex-col shadow-lg">
+<div class="relative aspect-video overflow-hidden">
+<img alt="Thumbnail" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAdw6Vx9iuPtPxM0zPG9U0exNF_cBkfrEpL177r2U-N6VRpIgQdXZRUBLipO4-OcuvYrCHaB-1olaaLxSt01iWG8VVOvo22lIGZRzh395l16YRBHi6TNFeOplRJmbK6_qSIZSfWkbvrq-bRE3fPAAXIR4bRvM6FnWNwFEz2vOYBEs7V9qWQliFvj2AtDQ8UKO5oGnE5CGFofZ5lNYpYmDxb8tr1-tzs16B1pwH1GOdVeZQhpc-RzAaHUNdfuk7XrefbK-TBu_c9NPCx"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
+<div class="absolute top-3 left-3 flex gap-2">
+<span class="bg-black/60 backdrop-blur-md text-[9px] font-bold text-primary uppercase px-2 py-0.5 rounded border border-primary/20">Atmosphere</span>
+<span class="bg-black/60 backdrop-blur-md text-[9px] font-bold text-slate-300 uppercase px-2 py-0.5 rounded border border-white/10">HDR</span>
+</div>
+</div>
+<div class="p-4 flex-1 flex flex-col">
+<div class="flex items-start justify-between mb-3">
+<h3 class="font-bold text-sm tracking-tight text-white uppercase">Tropical Golden Hour</h3>
+<span class="text-[10px] text-slate-500 font-mono tracking-tighter">#PR-8829</span>
+</div>
+<div class="bg-black/30 border border-white/5 rounded-lg p-3 mb-4 flex-1">
+<p class="text-[11px] text-slate-400 leading-relaxed italic line-clamp-3">
+                            "Warm backlight from a setting sun through palm fronds, long shadows, lens flare, humid atmosphere, 35mm film aesthetic, rich contrast, vibrant natural greens and deep oranges..."
+                        </p>
+</div>
+<div class="flex items-center gap-2 mt-auto">
+<button class="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5">
+<span class="material-symbols-outlined text-sm">edit</span> Edit
+                        </button>
+<button class="flex-1 bg-white/5 hover:bg-white/10 border border-white/10 py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5">
+<span class="material-symbols-outlined text-sm">content_copy</span> Clone
+                        </button>
+<button class="flex-[1.5] bg-primary text-background-dark py-2 rounded-lg text-[10px] font-bold uppercase tracking-wider hover:brightness-110 transition-all flex items-center justify-center gap-1.5 shadow-lg shadow-primary/10">
+<span class="material-symbols-outlined text-sm">science</span> Use in Lab
+                        </button>
+</div>
+</div>
+</div>
+<button class="border-2 border-dashed border-white/5 rounded-xl flex flex-col items-center justify-center gap-4 hover:bg-white/[0.02] hover:border-primary/40 transition-all min-h-[400px]">
+<div class="w-16 h-16 rounded-full bg-surface-dark flex items-center justify-center border border-white/5">
+<span class="material-symbols-outlined text-primary text-3xl">add</span>
+</div>
+<div class="text-center">
+<p class="text-sm font-bold text-slate-300 uppercase tracking-widest">Create New Prompt</p>
+<p class="text-[10px] text-slate-500 mt-1 uppercase">Start from a template or scratch</p>
+</div>
+</button>
+</div>
+</main>
+<aside class="w-80 border-l border-slate-200 dark:border-white/5 bg-background-light dark:bg-panel-dark flex flex-col overflow-hidden">
+<div class="p-5 border-b border-white/5 bg-white/[0.02]">
+<h2 class="font-bold text-sm tracking-tight">Library Analytics</h2>
+<p class="text-[10px] text-slate-500 uppercase tracking-widest font-medium mt-0.5">Performance Metrics</p>
+</div>
+<div class="flex-1 overflow-y-auto no-scrollbar p-5 space-y-8">
+<div class="space-y-4">
+<div class="flex items-center justify-between text-xs">
+<span class="text-slate-500 uppercase font-bold tracking-tighter">Avg. Render Time</span>
+<span class="text-primary font-mono">14.2s</span>
+</div>
+<div class="flex items-center justify-between text-xs">
+<span class="text-slate-500 uppercase font-bold tracking-tighter">Total Generations</span>
+<span class="text-slate-200 font-mono">4,129</span>
+</div>
+<div class="flex items-center justify-between text-xs">
+<span class="text-slate-500 uppercase font-bold tracking-tighter">Library Health</span>
+<span class="text-green-500 font-mono">Optimal</span>
+</div>
+</div>
+<div>
+<h3 class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-4">Top Model Archetypes</h3>
+<div class="space-y-3">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg overflow-hidden border border-white/10">
+<img alt="Model" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJxC419FkQOHiXnZq5OLoR5CH7rF3i54fX5fWzXwhmUIDiRzM_PjMex9fc5dvs8f8IRUMlLZ44nrioSPg3KmtSNM8mZwg1IArmpdYszY2r_D7q2LhgZo8cfs3cF5LNM6nnSKM9xwPDFiajnAPBRpT_4tx-eB4xA4Ev7keW_VcRUBfhoPg_epKOKjP5U_939U9BE07SLzkJBmtJenAGorCJSX7zF7PvPQVPHfMplP8hDRjNAswrCUtBcj2RgA5TlfulbilOCN6n7Wty"/>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-end mb-1">
+<span class="text-[10px] font-bold uppercase text-slate-300">Elena Rossi</span>
+<span class="text-[9px] text-primary">1.2k uses</span>
+</div>
+<div class="w-full h-1 bg-white/5 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[85%]"></div>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-lg overflow-hidden border border-white/10">
+<img alt="Model" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBildvWjpZIPbGpUH4-Lj0-JPlaAysP9v3Dhw5da0sfz6YjoPOBIyvD6vWW3Gmoe4KmgUxUm_iL16Z5DHmxoQK8GK42_C6o-yEKE9R7xLR1oV3jjcIo1BbuZ7DsCIe8d4PeOPMdqg7yEk02NEMoiuGcLhQ4PIHWUegwHw3REcW3ZWGBuZ0uiT34XC97rqKPOxtNPz124-8tLejJ0RKA82PDeOLKpVQ52HVkoDQFXmhbBaWdiKpNoygC4Ai41b49tKn0ZX3lB2SiGuQb"/>
+</div>
+<div class="flex-1">
+<div class="flex justify-between items-end mb-1">
+<span class="text-[10px] font-bold uppercase text-slate-300">Julian Chen</span>
+<span class="text-[9px] text-primary">840 uses</span>
+</div>
+<div class="w-full h-1 bg-white/5 rounded-full overflow-hidden">
+<div class="h-full bg-primary w-[55%]"></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div>
+<h3 class="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-4">System Alerts</h3>
+<div class="bg-surface-dark border border-white/5 rounded-lg p-3 space-y-3">
+<div class="flex gap-2">
+<span class="material-symbols-outlined text-amber-500 text-sm">warning</span>
+<div class="text-[10px]">
+<p class="text-slate-300 font-bold uppercase tracking-tighter">Engine Version Update</p>
+<p class="text-slate-500 mt-1">Prompt weights for 'Ultra-Real v2' might require re-calibration.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-auto p-4 border-t border-white/5 bg-black/40">
+<div class="flex items-center justify-between text-[10px] text-slate-500 uppercase tracking-widest">
+<span class="flex items-center gap-1.5">
+<span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                    API Connected: 12ms
+                </span>
+<span class="hover:text-primary cursor-pointer">Help Center</span>
+</div>
+</div>
+</aside>
+</div>
+<footer class="h-6 bg-primary/5 border-t border-white/5 flex items-center justify-between px-4 z-50">
+<div class="flex items-center gap-4 text-[9px] font-medium uppercase tracking-tight text-primary">
+<div class="flex items-center gap-1.5">
+<span class="w-1 h-1 rounded-full bg-primary animate-pulse"></span>
+            Admin Console: Active
+        </div>
+<div class="text-slate-800 dark:text-slate-700">|</div>
+<div class="text-slate-500">Cloud Library Sync: Synchronized</div>
+<div class="text-slate-800 dark:text-slate-700">|</div>
+<div class="text-slate-500">GPU Region: us-east-1</div>
+</div>
+<div class="text-[9px] text-slate-500 flex items-center gap-4">
+<span>© 2024 AI Virtual Try-On Studio Enterprise</span>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[10px]">lock_open</span>
+<span>Level 4 Access</span>
+</div>
+</div>
+</footer>
+
+</body></html>

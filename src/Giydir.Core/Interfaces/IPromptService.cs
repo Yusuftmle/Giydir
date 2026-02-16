@@ -5,7 +5,7 @@ namespace Giydir.Core.Interfaces;
 
 public interface IPromptService
 {
-    string GeneratePromptFromTemplate(Template template, string? customPrompt = null);
+    string GeneratePromptFromTemplate(Template template, string? customPrompt = null, string? background = null, string? lighting = null);
     
     // YENİ
     string GeneratePromptWithModelDefaults(
@@ -15,7 +15,9 @@ public interface IPromptService
         string color = "",
         string pattern = "",
         string material = "",
-        string category = "upper_body");
+        string category = "upper_body",
+        string? background = null,
+        string? lighting = null);
     
     string GeneratePromptFromJson(
         string style, 

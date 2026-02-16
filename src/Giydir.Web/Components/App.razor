@@ -10,10 +10,13 @@
     <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet" />
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet" />
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <!-- Alpine.js -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"></script>
     <script>
         tailwind.config = {
             darkMode: "class",
@@ -22,8 +25,10 @@
                     colors: {
                         "primary": "#13c8ec",
                         "background-light": "#f6f8f8",
-                        "background-dark": "#101f22",
-                        "surface-dark": "#15262a",
+                        "background-dark": "#05090a",
+                        "panel-dark": "#0c1416",
+                        "surface-dark": "#121d20",
+                        "border-dark": "#203439",
                     },
                     fontFamily: {
                         "display": ["Space Grotesk", "sans-serif"]
@@ -34,10 +39,13 @@
         }
     </script>
     <link rel="stylesheet" href="css/site.css" />
-    <HeadOutlet />
+    <!-- Image Comparison Slider -->
+    <link rel="stylesheet" href="https://unpkg.com/img-comparison-slider@8/dist/styles.css">
+    <script type="module" src="https://unpkg.com/img-comparison-slider@8/dist/index.js"></script>
+    <HeadOutlet @rendermode="InteractiveServer" />
 </head>
 <body class="bg-background-light dark:bg-background-dark font-display text-gray-800 dark:text-gray-100 antialiased selection:bg-primary selection:text-white">
-    <Routes />
+    <Routes @rendermode="InteractiveServer" />
     <script src="_framework/blazor.web.js"></script>
     <script>
         // Token yönetimi için JavaScript fonksiyonları
@@ -45,8 +53,8 @@
             setToken: function(token) {
                 localStorage.setItem('jwtToken', token);
                 // Cookie'yi de tarayıcıdan set et (Blazor Server SSR için kritik)
-                document.cookie = "JwtToken=" + encodeURIComponent(token) + "; path=/; max-age=" + (10 * 24 * 60 * 60) + "; SameSite=Lax";
-                console.log('[JS] Token localStorage ve cookie\'ye kaydedildi');
+                document.cookie = "JwtToken=" + encodeURIComponent(token) + "; path=/; max-age=" + (10 * 24 * 60 * 60) + "; path=/; SameSite=Lax; Secure";
+                console.log('[JS] Token localStorage ve cookie\'ye kaydedildi (Secure)');
             },
             getToken: function() {
                 return localStorage.getItem('jwtToken') || '';
@@ -54,17 +62,51 @@
             removeToken: function() {
                 localStorage.removeItem('jwtToken');
                 // Cookie'yi de temizle
-                document.cookie = "JwtToken=; path=/; max-age=0; SameSite=Lax";
+                document.cookie = "JwtToken=; path=/; max-age=0; SameSite=Lax; Secure";
                 console.log('[JS] Token localStorage ve cookie\'den silindi');
             },
             logout: function() {
                 // localStorage ve cookie'yi temizle
                 localStorage.removeItem('jwtToken');
-                document.cookie = "JwtToken=; path=/; max-age=0; SameSite=Lax";
+                document.cookie = "JwtToken=; path=/; max-age=0; SameSite=Lax; Secure";
                 console.log('[JS] Logout: Token temizlendi, yönlendiriliyor...');
                 // Sunucu tarafında da session temizlensin ve ana sayfaya dön
-                window.location.href = '/api/auth/signout';
+                window.location.href = '/login';
             }
+        };
+    </script>
+    <script src="js/auth-helper.js"></script>
+    <script src="js/slider-helper.js"></script>
+    <script src="js/dropdown.js"></script>
+    <script>
+        window.setupHorizontalScroll = function(element) {
+            if (!element) return;
+            
+            element.addEventListener('wheel', (e) => {
+                if (e.deltaY !== 0) {
+                    e.preventDefault();
+                    element.scrollLeft += e.deltaY;
+                }
+            }, { passive: false });
+
+            let isDown = false;
+            let startX;
+            let scrollLeft;
+
+            element.addEventListener('mousedown', (e) => {
+                isDown = true;
+                startX = e.pageX - element.offsetLeft;
+                scrollLeft = element.scrollLeft;
+            });
+            element.addEventListener('mouseleave', () => { isDown = false; });
+            element.addEventListener('mouseup', () => { isDown = false; });
+            element.addEventListener('mousemove', (e) => {
+                if (!isDown) return;
+                e.preventDefault();
+                const x = e.pageX - element.offsetLeft;
+                const walk = (x - startX) * 2;
+                element.scrollLeft = scrollLeft - walk;
+            });
         };
     </script>
 </body>

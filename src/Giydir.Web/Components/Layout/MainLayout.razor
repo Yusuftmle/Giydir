@@ -3,10 +3,13 @@
 @inject AuthenticationStateProvider AuthStateProvider
 @inject IHttpContextAccessor HttpContextAccessor
 @inject ILogger<MainLayout> Logger
+@inject NavigationManager Navigation
+@inject IJSRuntime JSRuntime
 
 @code {
     private Giydir.Core.DTOs.UserDto? currentUser;
     private bool isLoading = true;
+    private string currentPage = "/";
 
     protected override async Task OnInitializedAsync()
     {
@@ -24,6 +27,16 @@
         else
         {
             isLoading = false;
+        }
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            // Get current page from navigation
+            currentPage = HttpContextAccessor.HttpContext?.Request.Path.Value ?? "/";
+            StateHasChanged();
         }
     }
 
@@ -49,21 +62,62 @@
             isLoading = true;
             StateHasChanged();
             
-            // AuthTokenHandler token'ı otomatik ekler (cookie/session'dan)
-            var response = await Http.GetFromJsonAsync<Giydir.Core.DTOs.AuthResponseDto>("api/auth/me");
-            
-            if (response?.Success == true && response.User != null)
+            // Token'ı localStorage'dan al (JSRuntime ile)
+            string? token = null;
+            try
             {
-                currentUser = response.User;
+                token = await JSRuntime.InvokeAsync<string>("getAuthToken");
+            }
+            catch (Exception ex)
+            {
+                Logger.LogWarning(ex, "[MainLayout] Could not get token from localStorage");
+            }
+            
+            if (!string.IsNullOrEmpty(token))
+            {
+                // Token'ı Manuel olarak Authorization header'ına ekle
+                // HttpClient shared instance olduğu için dikkatli olmalı ama SSR ve Scoped olduğu için sorun olmaz
+                if (Http.DefaultRequestHeaders.Authorization == null || Http.DefaultRequestHeaders.Authorization.Parameter != token)
+                {
+                     Http.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+                }
+                
+                var httpResponse = await Http.GetAsync("api/auth/me");
+                
+                if (httpResponse.IsSuccessStatusCode)
+                {
+                    var response = await httpResponse.Content.ReadFromJsonAsync<Giydir.Core.DTOs.AuthResponseDto>();
+                    if (response?.Success == true && response.User != null)
+                    {
+                        currentUser = response.User;
+                    }
+                    else
+                    {
+                        currentUser = null;
+                    }
+                }
+                else if (httpResponse.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    // 401 is expected for expired/invalid tokens
+                    currentUser = null;
+                    // Token geçersiz, temizle
+                    try { await JSRuntime.InvokeVoidAsync("tokenStorage.logout"); } catch {}
+                }
+                else
+                {
+                    Logger.LogWarning("[MainLayout] Unexpected status: {StatusCode}", httpResponse.StatusCode);
+                    currentUser = null;
+                }
             }
             else
             {
+                // Token yok, kullanıcı giriş yapmamış
                 currentUser = null;
             }
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "[MainLayout] LoadUserAsync ERROR: {Message}", ex.Message);
+            Logger.LogWarning(ex, "[MainLayout] LoadUserAsync exception");
             currentUser = null;
         }
         finally
@@ -72,98 +126,170 @@
             StateHasChanged();
         }
     }
+
+    private bool IsEditorPage => currentPage.Equals("/editor", StringComparison.OrdinalIgnoreCase) || 
+                                 currentPage.Equals("/pro-editor", StringComparison.OrdinalIgnoreCase);
 }
 
-<!-- Navigation -->
-<nav class="sticky top-0 w-full z-50 backdrop-blur-xl bg-background-light/80 dark:bg-background-dark/80 border-b border-primary/10">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-20">
-            <!-- Logo -->
-            <a href="/" class="flex-shrink-0 flex items-center gap-2 no-underline">
-                <div class="w-10 h-10 rounded-lg bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-primary/20">
-                    G
-                </div>
-                <span class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">Giydir<span class="text-primary">.ai</span></span>
-            </a>
-            <!-- Center Nav -->
-            <div class="hidden md:flex items-center space-x-8">
-                <a href="/" class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors no-underline">Ana Sayfa</a>
-                <a href="/editor" class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors no-underline">Editör</a>
-                <a href="/projects" class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors no-underline">Projeler</a>
-                <a href="/settings" class="text-sm font-medium text-slate-500 dark:text-slate-400 hover:text-primary dark:hover:text-primary transition-colors no-underline">Faturalandırma</a>
-            </div>
-            <!-- Right Side -->
-            <div class="flex items-center gap-4">
-                <AuthorizeView>
-                    <Authorized Context="authContext">
-                        @if (isLoading)
-                        {
-                            <div class="flex items-center gap-2">
-                                <div class="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
-                            </div>
-                        }
-                        else
-                        {
-                            <!-- Credits Pill -->
-                            <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/20">
-                                <span class="material-icons-outlined text-primary text-sm">bolt</span>
-                                <span class="text-sm font-bold text-primary">@(currentUser?.Credits ?? 0) Kredi</span>
-                                <a href="/settings" class="ml-1 w-5 h-5 rounded-full bg-primary text-background-dark flex items-center justify-center hover:bg-white transition-colors no-underline">
-                                    <span class="material-icons-outlined text-xs font-bold">add</span>
-                                </a>
-                            </div>
-                            <!-- Profile Dropdown -->
-                            <div class="flex items-center gap-3 pl-4 border-l border-slate-200 dark:border-slate-800">
-                                <div class="text-right hidden sm:block">
-                                    <p class="text-xs font-medium text-slate-500 dark:text-slate-400 m-0">Pro Plan</p>
-                                    <p class="text-sm font-bold text-slate-900 dark:text-white m-0">@(!string.IsNullOrEmpty(currentUser?.Name) ? currentUser.Name : currentUser?.Email?.Split('@')[0] ?? "Kullanıcı")</p>
-                                </div>
-                                <div class="relative group">
-                                    <a href="/profile" class="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 overflow-hidden border-2 border-primary/30 hover:border-primary transition-colors no-underline flex items-center justify-center">
-                                        <span class="material-icons-outlined text-primary">person</span>
-                                    </a>
-                                    <!-- Dropdown Menu -->
-                                    <div class="absolute right-0 mt-2 w-48 rounded-lg shadow-lg bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
-                                        <div class="py-1">
-                                            <a href="/profile" class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 no-underline">Profil</a>
-                                            <a href="/settings" class="block px-4 py-2 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 no-underline">Ayarlar</a>
-                                            <hr class="my-1 border-slate-200 dark:border-slate-700">
-                                            <button onclick="tokenStorage.logout()" class="w-full text-left block px-4 py-2 text-sm text-red-600 dark:text-red-400 hover:bg-slate-100 dark:hover:bg-slate-700">
-                                                Çıkış Yap
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                    </Authorized>
-                    <NotAuthorized>
-                        <!-- Login/Register Buttons -->
-                        <div class="flex items-center gap-3">
-                            <a href="/login" class="px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-300 hover:text-primary transition-colors no-underline">Giriş Yap</a>
-                            <a href="/register" class="px-4 py-2 text-sm font-medium bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors no-underline">Kayıt Ol</a>
-                        </div>
-                    </NotAuthorized>
-                </AuthorizeView>
-            </div>
-        </div>
+<!-- Premium Studio Navigation -->
+@if (IsEditorPage)
+{
+<nav class="fixed left-0 top-0 h-full w-20 flex flex-col items-center py-8 border-r border-white/5 bg-slate-950 z-50">
+    <div class="mb-12">
+        <a href="/" class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#d4b38d] to-[#b08d65] flex items-center justify-center text-slate-950 shadow-lg shadow-[#d4b38d]/20 no-underline">
+            <span class="material-symbols-outlined font-bold text-2xl">camera</span>
+        </a>
+    </div>
+    <div class="flex flex-col gap-10 flex-1">
+        <a href="/" class="@(currentPage == "/" ? "text-[#d4b38d]" : "text-slate-600") hover:text-[#d4b38d] transition-colors no-underline" title="Ana Sayfa">
+            <span class="material-symbols-outlined text-[26px]">grid_view</span>
+        </a>
+        <a href="/editor" class="@(currentPage == "/editor" ? "text-[#d4b38d]" : "text-slate-600") hover:text-[#d4b38d] transition-colors no-underline" title="Editor">
+            <span class="material-symbols-outlined text-[26px]">inventory_2</span>
+        </a>
+        <a href="/projects" class="@(currentPage == "/projects" ? "text-[#d4b38d]" : "text-slate-600") hover:text-[#d4b38d] transition-colors no-underline" title="Projeler">
+            <span class="material-symbols-outlined text-[26px]">collections</span>
+        </a>
+        <a href="/notifications" class="@(currentPage == "/notifications" ? "text-[#d4b38d]" : "text-slate-600") hover:text-[#d4b38d] transition-colors no-underline" title="Bildirimler">
+            <span class="material-symbols-outlined text-[26px]">notifications</span>
+        </a>
+    </div>
+    <div class="mt-auto flex flex-col gap-8">
+        <a href="/settings" class="@(currentPage == "/settings" ? "text-[#d4b38d]" : "text-slate-600") hover:text-[#d4b38d] transition-colors no-underline" title="Ayarlar">
+            <span class="material-symbols-outlined text-[26px]">settings</span>
+        </a>
+        <AuthorizeView>
+            <Authorized Context="authContext">
+                <a href="/profile" class="w-10 h-10 rounded-full overflow-hidden border border-white/10 p-0.5 no-underline flex items-center justify-center bg-gray-700 hover:bg-gray-600 transition-colors" title="Profil">
+                    <span class="material-symbols-outlined text-[#d4b38d]">person</span>
+                </a>
+                <button onclick="tokenStorage.logout()" class="w-10 h-10 rounded-full overflow-hidden border border-white/10 p-0.5 mt-2 flex items-center justify-center bg-slate-900 hover:bg-red-500/20 group transition-colors" title="Çıkış Yap">
+                    <span class="material-symbols-outlined text-slate-400 group-hover:text-red-400 text-sm">logout</span>
+                </button>
+            </Authorized>
+            <NotAuthorized>
+                <a href="/login" class="w-10 h-10 rounded-full overflow-hidden border border-white/10 p-0.5 no-underline flex items-center justify-center bg-gray-700" title="Giriş Yap">
+                    <span class="material-symbols-outlined text-slate-400">login</span>
+                </a>
+            </NotAuthorized>
+        </AuthorizeView>
     </div>
 </nav>
+}
 
-<!-- Main Content -->
-<main class="flex-grow min-h-screen">
-    @Body
-</main>
-
-<!-- Footer (sadece belirli sayfalar için) -->
-<footer class="border-t border-slate-200 dark:border-slate-800 bg-background-light dark:bg-background-dark py-8">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col md:flex-row justify-between items-center gap-4">
-        <p class="text-sm text-slate-500 dark:text-slate-400 m-0">© 2026 Giydir AI. Tüm hakları saklıdır.</p>
-        <div class="flex items-center space-x-6">
-            <a href="#" class="text-sm text-slate-400 hover:text-primary transition-colors no-underline">Yardım Merkezi</a>
-            <a href="#" class="text-sm text-slate-400 hover:text-primary transition-colors no-underline">Gizlilik</a>
-            <a href="#" class="text-sm text-slate-400 hover:text-primary transition-colors no-underline">Şartlar</a>
+<!-- Top Header Bar -->
+<header class="@($"fixed top-0 right-0 h-16 border-b border-white/5 px-8 flex items-center justify-between bg-slate-950/80 backdrop-blur-md z-40 {(IsEditorPage ? "left-20" : "left-0")}")">
+    <div class="flex items-center gap-6">
+        <h1 class="text-sm font-display font-semibold tracking-[0.15em] text-[#f1f5f9] uppercase">
+            Giydir <span class="text-[#d4b38d]/80 ml-2">AI Fashion Studio</span>
+        </h1>
+        <div class="h-4 w-px bg-white/10"></div>
+        
+        @if (!IsEditorPage)
+        {
+            <!-- Navigation Links (only shown when sidebar is hidden) -->
+            <nav class="flex items-center gap-1">
+                <a href="/" class="@(currentPage == "/" ? "bg-[#d4b38d]/20 text-[#d4b38d]" : "text-slate-400 hover:text-[#f1f5f9]") px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-widest uppercase transition-colors no-underline">
+                    Ana Sayfa
+                </a>
+                <AuthorizeView>
+                    <Authorized>
+                        <a href="/editor" class="@(currentPage == "/editor" ? "bg-[#d4b38d]/20 text-[#d4b38d]" : "text-slate-400 hover:text-[#f1f5f9]") px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-widest uppercase transition-colors no-underline">
+                            Editor
+                        </a>
+                        <a href="/projects" class="@(currentPage == "/projects" ? "bg-[#d4b38d]/20 text-[#d4b38d]" : "text-slate-400 hover:text-[#f1f5f9]") px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-widest uppercase transition-colors no-underline">
+                            Projeler
+                        </a>
+                        <a href="/settings" class="@(currentPage == "/settings" ? "bg-[#d4b38d]/20 text-[#d4b38d]" : "text-slate-400 hover:text-[#f1f5f9]") px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-widest uppercase transition-colors no-underline">
+                            Ayarlar
+                        </a>
+                    </Authorized>
+                </AuthorizeView>
+            </nav>
+            <div class="h-4 w-px bg-white/10"></div>
+        }
+        
+        <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+            <span class="text-[10px] text-slate-400 font-medium tracking-widest uppercase">Live Production Mode</span>
         </div>
     </div>
-</footer>
+    <div class="flex items-center gap-4">
+        <AuthorizeView>
+            <Authorized Context="authContext">
+                @if (!isLoading && currentUser != null)
+                {
+                    <div class="flex items-center gap-3 px-4 py-1.5 glass-panel rounded-lg">
+                        <span class="text-[10px] font-semibold tracking-widest text-slate-400">CREDITS:</span>
+                        <span class="text-xs font-display font-bold text-[#d4b38d]">@(currentUser.Credits)</span>
+                    </div>
+                }
+                
+                <!-- Profile Dropdown (Alpine.js) -->
+                <div x-data="{ isOpen: false }" class="relative">
+                    <button @click="isOpen = !isOpen" class="flex items-center gap-2 px-3 py-2 glass-panel rounded-lg hover:bg-white/10 transition-colors">
+                        <span class="material-symbols-outlined text-[#d4b38d]">account_circle</span>
+                        <span class="text-[10px] font-bold tracking-widest text-[#f1f5f9] uppercase hidden sm:inline">Profil</span>
+                        <span class="material-symbols-outlined text-slate-400 text-sm" x-text="isOpen ? 'expand_less' : 'expand_more'">expand_more</span>
+                    </button>
+                    
+                    <div x-show="isOpen" 
+                         @click.away="isOpen = false"
+                         x-transition:enter="transition ease-out duration-100"
+                         x-transition:enter-start="opacity-0 scale-95"
+                         x-transition:enter-end="opacity-100 scale-100"
+                         x-transition:leave="transition ease-in duration-75"
+                         x-transition:leave-start="opacity-100 scale-100"
+                         x-transition:leave-end="opacity-0 scale-95"
+                         style="display: none;"
+                         class="absolute right-0 mt-2 w-56 glass-panel rounded-xl border border-white/10 shadow-2xl overflow-hidden z-50 bg-slate-900/95 backdrop-blur-xl">
+                        
+                        <div class="p-4 border-b border-white/5">
+                            <p class="text-sm font-bold text-[#f1f5f9]">@(currentUser?.Email ?? "Kullanıcı")</p>
+                            <p class="text-[10px] text-slate-400 uppercase tracking-wider mt-1">@(currentUser?.Name ?? "")</p>
+                        </div>
+                        <div class="py-2">
+                            @if (currentUser?.Role == "Admin")
+                            {
+                                <a href="/admin/dashboard" @click="isOpen = false" class="flex items-center gap-3 px-4 py-2.5 hover:bg-primary/10 transition-colors no-underline text-primary">
+                                    <span class="material-symbols-outlined text-lg">dashboard</span>
+                                    <span class="text-sm font-bold">Admin Dashboard</span>
+                                </a>
+                                <div class="h-px bg-white/5 my-2"></div>
+                            }
+                            <a href="/projects" @click="isOpen = false" class="flex items-center gap-3 px-4 py-2.5 hover:bg-white/5 transition-colors no-underline text-slate-300 hover:text-[#f1f5f9]">
+                                <span class="material-symbols-outlined text-lg">folder</span>
+                                <span class="text-sm font-medium">Projelerim</span>
+                            </a>
+                            <a href="/settings" @click="isOpen = false" class="flex items-center gap-3 px-4 py-2.5 hover:bg-white/5 transition-colors no-underline text-slate-300 hover:text-[#f1f5f9]">
+                                <span class="material-symbols-outlined text-lg">settings</span>
+                                <span class="text-sm font-medium">Ayarlar</span>
+                            </a>
+                            <div class="h-px bg-white/5 my-2"></div>
+                            <button @click="tokenStorage.logout()" class="w-full text-left flex items-center gap-3 px-4 py-2.5 hover:bg-red-500/10 transition-colors text-red-400 hover:text-red-300">
+                                <span class="material-symbols-outlined text-lg">logout</span>
+                                <span class="text-sm font-medium">Çıkış Yap</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </Authorized>
+            <NotAuthorized>
+                <div class="flex items-center gap-3">
+                    <a href="/register" class="px-4 py-2 glass-panel rounded-lg text-[11px] font-bold tracking-widest uppercase text-[#f1f5f9] hover:bg-white/10 transition-colors no-underline">
+                        Kayıt Ol
+                    </a>
+                    <a href="/login" class="bg-[#f1f5f9] text-slate-950 px-5 py-2 rounded-lg text-[11px] font-bold tracking-widest uppercase hover:bg-[#d4b38d] transition-colors no-underline">
+                        Giriş Yap
+                    </a>
+                </div>
+            </NotAuthorized>
+        </AuthorizeView>
+    </div>
+</header>
+
+<!-- Main Content with Sidebar Offset -->
+<main class="@($"flex-grow min-h-screen mt-16 bg-slate-950 {(IsEditorPage ? "ml-20" : "")}")">
+    @Body
+</main>
 

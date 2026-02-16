@@ -15,6 +15,8 @@ public class User
     public string? Sector { get; set; }
     public string? WebsiteUrl { get; set; }
 
+    public string Role { get; set; } = "User";
+
     public List<Project> Projects { get; set; } = new();
 }
 

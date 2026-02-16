@@ -24,6 +24,7 @@ public class UserDto
     public string? BoutiqueName { get; set; }
     public string? Sector { get; set; }
     public string? WebsiteUrl { get; set; }
+    public string? Role { get; set; }
 }
 
 public class UpdateProfileDto

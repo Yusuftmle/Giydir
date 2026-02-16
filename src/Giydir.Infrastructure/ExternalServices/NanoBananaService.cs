@@ -20,20 +20,30 @@ public class NanoBananaService : IAIImageGenerationService
         _httpClient = httpClient;
         _config = config;
         _logger = logger;
+        
+        var token = _config["Replicate:ApiToken"]?.Trim();
+        
+        if (string.IsNullOrEmpty(token))
+        {
+            _logger.LogError("[NanoBananaService] Nano Banana Token is NULL or EMPTY!");
+        }
 
         _httpClient.BaseAddress = new Uri("https://api.replicate.com/v1/");
-        _httpClient.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue("Token", _config["Replicate:ApiToken"]);
+
+        if (!string.IsNullOrEmpty(token))
+        {
+            _httpClient.DefaultRequestHeaders.TryAddWithoutValidation("Authorization", $"Token {token}");
+        }
+        
         _httpClient.DefaultRequestHeaders.Accept.Add(
             new MediaTypeWithQualityHeaderValue("application/json"));
     }
 
-    public async Task<string> GenerateImageFromPromptAsync(string prompt, string aspectRatio = "4:3", string outputFormat = "jpg", List<string>? imageInput = null)
+    public async Task<string> GenerateImageFromPromptAsync(string prompt, string aspectRatio = "3:4", string outputFormat = "jpg", List<string>? imageInput = null, string? negativePrompt = null)
     {
-        var modelName = _config["Replicate:NanoBananaModelVersion"] ?? "google/nano-banana";
+        var modelName = _config["Replicate:NanoBananaModelVersion"] ?? "google/nano-banana-pro";
 
-        // Replicate API'de model endpoint'ini kullan (kullanıcının curl komutundaki format)
-        // Format: models/{owner}/{model}/predictions
+        // Replicate API'de model endpoint'ini kullan
         var endpoint = $"models/{modelName}/predictions";
 
         // image_input varsa aspect_ratio'yu match_input_image yap
@@ -45,6 +55,12 @@ public class NanoBananaService : IAIImageGenerationService
             { "aspect_ratio", finalAspectRatio },
             { "output_format", outputFormat }
         };
+
+        // Negative prompt varsa ekle
+        if (!string.IsNullOrEmpty(negativePrompt))
+        {
+            inputObj["negative_prompt"] = negativePrompt;
+        }
 
         // image_input varsa ekle
         if (imageInput != null && imageInput.Any())
@@ -139,7 +155,7 @@ public class NanoBananaService : IAIImageGenerationService
             }
         }
 
-        _logger.LogInformation("NanoBanana prediction status: {PredictionId} -> {Status}, OutputUrl: {OutputUrl}, OutputCount: {OutputCount}",
+        _logger.LogInformation("NanoBanana prediction status: {PredictionId} -> {Status}, OutputUrl: {OutputUrl}",
             predictionId, result.Status, outputUrl ?? "YOK");
 
         return new AIGenerationStatusResult
