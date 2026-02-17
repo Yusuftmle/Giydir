@@ -97,82 +97,48 @@ public class PromptService : IPromptService
     {
         var promptParts = new List<string>();
 
-        // Base quality keywords - ORGANIC STYLE
-        promptParts.Add("Raw photo");
-        promptParts.Add("High-end editorial photography");
-        promptParts.Add("natural skin texture with pores");
-        promptParts.Add("soft natural lighting");
-        promptParts.Add("slight film grain");
-        promptParts.Add("highly detailed fabric weave");
-
-        switch (category.ToLower())
+        // 1. Subject & Action (Essential)
+        string subject = category.ToLower() switch
         {
-            case "upper_body":
-                promptParts.Add("35mm film photo of a person wearing a designer top");
-                break;
-            case "lower_body":
-                promptParts.Add("Full body fashion shot of a person in high-end trousers");
-                break;
-            case "dresses":
-                promptParts.Add("Elegant portrait of a person in a luxury dress");
-                break;
-            default:
-                promptParts.Add("Candid fashion shot");
-                break;
-        }
+            "dresses" => "A high-fashion model wearing an elegant dress",
+            "lower_body" => "A fashion model wearing stylish trousers",
+            _ => "A fashion model wearing a designer top"
+        };
+        
+        if (!string.IsNullOrEmpty(pose)) subject += $" posing in {pose}";
+        promptParts.Add(subject);
 
-        if (!string.IsNullOrEmpty(style))
-            promptParts.Add($"{style} style");
+        // 2. Clothing Details (Garment Reference) - Critical for NanoBanana Pro
+        promptParts.Add("wearing the exact garment shown in the reference image");
+        
+         if (!string.IsNullOrEmpty(color)) promptParts.Add($"{color} color");
+         if (!string.IsNullOrEmpty(material)) promptParts.Add($"{material} fabric");
+         if (!string.IsNullOrEmpty(pattern) && pattern.ToLower() != "solid") promptParts.Add($"{pattern} pattern");
 
-        if (!string.IsNullOrEmpty(color))
-            promptParts.Add($"{color} color");
-
-        if (!string.IsNullOrEmpty(material))
-            promptParts.Add($"made of {material} material");
-
-        if (!string.IsNullOrEmpty(pattern) && pattern.ToLower() != "solid")
-            promptParts.Add($"with subtle {pattern} pattern");
-
-        // Sahne özellikleri - Template varsa template, yoksa model default
-        if (!string.IsNullOrEmpty(background))
-            promptParts.Add($"shot on location at {background}");
-        else
-            promptParts.Add("studio setting");
+        // 3. Environment & Lighting
+        if (!string.IsNullOrEmpty(background)) 
+            promptParts.Add($"standing in {background}");
+        else 
+            promptParts.Add("standing in a professional studio background");
 
         if (!string.IsNullOrEmpty(lighting))
-            promptParts.Add($"{lighting}, moody natural light, realistic shadows");
-        else
-            promptParts.Add("soft window light");
+            promptParts.Add($"{lighting}, soft cinematic lighting");
+        else 
+            promptParts.Add("soft natural lighting");
 
-        if (!string.IsNullOrEmpty(pose))
-            promptParts.Add($"{pose} pose");
+        // 4. Style & Mood
+        if (!string.IsNullOrEmpty(mood)) promptParts.Add($"{mood} expression");
+        if (!string.IsNullOrEmpty(style)) promptParts.Add($"{style} aesthetic");
 
-        if (!string.IsNullOrEmpty(cameraAngle))
-            promptParts.Add($"{cameraAngle} camera angle");
+        // 5. Quality Boosters (User Requested)
+        promptParts.Add("The garment must match color, texture, and fit realistically");
+        promptParts.Add("Photorealistic");
+        promptParts.Add("8k resolution");
+        promptParts.Add("highly detailed fabric folds");
+        promptParts.Add("realistic shadows");
+        promptParts.Add("depth of field");
+        promptParts.Add("masterpiece");
 
-        if (!string.IsNullOrEmpty(mood))
-            promptParts.Add($"{mood} expression");
-
-        if (!string.IsNullOrEmpty(additionalAttributes))
-        {
-            try
-            {
-                var attrs = JsonSerializer.Deserialize<Dictionary<string, string>>(additionalAttributes);
-                if (attrs != null)
-                {
-                    foreach (var attr in attrs)
-                    {
-                        promptParts.Add(attr.Value);
-                    }
-                }
-            }
-            catch { }
-        }
-
-        promptParts.Add("hyper-detailed");
-        promptParts.Add("cinematic composition");
-        promptParts.Add("blurred background");
-
-        return string.Join(", ", promptParts);
+        return string.Join(". ", promptParts);
     }
 }

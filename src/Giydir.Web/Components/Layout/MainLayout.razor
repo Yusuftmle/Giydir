@@ -134,36 +134,36 @@
 <!-- Premium Studio Navigation -->
 @if (IsEditorPage)
 {
-<nav class="fixed left-0 top-0 h-full w-20 flex flex-col items-center py-8 border-r border-white/5 bg-slate-950 z-50">
+<nav class="fixed left-0 top-0 h-full w-20 flex flex-col items-center py-8 border-r border-white/5 bg-background-dark z-50">
     <div class="mb-12">
-        <a href="/" class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#d4b38d] to-[#b08d65] flex items-center justify-center text-slate-950 shadow-lg shadow-[#d4b38d]/20 no-underline">
+        <a href="/" class="w-12 h-12 rounded-xl bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center text-background-dark shadow-lg shadow-primary/20 no-underline">
             <span class="material-symbols-outlined font-bold text-2xl">camera</span>
         </a>
     </div>
     <div class="flex flex-col gap-10 flex-1">
-        <a href="/" class="@(currentPage == "/" ? "text-[#d4b38d]" : "text-slate-600") hover:text-[#d4b38d] transition-colors no-underline" title="Ana Sayfa">
+        <a href="/" class="@(currentPage == "/" ? "text-primary" : "text-slate-600") hover:text-primary transition-colors no-underline" title="Ana Sayfa">
             <span class="material-symbols-outlined text-[26px]">grid_view</span>
         </a>
-        <a href="/editor" class="@(currentPage == "/editor" ? "text-[#d4b38d]" : "text-slate-600") hover:text-[#d4b38d] transition-colors no-underline" title="Editor">
+        <a href="/editor" class="@(currentPage == "/editor" ? "text-primary" : "text-slate-600") hover:text-primary transition-colors no-underline" title="Editör">
             <span class="material-symbols-outlined text-[26px]">inventory_2</span>
         </a>
-        <a href="/projects" class="@(currentPage == "/projects" ? "text-[#d4b38d]" : "text-slate-600") hover:text-[#d4b38d] transition-colors no-underline" title="Projeler">
+        <a href="/projects" class="@(currentPage == "/projects" ? "text-primary" : "text-slate-600") hover:text-primary transition-colors no-underline" title="Projeler">
             <span class="material-symbols-outlined text-[26px]">collections</span>
         </a>
-        <a href="/notifications" class="@(currentPage == "/notifications" ? "text-[#d4b38d]" : "text-slate-600") hover:text-[#d4b38d] transition-colors no-underline" title="Bildirimler">
+        <a href="/notifications" class="@(currentPage == "/notifications" ? "text-primary" : "text-slate-600") hover:text-primary transition-colors no-underline" title="Bildirimler">
             <span class="material-symbols-outlined text-[26px]">notifications</span>
         </a>
     </div>
     <div class="mt-auto flex flex-col gap-8">
-        <a href="/settings" class="@(currentPage == "/settings" ? "text-[#d4b38d]" : "text-slate-600") hover:text-[#d4b38d] transition-colors no-underline" title="Ayarlar">
+        <a href="/settings" class="@(currentPage == "/settings" ? "text-primary" : "text-slate-600") hover:text-primary transition-colors no-underline" title="Ayarlar">
             <span class="material-symbols-outlined text-[26px]">settings</span>
         </a>
         <AuthorizeView>
             <Authorized Context="authContext">
                 <a href="/profile" class="w-10 h-10 rounded-full overflow-hidden border border-white/10 p-0.5 no-underline flex items-center justify-center bg-gray-700 hover:bg-gray-600 transition-colors" title="Profil">
-                    <span class="material-symbols-outlined text-[#d4b38d]">person</span>
+                    <span class="material-symbols-outlined text-primary">person</span>
                 </a>
-                <button onclick="tokenStorage.logout()" class="w-10 h-10 rounded-full overflow-hidden border border-white/10 p-0.5 mt-2 flex items-center justify-center bg-slate-900 hover:bg-red-500/20 group transition-colors" title="Çıkış Yap">
+                <button onclick="tokenStorage.logout()" class="w-10 h-10 rounded-full overflow-hidden border border-white/10 p-0.5 mt-2 flex items-center justify-center bg-background-dark hover:bg-red-500/20 group transition-colors" title="Çıkış Yap">
                     <span class="material-symbols-outlined text-slate-400 group-hover:text-red-400 text-sm">logout</span>
                 </button>
             </Authorized>
@@ -178,10 +178,10 @@
 }
 
 <!-- Top Header Bar -->
-<header class="@($"fixed top-0 right-0 h-16 border-b border-white/5 px-8 flex items-center justify-between bg-slate-950/80 backdrop-blur-md z-40 {(IsEditorPage ? "left-20" : "left-0")}")">
+<header class="@($"fixed top-0 right-0 h-16 border-b border-white/5 px-8 flex items-center justify-between bg-background-dark/80 backdrop-blur-md z-40 {(IsEditorPage ? "left-20" : "left-0")}")">
     <div class="flex items-center gap-6">
         <h1 class="text-sm font-display font-semibold tracking-[0.15em] text-[#f1f5f9] uppercase">
-            Giydir <span class="text-[#d4b38d]/80 ml-2">AI Fashion Studio</span>
+            Giydir <span class="text-primary/80 ml-2">AI Fashion Studio</span>
         </h1>
         <div class="h-4 w-px bg-white/10"></div>
         
@@ -189,18 +189,18 @@
         {
             <!-- Navigation Links (only shown when sidebar is hidden) -->
             <nav class="flex items-center gap-1">
-                <a href="/" class="@(currentPage == "/" ? "bg-[#d4b38d]/20 text-[#d4b38d]" : "text-slate-400 hover:text-[#f1f5f9]") px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-widest uppercase transition-colors no-underline">
+                <a href="/" class="@(currentPage == "/" ? "bg-primary/20 text-primary" : "text-slate-400 hover:text-[#f1f5f9]") px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-widest uppercase transition-colors no-underline">
                     Ana Sayfa
                 </a>
                 <AuthorizeView>
                     <Authorized>
-                        <a href="/editor" class="@(currentPage == "/editor" ? "bg-[#d4b38d]/20 text-[#d4b38d]" : "text-slate-400 hover:text-[#f1f5f9]") px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-widest uppercase transition-colors no-underline">
-                            Editor
+                        <a href="/editor" class="@(currentPage == "/editor" ? "bg-primary/20 text-primary" : "text-slate-400 hover:text-[#f1f5f9]") px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-widest uppercase transition-colors no-underline">
+                            Editör
                         </a>
-                        <a href="/projects" class="@(currentPage == "/projects" ? "bg-[#d4b38d]/20 text-[#d4b38d]" : "text-slate-400 hover:text-[#f1f5f9]") px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-widest uppercase transition-colors no-underline">
+                        <a href="/projects" class="@(currentPage == "/projects" ? "bg-primary/20 text-primary" : "text-slate-400 hover:text-[#f1f5f9]") px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-widest uppercase transition-colors no-underline">
                             Projeler
                         </a>
-                        <a href="/settings" class="@(currentPage == "/settings" ? "bg-[#d4b38d]/20 text-[#d4b38d]" : "text-slate-400 hover:text-[#f1f5f9]") px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-widest uppercase transition-colors no-underline">
+                        <a href="/settings" class="@(currentPage == "/settings" ? "bg-primary/20 text-primary" : "text-slate-400 hover:text-[#f1f5f9]") px-3 py-1.5 rounded-lg text-[10px] font-bold tracking-widest uppercase transition-colors no-underline">
                             Ayarlar
                         </a>
                     </Authorized>
@@ -211,7 +211,7 @@
         
         <div class="flex items-center gap-2">
             <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-            <span class="text-[10px] text-slate-400 font-medium tracking-widest uppercase">Live Production Mode</span>
+            <span class="text-[10px] text-slate-400 font-medium tracking-widest uppercase">Canlı Üretim Modu</span>
         </div>
     </div>
     <div class="flex items-center gap-4">
@@ -221,14 +221,14 @@
                 {
                     <div class="flex items-center gap-3 px-4 py-1.5 glass-panel rounded-lg">
                         <span class="text-[10px] font-semibold tracking-widest text-slate-400">CREDITS:</span>
-                        <span class="text-xs font-display font-bold text-[#d4b38d]">@(currentUser.Credits)</span>
+                        <span class="text-xs font-display font-bold text-primary">@(currentUser.Credits)</span>
                     </div>
                 }
                 
                 <!-- Profile Dropdown (Alpine.js) -->
                 <div x-data="{ isOpen: false }" class="relative">
                     <button @click="isOpen = !isOpen" class="flex items-center gap-2 px-3 py-2 glass-panel rounded-lg hover:bg-white/10 transition-colors">
-                        <span class="material-symbols-outlined text-[#d4b38d]">account_circle</span>
+                        <span class="material-symbols-outlined text-primary">account_circle</span>
                         <span class="text-[10px] font-bold tracking-widest text-[#f1f5f9] uppercase hidden sm:inline">Profil</span>
                         <span class="material-symbols-outlined text-slate-400 text-sm" x-text="isOpen ? 'expand_less' : 'expand_more'">expand_more</span>
                     </button>
@@ -289,7 +289,7 @@
 </header>
 
 <!-- Main Content with Sidebar Offset -->
-<main class="@($"flex-grow min-h-screen mt-16 bg-slate-950 {(IsEditorPage ? "ml-20" : "")}")">
+<main class="@($"flex-grow min-h-screen mt-16 bg-background-dark {(IsEditorPage ? "ml-20" : "")}")">
     @Body
 </main>
 

@@ -13,9 +13,8 @@ public class ModelAsset
     public string? DefaultPose { get; set; } // "standing", "casual", etc.
     public string? DefaultCameraAngle { get; set; } // "front", "side", etc.
     public string? DefaultMood { get; set; } // "professional", "casual", etc.
+    public string TriggerWord { get; set; } = "woman"; // Token for the model (e.g. "woman", "man", "ohwx")
 
     public List<GeneratedImage> GeneratedImages { get; set; } = new();
 }
-
-
-
+    

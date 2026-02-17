@@ -1,441 +1,394 @@
 @page "/editor"
+@using Giydir.Core.Entities
 @using Giydir.Core.DTOs
 @using Giydir.Core.Interfaces
+@using Giydir.Infrastructure.Services
+@inject IProjectRepository ProjectRepository
+@inject IGeneratedImageRepository ImageRepository
+@inject IImageDownloadService ImageDownloader
+@inject IJwtTokenService JwtService
 @inject HttpClient Http
-@inject IVirtualTryOnService TryOnService
+@inject RenderOrchestrator Orchestrator
+@inject IAIImageGenerationService GenService
 @inject IModelAssetRepository ModelAssetRepository
+@inject IPoseRepository PoseRepository
 @inject ILogger<Editor> Logger
+@inject IJSRuntime JS
 @rendermode InteractiveServer
 
-<div class="flex h-[calc(100vh-4rem)] overflow-hidden bg-slate-950">
-    <!-- Column 1: Garment Upload/Selection (Left Sidebar) -->
-    <aside class="w-[320px] border-r border-white/5 flex flex-col bg-slate-900/20">
-        <div class="p-6">
-            <span class="step-label">Step 01 / Garment Upload</span>
-            
-            @if (editorMode == "upload")
-            {
-                <!-- Upload Area -->
-                <div class="relative group cursor-pointer mb-8">
-                    <div class="absolute -inset-0.5 bg-[#d4b38d]/20 rounded-xl blur opacity-0 group-hover:opacity-100 transition duration-500"></div>
-                    <div class="relative glass-panel rounded-xl p-8 border-dashed border-white/10 flex flex-col items-center text-center hover:border-[#d4b38d]/40 transition-colors">
-                        @if (string.IsNullOrEmpty(uploadedClothingUrl))
+<div class="relative flex h-screen w-full flex-col overflow-hidden bg-background-light dark:bg-background-dark text-white font-display">
+
+    <main class="flex flex-1 overflow-hidden">
+        <!-- Left Panel: Scene Vibes & Selectors -->
+        <aside class="w-[320px] border-r border-neutral-700 bg-background-dark flex flex-col custom-scrollbar overflow-y-auto z-20">
+            <div class="p-6 space-y-8">
+                
+                <!-- Garment Upload Section -->
+                 <section>
+                    <h3 class="text-xs font-bold text-neutral-400 uppercase tracking-[0.2em] mb-4">Kıyafet Kaynağı</h3>
+                    <div class="relative group cursor-pointer">
+                        <div class="relative bg-neutral-800 border-2 border-dashed border-neutral-700 rounded-xl p-6 flex flex-col items-center text-center hover:border-primary/50 transition-colors">
+                            @if (string.IsNullOrEmpty(uploadedClothingUrl))
+                            {
+                                <span class="material-symbols-outlined text-3xl font-light text-neutral-400 mb-2">add_photo_alternate</span>
+                                <p class="text-[10px] font-bold text-neutral-300 uppercase tracking-wider">Kıyafet Yükle</p>
+                                <InputFile OnChange="HandleClothingUpload" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" accept="image/jpeg,image/png,image/webp" />
+                            }
+                            else
+                            {
+                                <img src="@uploadedClothingUrl" class="h-24 object-contain rounded-lg mb-2" alt="Uploaded" />
+                                <button class="text-[10px] text-red-400 hover:text-red-300 uppercase tracking-wider z-10 relative" @onclick="ClearClothing">Kaldır</button>
+                            }
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Model Selection -->
+                <section>
+                     <h3 class="text-xs font-bold text-neutral-400 uppercase tracking-[0.2em] mb-4">Sanal Model</h3>
+                     <ModelSelector @bind-SelectedModelId="selectedModelId" />
+                </section>
+
+                <!-- Scene Vibes Section -->
+                <section>
+                    <h3 class="text-xs font-bold text-neutral-400 uppercase tracking-[0.2em] mb-4">Arka Plan</h3>
+                    <div class="grid grid-cols-1 gap-3">
+                        @foreach (var vibe in vibeOptions)
                         {
-                            <span class="material-symbols-outlined text-3xl font-light text-[#d4b38d] mb-4">add_photo_alternate</span>
-                            <p class="text-xs font-semibold text-[#f1f5f9] tracking-wide uppercase">Add Boutique Item</p>
-                            <p class="text-[9px] text-slate-500 mt-2 leading-relaxed">UPLOAD FLAT-LAY OR<br/>MANNEQUIN PHOTOGRAPHY</p>
-                            <InputFile OnChange="HandleClothingUpload" class="mt-2 text-xs w-full" accept="image/jpeg,image/png,image/webp" />
+                            <div class="group relative aspect-[16/9] rounded-lg overflow-hidden cursor-pointer border-2 @(selectedBackground == vibe.Key ? "border-primary" : "border-transparent hover:border-neutral-600")" 
+                                 @onclick="() => selectedBackground = vibe.Key">
+                                <div class="absolute inset-0" style="@vibe.Value"></div>
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-3">
+                                    <div class="flex justify-between items-center w-full">
+                                        <span class="text-xs font-medium tracking-wider text-white">@vibe.Key</span>
+                                        @if(selectedBackground == vibe.Key) { <span class="material-symbols-outlined text-primary text-sm">check_circle</span> }
+                                    </div>
+                                </div>
+                            </div>
                         }
-                        else
+                    </div>
+                </section>
+
+                <!-- Pose Section -->
+                <section>
+                    <h3 class="text-xs font-bold text-neutral-400 uppercase tracking-[0.2em] mb-4">Poz</h3>
+                    <div class="grid grid-cols-2 gap-2">
+                        @foreach (var pose in loadedPoses)
                         {
-                            <img src="@uploadedClothingUrl" class="max-h-28 rounded-lg object-contain" alt="Yüklenen kıyafet" />
-                            <button class="mt-2 text-xs text-red-400 hover:text-red-300 flex items-center gap-1" @onclick="ClearClothing">
-                                <span class="material-symbols-outlined text-sm">delete</span> Kaldır
+                            <button class="relative rounded-lg border overflow-hidden @(selectedPose == pose.Name ? "border-primary ring-1 ring-primary" : "border-neutral-700 hover:border-neutral-600") transition-all"
+                                    @onclick="() => selectedPose = pose.Name">
+                                <div class="aspect-[3/4] bg-neutral-800">
+                                    @if (!string.IsNullOrEmpty(pose.ImagePath))
+                                    {
+                                        <img src="@pose.ImagePath" class="w-full h-full object-cover" alt="@pose.Name" />
+                                    }
+                                    else
+                                    {
+                                        <div class="w-full h-full flex items-center justify-center">
+                                            <span class="material-symbols-outlined text-2xl text-neutral-600">accessibility_new</span>
+                                        </div>
+                                    }
+                                </div>
+                                <div class="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/80 to-transparent p-2">
+                                    <span class="text-[10px] font-bold uppercase tracking-wider @(selectedPose == pose.Name ? "text-primary" : "text-neutral-300")">@pose.Name</span>
+                                </div>
                             </button>
                         }
                     </div>
-                </div>
-            }
-            else
-            {
-                <!-- Template Mode -->
-                <div class="relative group cursor-pointer mb-8">
-                    <div class="relative glass-panel rounded-xl p-6 border-white/10 flex flex-col items-center text-center">
-                        <span class="material-symbols-outlined text-3xl font-light text-[#d4b38d] mb-3">auto_awesome</span>
-                        <p class="text-xs font-semibold text-[#f1f5f9] tracking-wide uppercase">Template Mode</p>
-                        <p class="text-[9px] text-slate-500 mt-2">AI GENERATED FASHION</p>
-                    </div>
-                </div>
-            }
+                </section>
 
-            <!-- Mode Tabs -->
-            <div class="flex gap-2 mb-8">
-                <button class="flex-1 px-3 py-2 rounded-lg text-[10px] font-bold tracking-widest uppercase transition-all @(editorMode == "upload" ? "bg-white/5 text-[#d4b38d] border border-[#d4b38d]/30" : "text-slate-500 hover:text-slate-300")"
-                        @onclick='() => { editorMode = "upload"; selectedTemplateId = null; }'>
-                    Upload
-                </button>
-                <button class="flex-1 px-3 py-2 rounded-lg text-[10px] font-bold tracking-widest uppercase transition-all @(editorMode == "template" ? "bg-white/5 text-[#d4b38d] border border-[#d4b38d]/30" : "text-slate-500 hover:text-slate-300")"
-                        @onclick='() => { editorMode = "template"; uploadedClothingUrl = null; }'>
-                    Template
-                </button>
-            </div>
-
-            <div class="flex items-center justify-between mb-4 border-b border-white/5 pb-2">
-                <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                    @(editorMode == "template" ? "Template Library" : "Garment Library")
-                </h3>
-                <span class="text-[9px] text-[#d4b38d] font-medium">
-                    @(editorMode == "template" ? templates.Count : "12") ITEMS
-                </span>
-            </div>
-        </div>
-
-        <!-- Library / Templates -->
-        <div class="flex-1 overflow-y-auto px-6 space-y-4 pb-6 no-scrollbar">
-            @if (editorMode == "template")
-            {
-                @if (isLoadingTemplates)
-                {
-                    <div class="flex items-center justify-center py-10">
-                        <div class="w-6 h-6 border-2 border-[#d4b38d] border-t-transparent rounded-full animate-spin"></div>
-                    </div>
-                }
-                else if (templates.Any())
-                {
-                    @foreach (var template in templates)
-                    {
-                        <button class="w-full text-left p-4 rounded-xl border transition-all @(selectedTemplateId == template.Id ? "border-[#d4b38d] bg-[#d4b38d]/10" : "border-white/10 hover:border-[#d4b38d]/50")"
-                                @onclick='() => SelectTemplate(template.Id)'>
-                            <div class="flex items-start gap-3">
-                                @if (!string.IsNullOrEmpty(template.ThumbnailPath))
-                                {
-                                    <img src="@template.ThumbnailPath" class="w-16 h-16 rounded-lg object-cover" alt="@template.Name" />
-                                }
-                                else
-                                {
-                                    <div class="w-16 h-16 rounded-lg bg-gradient-to-br from-[#d4b38d] to-[#b08d65] flex items-center justify-center">
-                                        <span class="material-symbols-outlined text-white text-2xl">style</span>
-                                    </div>
-                                }
-                                <div class="flex-1 min-w-0">
-                                    <h4 class="font-bold text-sm mb-1 truncate text-white">@template.Name</h4>
-                                    <p class="text-xs text-slate-400 line-clamp-2">@template.Description</p>
-                                </div>
-                                @if (selectedTemplateId == template.Id)
-                                {
-                                    <span class="material-symbols-outlined text-[#d4b38d] text-lg">check_circle</span>
-                                }
-                            </div>
-                        </button>
-                    }
-                }
-            }
-            else
-            {
-                <!-- Placeholder garment gallery -->
-                <div class="grid grid-cols-2 gap-3">
-                    <div class="aspect-[4/5] rounded-xl overflow-hidden glass-panel p-1 group cursor-pointer border-white/5 hover:border-white/20 transition-all">
-                        <div class="w-full h-full bg-slate-800 rounded-lg"></div>
-                    </div>
-                    <div class="aspect-[4/5] rounded-xl overflow-hidden glass-panel p-1 group cursor-pointer border-white/5 hover:border-white/20 transition-all">
-                        <div class="w-full h-full bg-slate-800 rounded-lg"></div>
-                    </div>
-                </div>
-            }
-        </div>
-
-        @if (!string.IsNullOrEmpty(uploadError))
-        {
-            <div class="mx-6 mb-4 p-3 bg-red-500/10 border border-red-500/20 rounded-lg text-xs text-red-400">
-                <span class="material-symbols-outlined text-sm align-middle mr-1">error</span>@uploadError
-            </div>
-        }
-    </aside>
-
-    <!-- Column 2: Creative Direction (Center) -->
-    <section class="flex-1 flex flex-col bg-slate-950 min-w-0 border-r border-white/5">
-        <div class="p-8 pb-4">
-            <span class="step-label">Step 02 / Creative Direction</span>
-            <div class="flex items-center justify-between mb-8">
-                <h2 class="text-2xl font-display font-medium text-[#f1f5f9] tracking-tight">Virtual Talent &amp; Set</h2>
-                <div class="flex gap-2">
-                    <button class="glass-panel px-4 py-2 rounded-lg text-[10px] font-bold tracking-widest uppercase hover:bg-white/5 transition-colors">
-                        Advanced Filters
-                    </button>
-                </div>
-            </div>
-
-            <div class="space-y-8">
-                <!-- Model Selection -->
-                <div>
-                    <div class="flex items-center gap-3 mb-4">
-                        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Photorealistic Talent</span>
-                        <div class="flex-1 h-px bg-white/5"></div>
-                    </div>
-                    <div class="overflow-y-auto max-h-[calc(100vh-32rem)] pb-2 no-scrollbar">
-                        <ModelSelector @bind-SelectedModelId="selectedModelId" />
-                    </div>
-                </div>
-
-                <!-- Scene Settings -->
-                <div class="grid grid-cols-2 gap-8">
+                <!-- Dropdowns Section -->
+                <section class="space-y-6">
                     <div>
-                        <div class="flex items-center gap-3 mb-4">
-                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Garment Category</span>
-                            <div class="flex-1 h-px bg-white/5"></div>
-                        </div>
-                        <select @bind="selectedCategory" class="w-full bg-slate-900 border border-white/10 rounded-lg p-3 text-[10px] font-bold text-slate-400 outline-none appearance-none cursor-pointer hover:border-[#d4b38d]/40 transition-colors uppercase tracking-widest">
-                            <option value="upper_body">Upper Body (T-shirt, Jacket)</option>
-                            <option value="lower_body">Lower Body (Pants, Skirt)</option>
-                            <option value="dresses">Dresses / Full Body</option>
+                        <label class="text-xs font-bold text-neutral-400 uppercase tracking-[0.2em] mb-3 block">Kategori</label>
+                        <select @bind="selectedCategory" class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-sm text-white outline-none focus:border-primary uppercase tracking-wider">
+                            <option value="upper_body">Dış Giyim</option>
+                            <option value="lower_body">Pantolon</option>
+                            <option value="dresses">Gece Kıyafeti</option>
                         </select>
                     </div>
                     <div>
-                        <div class="flex items-center gap-3 mb-4">
-                            <span class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Lighting Profile</span>
-                            <div class="flex-1 h-px bg-white/5"></div>
-                        </div>
-                        <div class="grid grid-cols-1 gap-2">
-                            <button class="flex items-center justify-between p-3 rounded-lg border transition-all @(selectedLighting == "Golden Hour" ? "border-[#d4b38d] bg-[#d4b38d]/5 text-[#d4b38d]" : "border-white/5 hover:border-white/20 text-slate-400")"
-                                    @onclick='() => selectedLighting = "Golden Hour"'>
-                                <div class="flex items-center gap-3">
-                                    <span class="material-symbols-outlined text-sm @(selectedLighting == "Golden Hour" ? "" : "text-slate-500")">wb_sunny</span>
-                                    <span class="text-[10px] font-bold tracking-widest uppercase">Golden Hour</span>
-                                </div>
-                                @if (selectedLighting == "Golden Hour")
-                                {
-                                    <span class="material-symbols-outlined text-sm">check</span>
-                                }
+                        <label class="text-xs font-bold text-neutral-400 uppercase tracking-[0.2em] mb-3 block">Aydınlatma</label>
+                         <select @bind="selectedLighting" class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-sm text-white outline-none focus:border-primary uppercase tracking-wider">
+                            <option value="Golden Hour">Altın Saat</option>
+                            <option value="Studio Soft">Stüdyo Işığı</option>
+                            <option value="Dramatic">Dramatik Kontrast</option>
+                        </select>
+                    </div>
+                </section>
+            </div>
+            
+            <!-- Generate Button -->
+            <div class="mt-auto p-6 border-t border-neutral-700 space-y-3">
+                <!-- Variation Count Selector -->
+                <div class="flex items-center justify-between mb-2">
+                    <label class="text-[10px] font-bold text-neutral-400 uppercase tracking-widest">Varyasyon</label>
+                    <div class="flex bg-neutral-800 rounded-lg p-1 border border-neutral-700">
+                        @for (int i = 1; i <= 4; i++)
+                        {
+                            var count = i;
+                            <button class="w-8 h-8 rounded flex items-center justify-center text-xs font-bold transition-all @(variationCount == count ? "bg-primary text-background-dark shadow-md" : "text-neutral-500 hover:text-white hover:bg-white/5")"
+                                    @onclick="() => variationCount = count">
+                                @count
                             </button>
-                            <button class="flex items-center justify-between p-3 rounded-lg border transition-all @(selectedLighting == "Studio Soft" ? "border-[#d4b38d] bg-[#d4b38d]/5 text-[#d4b38d]" : "border-white/5 hover:border-white/20 text-slate-400")"
-                                    @onclick='() => selectedLighting = "Studio Soft"'>
-                                <div class="flex items-center gap-3">
-                                    <span class="material-symbols-outlined text-sm @(selectedLighting == "Studio Soft" ? "" : "text-slate-500")">light_mode</span>
-                                    <span class="text-[10px] font-bold tracking-widest uppercase">Studio Soft</span>
+                        }
+                    </div>
+                </div>
+
+                @if (isProcessing)
+                {
+                    <div class="flex items-center justify-center gap-2 bg-primary/10 px-3 py-2 rounded-lg border border-primary/20 mb-2">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+                        </span>
+                        <span class="text-primary text-[10px] font-bold tracking-widest uppercase">Oluşturuluyor...</span>
+                    </div>
+                }
+                <button class="w-full bg-primary text-background-dark font-bold text-sm tracking-widest uppercase py-4 rounded-lg flex items-center justify-center gap-2 hover:brightness-110 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
+                        @onclick="GenerateImage"
+                        disabled="@(!CanGenerate)">
+                    <span class="material-symbols-outlined">auto_fix_high</span>
+                    <span>@variationCount Varyasyon Oluştur</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Central Canvas: Editorial Grid -->
+        <section class="flex-1 bg-[#0a1416] relative flex items-center justify-center p-12 overflow-hidden">
+            <div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: radial-gradient(circle at center, #13c8ec 0%, transparent 70%);"></div>
+            
+             @if (generatedImages.Any())
+             {
+                 <div class="grid grid-cols-2 gap-4 max-w-5xl w-full">
+                     @for (int i = 0; i < generatedImages.Count; i++)
+                     {
+                         var idx = i;
+                         var img = generatedImages[idx];
+                         var isSelected = selectedImageIndices.Contains(idx);
+                          <div class="aspect-[3/4] bg-neutral-800 rounded-lg overflow-hidden shadow-2xl border-2 @(isSelected ? "border-primary" : "border-white/5") hover:scale-[1.02] transition-all duration-300 cursor-pointer group relative"
+                               @onclick="() => ToggleImageSelection(idx)">
+                            <img class="w-full h-full object-cover" src="@img" />
+                            <!-- Selection Checkbox -->
+                            <div class="absolute top-3 right-3 z-10">
+                                <div class="w-6 h-6 rounded-md border-2 @(isSelected ? "bg-primary border-primary" : "border-white/40 bg-black/40 backdrop-blur-sm group-hover:border-white/70") flex items-center justify-center transition-all">
+                                    @if (isSelected)
+                                    {
+                                        <span class="material-symbols-outlined text-background-dark text-sm font-bold">check</span>
+                                    }
                                 </div>
-                                @if (selectedLighting == "Studio Soft")
-                                {
-                                    <span class="material-symbols-outlined text-sm">check</span>
-                                }
-                            </button>
+                            </div>
+                            <!-- Asset Label -->
+                            <div class="absolute top-3 left-3 bg-black/40 backdrop-blur-md px-2 py-1 rounded text-[10px] tracking-tighter uppercase font-bold text-primary border border-primary/20">Asset_0@(idx+1)</div>
+                        </div>
+                     }
+                 </div>
+                 
+                 <!-- Selection Count -->
+                 @if (selectedImageIndices.Any())
+                 {
+                     <div class="absolute top-6 left-1/2 -translate-x-1/2 bg-primary/10 backdrop-blur-xl border border-primary/30 px-4 py-2 rounded-full z-50">
+                         <span class="text-primary text-xs font-bold tracking-widest uppercase">@selectedImageIndices.Count seçili</span>
+                     </div>
+                 }
+             }
+             else if (isProcessing)
+             {
+                  <div class="flex flex-col items-center justify-center">
+                    <div class="w-24 h-24 mb-6 relative">
+                        <div class="absolute inset-0 border-2 border-primary/30 rounded-full animate-ping"></div>
+                        <div class="relative w-full h-full bg-background-dark/80 rounded-full flex items-center justify-center backdrop-blur-sm border border-primary/20">
+                            <span class="material-symbols-outlined text-primary text-4xl font-light animate-pulse">auto_fix_high</span>
                         </div>
                     </div>
+                     <h4 class="text-sm font-display font-bold text-white tracking-[0.15em] uppercase mb-2">Koleksiyon Hazırlanıyor</h4>
+                     <p class="text-[10px] text-neutral-500 max-w-[240px] leading-relaxed uppercase tracking-widest font-medium text-center">AI moda setinizi oluşturuyor</p>
                 </div>
+             }
+             else
+             {
+                 <!-- Empty State -->
+                 <div class="text-center opacity-40">
+                      <span class="material-symbols-outlined text-6xl text-neutral-600 mb-4">view_quilt</span>
+                       <h3 class="text-xl font-bold text-neutral-400 uppercase tracking-widest">Oluşturmaya Hazır</h3>
+                       <p class="text-xs text-neutral-500 mt-2">Koleksiyonunuzu oluşturmak için kıyafet ve model seçin</p>
+                 </div>
+             }
 
-                <!-- Location Set -->
-                <div>
-                    <div class="flex items-center gap-3 mb-4">
-                        <span class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Location Set</span>
-                        <div class="flex-1 h-px bg-white/5"></div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-4">
-                        <button class="flex items-center justify-between p-3 rounded-lg border transition-all @(selectedBackground == "Parisian Street" ? "border-[#d4b38d] bg-[#d4b38d]/5 text-[#d4b38d]" : "border-white/5 hover:border-white/20 text-slate-400")"
-                                @onclick='() => selectedBackground = "Parisian Street"'>
-                            <div class="flex items-center gap-3">
-                                <span class="material-symbols-outlined text-sm @(selectedBackground == "Parisian Street" ? "" : "text-slate-500")">location_on</span>
-                                <span class="text-[10px] font-bold tracking-widest uppercase">Parisian Street</span>
-                            </div>
-                            @if (selectedBackground == "Parisian Street")
-                            {
-                                <span class="material-symbols-outlined text-sm">check</span>
-                            }
-                        </button>
-                        <button class="flex items-center justify-between p-3 rounded-lg border transition-all @(selectedBackground == "Minimalist Boutique" ? "border-[#d4b38d] bg-[#d4b38d]/5 text-[#d4b38d]" : "border-white/5 hover:border-white/20 text-slate-400")"
-                                @onclick='() => selectedBackground = "Minimalist Boutique"'>
-                            <div class="flex items-center gap-3">
-                                <span class="material-symbols-outlined text-sm @(selectedBackground == "Minimalist Boutique" ? "" : "text-slate-500")">storefront</span>
-                                <span class="text-[10px] font-bold tracking-widest uppercase">Minimalist Boutique</span>
-                            </div>
-                            @if (selectedBackground == "Minimalist Boutique")
-                            {
-                                <span class="material-symbols-outlined text-sm">check</span>
-                            }
-                        </button>
-                    </div>
+            <!-- Floating Toolbar -->
+            @if (generatedImages.Any())
+            {
+                <div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-neutral-800/80 backdrop-blur-xl border border-neutral-700 p-2 rounded-full shadow-2xl z-50">
+                    <button class="p-3 rounded-full hover:bg-neutral-700 text-neutral-400 hover:text-white transition-all material-symbols-outlined" @onclick="SelectAll" title="Tümünü Seç">select_all</button>
+                    <div class="h-6 w-px bg-neutral-700"></div>
+                    <button class="p-3 rounded-full hover:bg-neutral-700 text-neutral-400 hover:text-white transition-all material-symbols-outlined" @onclick="ClearResult" title="Temizle">refresh</button>
                 </div>
-            </div>
-        </div>
-    </section>
+            }
+        </section>
 
-    <!-- Column 3: Live Preview & Result (Right Sidebar) -->
-    <aside class="w-[440px] flex flex-col bg-slate-900/40 backdrop-blur-3xl">
-        <div class="p-8 flex-1 flex flex-col">
-            <span class="step-label">Step 03 / Live Preview</span>
-            <div class="flex-1 relative mt-2 group">
-                <div class="absolute inset-0 glass-panel rounded-2xl overflow-hidden shadow-2xl ring-1 ring-white/10">
-                    <div class="absolute inset-0 bg-slate-950 flex flex-col items-center justify-center p-8 text-center">
-                        @if (isProcessing)
-                        {
-                            <!-- Processing State -->
-                            <div class="w-full h-full relative group/preview">
-                                <div class="absolute inset-0 flex flex-col items-center justify-center">
-                                    <div class="w-24 h-24 mb-6 relative">
-                                        <div class="absolute inset-0 border-2 border-[#d4b38d]/30 rounded-full animate-ping"></div>
-                                        <div class="relative w-full h-full bg-slate-900/80 rounded-full flex items-center justify-center backdrop-blur-sm border border-[#d4b38d]/20">
-                                            <span class="material-symbols-outlined text-[#d4b38d] text-4xl font-light">auto_fix_high</span>
-                                        </div>
-                                    </div>
-                                    <h4 class="text-sm font-display font-bold text-[#f1f5f9] tracking-[0.15em] uppercase mb-2">Processing...</h4>
-                                    <p class="text-[10px] text-slate-500 max-w-[240px] leading-relaxed uppercase tracking-widest font-medium">AI is creating your masterpiece</p>
-                                </div>
-                            </div>
-                        }
-                        else if (!string.IsNullOrEmpty(resultImageUrl))
-                        {
-                            <!-- Result State -->
-                            <div class="w-full h-full relative group">
-                                <img src="@resultImageUrl" class="w-full h-full object-cover rounded-xl shadow-2xl" alt="Result" />
-                                <div class="absolute inset-0 ring-1 ring-white/10 rounded-xl pointer-events-none"></div>
-                                <div class="absolute top-4 left-4 flex gap-2">
-                                    <span class="px-2 py-1 bg-black/60 backdrop-blur-md rounded text-[9px] font-bold text-white uppercase border border-white/5 tracking-widest">High Fidelity Generated</span>
-                                </div>
-                            </div>
-                        }
-                        else if (!string.IsNullOrEmpty(errorMessage))
-                        {
-                            <!-- Error State -->
-                            <div class="text-center p-6">
-                                <span class="material-symbols-outlined text-4xl text-red-400 mb-2">error_outline</span>
-                                <p class="text-sm text-red-400 mb-3">@errorMessage</p>
-                                <button class="text-xs text-[#d4b38d] hover:underline" @onclick="ClearResult">Tekrar Dene</button>
-                            </div>
-                        }
-                        else
-                        {
-                            <!-- Placeholder State -->
-                            <div class="w-full h-full relative group/preview cursor-crosshair">
-                                <div class="absolute inset-0 flex flex-col items-center justify-center">
-                                    <div class="w-24 h-24 mb-6 relative">
-                                        <div class="relative w-full h-full bg-slate-900/80 rounded-full flex items-center justify-center backdrop-blur-sm border border-[#d4b38d]/20">
-                                            <span class="material-symbols-outlined text-[#d4b38d] text-4xl font-light">auto_fix_high</span>
-                                        </div>
-                                    </div>
-                                    <h4 class="text-sm font-display font-bold text-[#f1f5f9] tracking-[0.15em] uppercase mb-2">Initialize Composite</h4>
-                                    <p class="text-[10px] text-slate-500 max-w-[240px] leading-relaxed uppercase tracking-widest font-medium">Ready to create stunning fashion imagery</p>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                </div>
-            </div>
-
-            <!-- Finishing Suite -->
-            <div class="mt-8 space-y-6">
-                <div class="flex items-center justify-between border-b border-white/5 pb-2">
-                    <h3 class="text-[11px] font-bold text-slate-400 uppercase tracking-widest">Finishing Suite</h3>
-                    <span class="text-[9px] text-slate-500 font-bold tracking-widest uppercase">Production Grade</span>
-                </div>
-                <div class="grid grid-cols-3 gap-3">
-                    <button class="flex flex-col items-center gap-3 p-4 glass-panel rounded-xl hover:border-[#d4b38d]/40 transition-all group">
-                        <span class="material-symbols-outlined text-xl text-slate-400 group-hover:text-[#d4b38d]">tune</span>
-                        <span class="text-[9px] font-bold tracking-widest uppercase text-slate-500 group-hover:text-[#f1f5f9]">Exposure</span>
-                    </button>
-                    <button class="flex flex-col items-center gap-3 p-4 glass-panel rounded-xl hover:border-[#d4b38d]/40 transition-all group border-[#d4b38d]/20 bg-[#d4b38d]/5">
-                        <span class="material-symbols-outlined text-xl text-[#d4b38d]">high_res</span>
-                        <span class="text-[9px] font-bold tracking-widest uppercase text-[#f1f5f9]">HD Enhance</span>
-                    </button>
-                    <button class="flex flex-col items-center gap-3 p-4 glass-panel rounded-xl hover:border-[#d4b38d]/40 transition-all group">
-                        <span class="material-symbols-outlined text-xl text-slate-400 group-hover:text-[#d4b38d]">image_search</span>
-                        <span class="text-[9px] font-bold tracking-widest uppercase text-slate-500 group-hover:text-[#f1f5f9]">Retouch</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Render Button -->
-        <div class="p-8 border-t border-white/5 bg-slate-950/40">
-            <button class="w-full relative group"
-                    @onclick="GenerateImage"
-                    disabled="@(!CanGenerate)">
-                <div class="absolute -inset-1 bg-gradient-to-r from-[#d4b38d] via-white/20 to-[#d4b38d] rounded-xl blur opacity-20 group-hover:opacity-40 transition duration-1000"></div>
-                <div class="relative w-full bg-[#f1f5f9] hover:bg-[#d4b38d] text-slate-950 font-display font-extrabold text-[12px] tracking-[0.25em] py-5 rounded-xl transition-all flex items-center justify-center gap-4 group-hover:shadow-[0_0_30px_rgba(212,179,141,0.3)] disabled:opacity-50 disabled:cursor-not-allowed">
-                    <span class="material-symbols-outlined text-xl">camera_enhance</span>
-                    @if (isProcessing)
+        <!-- Right Panel: Export & Save -->
+        <aside class="w-[280px] border-l border-neutral-700 bg-background-dark flex flex-col p-6 space-y-6 z-20">
+            
+            <!-- Aspect Ratio -->
+            <div>
+                <h3 class="text-xs font-bold text-neutral-400 uppercase tracking-[0.2em] mb-4">En Boy Oranı</h3>
+                <div class="grid grid-cols-2 gap-2">
+                    @foreach (var ratio in aspectRatios)
                     {
-                        <span>RENDERING...</span>
-                    }
-                    else
-                    {
-                        <span>RENDER MASTERPIECE</span>
+                        <button class="flex flex-col items-center gap-1.5 p-3 rounded-lg border-2 @(selectedAspectRatio == ratio.Key ? "border-primary bg-primary/5" : "border-neutral-700 bg-neutral-800/50 hover:border-neutral-600") transition-all"
+                                @onclick="() => selectedAspectRatio = ratio.Key">
+                            <span class="material-symbols-outlined text-sm @(selectedAspectRatio == ratio.Key ? "text-primary" : "text-neutral-500")">@ratio.Value.Icon</span>
+                            <span class="text-[10px] font-bold uppercase tracking-wider @(selectedAspectRatio == ratio.Key ? "text-primary" : "text-neutral-400")">@ratio.Key</span>
+                            <span class="text-[8px] text-neutral-500 tracking-wide">@ratio.Value.Platform</span>
+                        </button>
                     }
                 </div>
-            </button>
-            <div class="mt-4 flex items-center justify-center gap-3">
-                <div class="flex -space-x-1">
-                    <div class="w-4 h-4 rounded-full border border-slate-950 bg-slate-800"></div>
-                    <div class="w-4 h-4 rounded-full border border-slate-950 bg-slate-700"></div>
-                </div>
-                <p class="text-[9px] text-slate-500 font-bold tracking-[0.1em] uppercase">Trusted by 200+ Premium Brands</p>
             </div>
+
+            <!-- Export Format -->
+            <div>
+                <h3 class="text-xs font-bold text-neutral-400 uppercase tracking-[0.2em] mb-4">Dışa Aktarma Formatı</h3>
+                <div class="grid grid-cols-3 gap-2">
+                    @foreach (var fmt in exportFormats)
+                    {
+                        <button class="p-2 rounded-lg border @(selectedExportFormat == fmt ? "border-primary bg-primary/10 text-primary" : "border-neutral-700 bg-neutral-800/50 text-neutral-400 hover:border-neutral-600") text-[10px] font-bold uppercase tracking-wider transition-all"
+                                @onclick="() => selectedExportFormat = fmt">
+                            @fmt
+                        </button>
+                    }
+                </div>
+            </div>
+
+            <!-- Resolution -->
+            <div>
+                <h3 class="text-xs font-bold text-neutral-400 uppercase tracking-[0.2em] mb-4">Çözünürlük</h3>
+                <select @bind="selectedResolution" class="w-full bg-neutral-800 border border-neutral-700 rounded-lg p-3 text-sm text-white outline-none focus:border-primary uppercase tracking-wider">
+                    <option value="original">Orijinal</option>
+                    <option value="1080p">1080p (1080×1440)</option>
+                    <option value="4k">4K (2160×2880)</option>
+                </select>
+            </div>
+
+             <!-- Error Message Display -->
+             @if (!string.IsNullOrEmpty(errorMessage))
+            {
+                <div class="p-4 bg-red-500/10 border border-red-500/20 rounded-lg">
+                    <p class="text-[10px] text-red-400">@errorMessage</p>
+                </div>
+            }
+
+            <div class="mt-auto space-y-3">
+                <button class="w-full flex items-center justify-between px-4 py-3 rounded-lg border border-neutral-700 hover:bg-neutral-800 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                        disabled="@(!selectedImageIndices.Any())"
+                        @onclick="SaveSelection">
+                    <span class="text-xs font-bold tracking-widest uppercase">Seçimi Kaydet</span>
+                    <span class="material-symbols-outlined text-sm">bookmark</span>
+                </button>
+                <button class="w-full flex items-center justify-between px-4 py-3 rounded-lg bg-neutral-800 border border-neutral-700 hover:border-neutral-600 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+                        disabled="@(!selectedImageIndices.Any())"
+                        @onclick="ExportAssets">
+                    <span class="text-xs font-bold tracking-widest uppercase">
+                        Dışa Aktar @(selectedImageIndices.Count > 0 ? $"({selectedImageIndices.Count})" : "")
+                    </span>
+                    <span class="material-symbols-outlined text-sm text-primary">download</span>
+                </button>
+            </div>
+        </aside>
+    </main>
+    
+    <!-- Bottom Bar: Status -->
+    <footer class="h-8 border-t border-neutral-700 bg-background-dark flex items-center justify-between px-6 text-[10px] text-neutral-500 uppercase tracking-widest z-50">
+        <div class="flex items-center gap-4">
+             <span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Motor Hazır</span>
+            <span class="h-3 w-px bg-neutral-700"></span>
+            <span>NanoBanana Pro</span>
         </div>
-    </aside>
+        <div class="flex items-center gap-4">
+             <span>Format: @selectedExportFormat</span>
+            <span class="h-3 w-px bg-neutral-700"></span>
+            <span>Oran: @selectedAspectRatio</span>
+        </div>
+    </footer>
 </div>
 
 @code {
+    // State
     private string? uploadedClothingUrl;
     private string? selectedModelId;
-    private string? selectedBackground = "Minimalist Boutique";
-    private string? selectedLighting = "Studio Soft";
+    private string? selectedBackground = "Studio Minimal";
+    private string? selectedLighting = "Golden Hour";
     private string selectedCategory = "upper_body";
-    private string? resultImageUrl;
+    private string selectedPose = "Ayakta";
+    private string selectedAspectRatio = "3:4";
+    private string selectedExportFormat = "JPG";
+    private string selectedResolution = "original";
+    private List<string> generatedImages = new();
+    private HashSet<int> selectedImageIndices = new();
     private string? errorMessage;
-    private string? uploadError;
     private bool isProcessing;
-    private int? currentImageId;
+    private int variationCount = 4;
+    private List<Giydir.Core.Entities.Pose> loadedPoses = new();
+    private List<Giydir.Core.Entities.ModelAsset> loadedModels = new();
 
-    private string editorMode = "upload"; // "upload" or "template"
-    private List<TemplateDto> templates = new();
-    private bool isLoadingTemplates = false;
-    private int? selectedTemplateId;
-    private TemplateDto? selectedTemplate;
+    // Options
+    private readonly Dictionary<string, string> vibeOptions = new()
+    {
+        { "Studio Minimal", "background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);" },
+        { "Urban Cinematic", "background: linear-gradient(135deg, #2d1b00 0%, #4a3728 40%, #1a1a1a 100%);" },
+        { "Architectural Luxury", "background: linear-gradient(135deg, #2c3e50 0%, #bdc3c7 50%, #ecf0f1 100%);" },
+        { "Nature Organic", "background: linear-gradient(135deg, #0b3d0b 0%, #1b5e20 50%, #2e7d32 100%);" },
+        { "Sunset Warm", "background: linear-gradient(135deg, #bf360c 0%, #e65100 50%, #ff8f00 100%);" }
+    };
+    private readonly string[] exportFormats = { "JPG", "PNG", "WebP" };
+    private readonly Dictionary<string, (string Icon, string Platform)> aspectRatios = new()
+    {
+        { "3:4", ("crop_3_2", "Genel") },
+        { "4:5", ("photo_camera", "Instagram") },
+        { "1:1", ("crop_square", "Kare") },
+        { "16:9", ("crop_16_9", "Geniş") },
+        { "9:16", ("smartphone", "Story / Reels") },
+        { "2:3", ("push_pin", "Pinterest") },
+        { "1200:628", ("storefront", "Shopify") }
+    };
+    
+    private bool CanGenerate => 
+        !isProcessing && !string.IsNullOrEmpty(uploadedClothingUrl) && !string.IsNullOrEmpty(selectedModelId);
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadTemplatesAsync();
-    }
+        loadedPoses = await PoseRepository.GetAllActiveAsync();
+        if (loadedPoses.Any() && !loadedPoses.Any(p => p.Name == selectedPose))
+        {
+            selectedPose = loadedPoses.First().Name;
+        }
 
-    private async Task LoadTemplatesAsync()
-    {
-        isLoadingTemplates = true;
-        try
+        loadedModels = await ModelAssetRepository.GetAllAsync();
+        if (string.IsNullOrEmpty(selectedModelId) && loadedModels.Any())
         {
-            var response = await Http.GetFromJsonAsync<List<TemplateDto>>("api/templates");
-            templates = response ?? new();
-        }
-        catch (Exception ex)
-        {
-            Logger.LogError(ex, "Template yükleme hatası");
-            templates = new();
-        }
-        finally
-        {
-            isLoadingTemplates = false;
+            selectedModelId = loadedModels.First().Id;
         }
     }
 
-    private void SelectTemplate(int templateId)
+    // --- Image Selection ---
+    private void ToggleImageSelection(int index)
     {
-        if (selectedTemplateId == templateId)
-        {
-            selectedTemplateId = null;
-            selectedTemplate = null;
-        }
+        if (!selectedImageIndices.Remove(index))
+            selectedImageIndices.Add(index);
+    }
+
+    private void SelectAll()
+    {
+        if (selectedImageIndices.Count == generatedImages.Count)
+            selectedImageIndices.Clear();
         else
-        {
-            selectedTemplateId = templateId;
-            selectedTemplate = templates.FirstOrDefault(t => t.Id == templateId);
-            uploadedClothingUrl = null;
-        }
+            selectedImageIndices = Enumerable.Range(0, generatedImages.Count).ToHashSet();
     }
 
-    private bool CanGenerate => 
-        !isProcessing &&
-        (
-            (editorMode == "upload" && !string.IsNullOrEmpty(uploadedClothingUrl) && !string.IsNullOrEmpty(selectedModelId))
-            ||
-            (editorMode == "template" && selectedTemplateId.HasValue && 
-                (selectedTemplate?.RequiresModel != true || !string.IsNullOrEmpty(selectedModelId)))
-        );
-
-
+    // --- Upload ---
     private async Task HandleClothingUpload(InputFileChangeEventArgs e)
     {
-        uploadError = null;
-
         var file = e.File;
-
-        if (file.Size > 10 * 1024 * 1024)
-        {
-            uploadError = "Dosya boyutu 10MB'dan büyük olamaz";
-            return;
-        }
-
-        var allowedTypes = new[] { "image/jpeg", "image/png", "image/webp" };
-        if (!allowedTypes.Contains(file.ContentType))
-        {
-            uploadError = "Sadece JPEG, PNG ve WebP dosyaları destekleniyor";
-            return;
-        }
+        if (file.Size > 10 * 1024 * 1024) return;
 
         try
         {
@@ -446,122 +399,81 @@
             content.Add(streamContent, "file", file.Name);
 
             var response = await Http.PostAsync("/api/upload/clothing", content);
-
             if (response.IsSuccessStatusCode)
             {
                 var result = await response.Content.ReadFromJsonAsync<UploadResponseDto>();
                 uploadedClothingUrl = result?.Url;
             }
-            else
-            {
-                uploadError = "Dosya yüklenirken bir hata oluştu";
-            }
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "Dosya yükleme hatası");
-            uploadError = "Dosya yüklenirken bir hata oluştu";
+            Logger.LogError(ex, "Upload Error");
         }
     }
 
+    // --- Generate ---
     private async Task GenerateImage()
     {
         if (!CanGenerate) return;
 
         isProcessing = true;
         errorMessage = null;
-        resultImageUrl = null;
+        generatedImages.Clear();
+        selectedImageIndices.Clear();
 
         try
         {
-            if (editorMode == "template" && selectedTemplateId.HasValue)
+            var request = new FashionRenderRequest
             {
-                var request = new GenerateFromTemplateDto
-                {
-                    TemplateId = selectedTemplateId.Value,
-                    ModelAssetId = selectedModelId,
-                    AspectRatio = "3:4",
-                    OutputFormat = "jpg"
-                };
+                ProductCategory = selectedCategory,
+                Fit = "regular",
+                Color = "original",
+                Vibe = selectedBackground,
+                ModelId = selectedModelId!,
+                SourceImageUrl = uploadedClothingUrl,
+                PositivePrompt = "", // Will be set below
+                NumberOfImages = variationCount
+            };
+            
+            var selectedModel = loadedModels.FirstOrDefault(m => m.Id == selectedModelId);
+            
+            // Build intelligent prompt
+            var modelDesc = !string.IsNullOrEmpty(selectedModel?.TriggerWord) 
+                ? selectedModel.TriggerWord 
+                : (selectedModel?.Gender == "Male" ? "male model" : "female model");
+                
+            var categoryDesc = selectedCategory switch 
+            {
+                "upper_body" => "upper body garment",
+                "lower_body" => "lower body garment",
+                "dresses" => "dress",
+                _ => "clothing"
+            };
 
-                var response = await Http.PostAsJsonAsync("/api/tryon/generate-from-template", request);
+            var prompt = $"{modelDesc} wearing {categoryDesc}, posing in {selectedPose}, standing in {selectedBackground}, {selectedLighting} lighting, highly detailed face, realistic skin texture, photorealistic, 8k uhd, cinematic lighting";
+            
+            request.PositivePrompt = prompt;
 
-                if (!response.IsSuccessStatusCode)
-                {
-                    try
-                    {
-                        var error = await response.Content.ReadFromJsonAsync<AIGenerationResponseDto>();
-                        errorMessage = error?.Error ?? "Görsel oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.";
-                    }
-                    catch
-                    {
-                        var errorText = await response.Content.ReadAsStringAsync();
-                        errorMessage = $"Görsel oluşturulurken bir hata oluştu: {errorText}";
-                    }
-                    return;
-                }
-
-                var aiResponse = await response.Content.ReadFromJsonAsync<AIGenerationResponseDto>();
-                if (aiResponse == null || !aiResponse.Success || !aiResponse.ImageId.HasValue)
-                {
-                    errorMessage = aiResponse?.Error ?? "Beklenmeyen bir hata oluştu";
-                    return;
-                }
-
-                currentImageId = aiResponse.ImageId;
-                await PollForAIGenerationResult(aiResponse.ImageId.Value);
+            if (selectedModel != null)
+            {
+                request.ModelImageUrl = selectedModel.FullImagePath;
             }
-            else
+
+            var predictionIds = await Orchestrator.GenerateFashionSetAsync(request);
+
+            if (predictionIds.Any())
             {
-                var request = new TryOnRequestDto
-                {
-                    ClothingImagePath = uploadedClothingUrl!,
-                    ModelAssetId = selectedModelId!,
-                    Category = selectedCategory,
-                    Background = selectedBackground,
-                    Lighting = selectedLighting
-                };
-
-                var response = await Http.PostAsJsonAsync("/api/tryon/generate", request);
-
-                if (!response.IsSuccessStatusCode)
-                {
-                    try
-                    {
-                        var errorObj = await response.Content.ReadFromJsonAsync<Dictionary<string, object>>();
-                        if (errorObj != null && errorObj.ContainsKey("error"))
-                        {
-                            errorMessage = errorObj["error"]?.ToString() ?? "Görsel oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.";
-                        }
-                        else
-                        {
-                            var errorText = await response.Content.ReadAsStringAsync();
-                            errorMessage = $"Görsel oluşturulurken bir hata oluştu: {errorText}";
-                        }
-                    }
-                    catch
-                    {
-                        var errorText = await response.Content.ReadAsStringAsync();
-                        errorMessage = $"Görsel oluşturulurken bir hata oluştu: {errorText}";
-                    }
-                    return;
-                }
-
-                var tryOnResponse = await response.Content.ReadFromJsonAsync<TryOnResponseDto>();
-                if (tryOnResponse == null)
-                {
-                    errorMessage = "Beklenmeyen bir hata oluştu";
-                    return;
-                }
-
-                currentImageId = tryOnResponse.ImageId;
-                await PollForResult(tryOnResponse.ImageId);
+                 await PollForFashionSet(predictionIds);
+            }
+            else 
+            {
+                 errorMessage = "Could not start generation jobs.";
             }
         }
         catch (Exception ex)
         {
-            Logger.LogError(ex, "Görsel oluşturma hatası");
-            errorMessage = "Görsel oluşturulurken bir hata oluştu. Lütfen tekrar deneyin.";
+            Logger.LogError(ex, "Generation Error");
+            errorMessage = "An error occurred during generation.";
         }
         finally
         {
@@ -569,101 +481,177 @@
         }
     }
 
-    private async Task PollForAIGenerationResult(int imageId)
+    private async Task PollForFashionSet(List<string> predictionIds)
     {
+        var pendingIds = new HashSet<string>(predictionIds);
         var maxAttempts = 60;
-        var attempt = 0;
-
-        while (attempt < maxAttempts)
+        
+        Logger.LogInformation("Polling started for {Count} predictions: {Ids}", pendingIds.Count, string.Join(", ", pendingIds));
+        
+        for (int i = 0; i < maxAttempts; i++)
         {
-            await Task.Delay(2000);
-            attempt++;
+            if (pendingIds.Count == 0) break;
 
-            try
+            foreach (var id in pendingIds.ToList())
             {
-                var response = await Http.GetAsync($"/api/tryon/status/{imageId}");
-                if (!response.IsSuccessStatusCode) continue;
-
-                var status = await response.Content.ReadFromJsonAsync<TryOnStatusDto>();
-                if (status == null) continue;
-
-                if (status.Status == "Completed" && !string.IsNullOrEmpty(status.GeneratedImageUrl))
+                try
                 {
-                    resultImageUrl = status.GeneratedImageUrl;
-                    StateHasChanged();
-                    return;
+                    var status = await GenService.CheckStatusAsync(id);
+                    Logger.LogInformation("Poll attempt {Attempt} - Prediction {Id}: Status={Status}, OutputUrl={Output}", 
+                        i + 1, id, status.Status, status.OutputUrl ?? "null");
+                    
+                    if (status.Status == "succeeded" && !string.IsNullOrEmpty(status.OutputUrl))
+                    {
+                        generatedImages.Add(status.OutputUrl);
+                        pendingIds.Remove(id);
+                        await InvokeAsync(StateHasChanged);
+                        Logger.LogInformation("✅ Prediction {Id} succeeded, image added. Remaining: {Count}", id, pendingIds.Count);
+                    }
+                    else if (status.Status == "failed" || status.Status == "canceled")
+                    {
+                        Logger.LogWarning("❌ Prediction {Id} {Status}: {Error}", id, status.Status, status.Error ?? "no error");
+                        pendingIds.Remove(id);
+                    }
                 }
-                else if (status.Status == "Failed")
+                catch (Exception ex)
                 {
-                    errorMessage = status.ErrorMessage ?? "AI görsel oluşturma başarısız oldu";
-                    StateHasChanged();
-                    return;
+                    Logger.LogError(ex, "Error checking status for prediction {Id}", id);
+                    pendingIds.Remove(id);
                 }
-
-                StateHasChanged();
             }
-            catch (Exception ex)
-            {
-                Logger.LogWarning(ex, "Status kontrol hatası, tekrar deneniyor...");
-            }
+            
+            if (pendingIds.Count > 0) await Task.Delay(2000);
         }
-
-        errorMessage = "İşlem zaman aşımına uğradı. Lütfen tekrar deneyin.";
+        
+        Logger.LogInformation("Polling finished. Total images: {Count}", generatedImages.Count);
     }
 
-    private async Task PollForResult(int imageId)
+    // --- Export ---
+    private async Task ExportAssets()
     {
-        var maxAttempts = 60;
-        var attempt = 0;
+        if (!selectedImageIndices.Any()) return;
 
-        while (attempt < maxAttempts)
+        try
         {
-            await Task.Delay(2000);
-            attempt++;
-
-            try
+            var urls = selectedImageIndices.OrderBy(i => i).Select(i => generatedImages[i]).ToList();
+            
+            if (urls.Count == 1)
             {
-                var response = await Http.GetAsync($"/api/tryon/status/{imageId}");
-                if (!response.IsSuccessStatusCode) continue;
-
-                var status = await response.Content.ReadFromJsonAsync<TryOnStatusDto>();
-                if (status == null) continue;
-
-                if (status.Status == "Completed" && !string.IsNullOrEmpty(status.GeneratedImageUrl))
-                {
-                    resultImageUrl = status.GeneratedImageUrl;
-                    StateHasChanged();
-                    return;
-                }
-                else if (status.Status == "Failed")
-                {
-                    errorMessage = status.ErrorMessage ?? "AI görsel oluşturma başarısız oldu";
-                    StateHasChanged();
-                    return;
-                }
-
-                StateHasChanged();
+                // Single image: direct download
+                await JS.InvokeVoidAsync("downloadImage", urls[0], $"giydir_export.{selectedExportFormat.ToLower()}");
             }
-            catch (Exception ex)
+            else
             {
-                Logger.LogWarning(ex, "Status kontrol hatası, tekrar deneniyor...");
+                // Multiple: download each
+                for (int i = 0; i < urls.Count; i++)
+                {
+                    await JS.InvokeVoidAsync("downloadImage", urls[i], $"giydir_export_{i + 1}.{selectedExportFormat.ToLower()}");
+                    await Task.Delay(500); // Small delay between downloads
+                }
             }
         }
-
-        errorMessage = "İşlem zaman aşımına uğradı. Lütfen tekrar deneyin.";
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Export Error");
+            errorMessage = "Export failed.";
+        }
     }
 
+    // --- Save ---
+    private async Task SaveSelection()
+    {
+        if (!selectedImageIndices.Any()) return;
+
+        try
+        {
+            // Get user ID from JWT token stored in localStorage
+            var token = await JS.InvokeAsync<string>("tokenStorage.getToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                errorMessage = "Kaydetmek için giriş yapmalısınız.";
+                return;
+            }
+            var principal = JwtService.ValidateToken(token);
+            var userIdStr = principal?.FindFirst("sub")?.Value;
+            if (!int.TryParse(userIdStr, out var userId))
+            {
+                errorMessage = "Oturum süresi dolmuş, lütfen tekrar giriş yapın.";
+                return;
+            }
+
+            // Prompt for project name
+            var projectName = await JS.InvokeAsync<string>("prompt", "Proje adı girin:", $"Proje {DateTime.Now:dd.MM.yyyy HH:mm}");
+            if (string.IsNullOrWhiteSpace(projectName))
+            {
+                return; // User cancelled
+            }
+
+            var urls = selectedImageIndices.OrderBy(i => i).Select(i => generatedImages[i]).ToList();
+
+            // Always create a new unique project
+            var newProject = new Project { UserId = userId, Name = projectName.Trim() };
+            var created = await ProjectRepository.CreateAsync(newProject);
+            int projectId = created.Id;
+
+            int savedCount = 0;
+            foreach (var imageUrl in urls)
+            {
+                try
+                {
+                    string localPath;
+                    try
+                    {
+                        localPath = await ImageDownloader.DownloadAndSaveAsync(imageUrl, $"saved_{Guid.NewGuid():N}.jpg");
+                    }
+                    catch
+                    {
+                        localPath = imageUrl;
+                    }
+
+                    var generatedImage = new GeneratedImage
+                    {
+                        ProjectId = projectId,
+                        OriginalClothingPath = uploadedClothingUrl ?? "editor",
+                        ModelAssetId = selectedModelId ?? "editor-saved",
+                        GeneratedImagePath = localPath,
+                        Status = "Completed"
+                    };
+                    await ImageRepository.CreateAsync(generatedImage);
+                    savedCount++;
+                }
+                catch (Exception ex)
+                {
+                    Logger.LogWarning(ex, "Görsel kaydedilemedi: {Url}", imageUrl);
+                }
+            }
+
+            if (savedCount > 0)
+            {
+                errorMessage = null;
+                await JS.InvokeVoidAsync("alert", $"'{projectName}' projesine {savedCount} görsel kaydedildi!");
+            }
+            else
+            {
+                errorMessage = "Görseller kaydedilemedi.";
+            }
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "Kaydetme hatası");
+            errorMessage = "Kaydetme sırasında bir hata oluştu.";
+        }
+    }
+
+    // --- Clear ---
     private void ClearClothing()
     {
         uploadedClothingUrl = null;
-        uploadError = null;
-        selectedTemplateId = null;
     }
 
     private void ClearResult()
     {
-        resultImageUrl = null;
+        generatedImages.Clear();
+        selectedImageIndices.Clear();
         errorMessage = null;
-        currentImageId = null;
     }
 }

@@ -13,6 +13,7 @@ public class AppDbContext : DbContext
     public DbSet<ModelAsset> ModelAssets => Set<ModelAsset>();
     public DbSet<Template> Templates => Set<Template>();
     public DbSet<SavedPrompt> SavedPrompts => Set<SavedPrompt>();
+    public DbSet<Pose> Poses => Set<Pose>();
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -83,6 +84,15 @@ public class AppDbContext : DbContext
             entity.Property(e => e.Pattern).HasMaxLength(50);
             entity.Property(e => e.Material).HasMaxLength(50);
             entity.Property(e => e.PromptTemplate).HasMaxLength(1000);
+        });
+
+        // Pose
+        modelBuilder.Entity<Pose>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+            entity.Property(e => e.ImagePath).HasMaxLength(500);
+            entity.Property(e => e.PromptKeyword).HasMaxLength(200);
         });
 
         // Seed data - Users

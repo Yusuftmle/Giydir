@@ -22,6 +22,14 @@ public class GeneratedImageRepository : IGeneratedImageRepository
             .FirstOrDefaultAsync(g => g.Id == id);
     }
 
+    public async Task<List<GeneratedImage>> GetByProjectIdAsync(int projectId)
+    {
+        return await _context.GeneratedImages
+            .Where(g => g.ProjectId == projectId)
+            .OrderByDescending(g => g.CreatedAt)
+            .ToListAsync();
+    }
+
     public async Task<GeneratedImage> CreateAsync(GeneratedImage image)
     {
         _context.GeneratedImages.Add(image);

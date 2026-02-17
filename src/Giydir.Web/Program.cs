@@ -45,6 +45,7 @@ builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
 builder.Services.AddScoped<IGeneratedImageRepository, GeneratedImageRepository>();
 builder.Services.AddScoped<ITemplateRepository, TemplateRepository>();
 builder.Services.AddScoped<ISavedPromptRepository, SavedPromptRepository>();
+builder.Services.AddScoped<IPoseRepository, PoseRepository>();
 
 // Services
 builder.Services.AddScoped<IJwtTokenService, JwtTokenService>();
@@ -57,15 +58,20 @@ builder.Services.AddScoped<IPromptService, PromptService>();
 builder.Services.ConfigureAuth(builder.Configuration);
 
 // External Services
-builder.Services.AddHttpClient<IVirtualTryOnService, ReplicateVirtualTryOnService>();
+// builder.Services.AddHttpClient<IVirtualTryOnService, ReplicateVirtualTryOnService>(); // Removed legacy VTON
 builder.Services.AddHttpClient<IAIImageGenerationService, NanoBananaService>();
 builder.Services.AddHttpClient<IImageDownloadService, ImageDownloadService>();
+
+// NanoBanana Unified Engine Services
+builder.Services.AddScoped<IFashionPromptBuilder, FashionPromptBuilder>();
+builder.Services.AddScoped<RenderOrchestrator>();
 
 // Background Services
 builder.Services.AddHostedService<TryOnStatusPollingService>();
 
 // HttpClient for Blazor pages (internal API calls) - with JWT token handler
 builder.Services.AddScoped<AuthTokenHandler>();
+
 builder.Services.AddScoped(sp =>
 {
     var navigationManager = sp.GetRequiredService<NavigationManager>();
@@ -124,6 +130,30 @@ using (var scope = app.Services.CreateScope())
                 // Varsayılan User rolünü ata
                 cmd.CommandText = "UPDATE Users SET Role = 'User' WHERE Role IS NULL";
                 await cmd.ExecuteNonQueryAsync();
+
+                // ModelAssets tablosuna TriggerWord sütunu ekle
+                try
+                {
+                    cmd.CommandText = "ALTER TABLE ModelAssets ADD COLUMN TriggerWord TEXT DEFAULT 'woman'";
+                    await cmd.ExecuteNonQueryAsync();
+                    Log.Information("Yeni sütun eklendi: ModelAssets.TriggerWord");
+                }
+                catch (Exception)
+                {
+                    // Sütun zaten varsa hata verir, yut
+                }
+
+                // ModelAssets tablosuna TriggerWord sütunu ekle
+                try
+                {
+                    cmd.CommandText = "ALTER TABLE ModelAssets ADD COLUMN TriggerWord TEXT DEFAULT 'woman'";
+                    await cmd.ExecuteNonQueryAsync();
+                    Log.Information("Yeni sütun eklendi: ModelAssets.TriggerWord");
+                }
+                catch (Exception)
+                {
+                    // Sütun zaten varsa hata verir, yut
+                }
 
                 // Admin kullanıcısını kontrol et/ekle
                 cmd.CommandText = "SELECT COUNT(*) FROM Users WHERE Email = 'admin@giydir.ai'";
@@ -322,6 +352,55 @@ using (var scope = app.Services.CreateScope())
         catch (Exception ex)
         {
             Log.Warning(ex, "Templates tablosu oluşturma/seed hatası");
+        }
+
+        // Poses tablosunu oluştur (eğer yoksa)
+        try
+        {
+            var conn = db.Database.GetDbConnection();
+            await conn.OpenAsync();
+            using var cmd = conn.CreateCommand();
+            
+            cmd.CommandText = "SELECT name FROM sqlite_master WHERE type='table' AND name='Poses'";
+            var poseTableExists = await cmd.ExecuteScalarAsync();
+            
+            if (poseTableExists == null)
+            {
+                cmd.CommandText = @"
+                    CREATE TABLE Poses (
+                        Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        Name TEXT NOT NULL,
+                        ImagePath TEXT,
+                        PromptKeyword TEXT,
+                        SortOrder INTEGER NOT NULL DEFAULT 0,
+                        IsActive INTEGER NOT NULL DEFAULT 1,
+                        CreatedAt TEXT NOT NULL
+                    );";
+                await cmd.ExecuteNonQueryAsync();
+                Log.Information("Poses tablosu oluşturuldu.");
+
+                // Varsayılan pozları ekle
+                var defaultPoses = new[]
+                {
+                    ("Ayakta", "/uploads/poses/standing.jpg", "standing pose, straight posture", 1),
+                    ("Rahat", "/uploads/poses/casual.jpg", "casual relaxed pose", 2),
+                    ("Editorial", "/uploads/poses/editorial.jpg", "editorial fashion pose, magazine style", 3),
+                    ("Dinamik", "/uploads/poses/dynamic.jpg", "dynamic movement pose, walking", 4)
+                };
+
+                foreach (var (name, imgPath, keyword, order) in defaultPoses)
+                {
+                    cmd.CommandText = $@"
+                        INSERT INTO Poses (Name, ImagePath, PromptKeyword, SortOrder, IsActive, CreatedAt) 
+                        VALUES ('{name}', '{imgPath}', '{keyword}', {order}, 1, '{DateTime.UtcNow:yyyy-MM-dd HH:mm:ss}')";
+                    await cmd.ExecuteNonQueryAsync();
+                }
+                Log.Information("Varsayılan pozlar eklendi.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Log.Warning(ex, "Poses tablosu oluşturma hatası");
         }
 }
 

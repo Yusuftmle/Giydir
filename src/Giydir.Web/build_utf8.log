@@ -1,0 +1,12 @@
+﻿  Geri y├╝klenecek projeler belirleniyor...
+  Geri y├╝kleme i├ğin t├╝m projeler g├╝ncel.
+  Giydir.Core -> C:\Users\hucks\OneDrive\Masa├╝st├╝\Giydir\Giydir\src\Giydir.Core\bin\Debug\net9.0\Giydir.Core.dll
+C:\Users\hucks\OneDrive\Masa├╝st├╝\Giydir\Giydir\src\Giydir.Infrastructure\Services\FashionPromptBuilder.cs(18,32): error CS1061: 'ModelAsset' bir 'TriggerWord' tan─▒m─▒ i├ğermiyor ve 'ModelAsset' t├╝r├╝nde bir ilk ba─ş─▒ms─▒z de─şi┼şken kabul eden hi├ğbir eri┼şilebilir 'TriggerWord' geni┼şletme y├Ântemi bulunamad─▒ (bir kullanma y├Ânergeniz veya derleme ba┼şvurunuz eksik olabilir mi?) [C:\Users\hucks\OneDrive\Masa├╝st├╝\Giydir\Giydir\src\Giydir.Infrastructure\Giydir.Infrastructure.csproj]
+
+Olu┼şturma BA┼ŞARISIZ OLDU.
+
+C:\Users\hucks\OneDrive\Masa├╝st├╝\Giydir\Giydir\src\Giydir.Infrastructure\Services\FashionPromptBuilder.cs(18,32): error CS1061: 'ModelAsset' bir 'TriggerWord' tan─▒m─▒ i├ğermiyor ve 'ModelAsset' t├╝r├╝nde bir ilk ba─ş─▒ms─▒z de─şi┼şken kabul eden hi├ğbir eri┼şilebilir 'TriggerWord' geni┼şletme y├Ântemi bulunamad─▒ (bir kullanma y├Ânergeniz veya derleme ba┼şvurunuz eksik olabilir mi?) [C:\Users\hucks\OneDrive\Masa├╝st├╝\Giydir\Giydir\src\Giydir.Infrastructure\Giydir.Infrastructure.csproj]
+    0 Uyar─▒
+    1 Hata
+
+Ge├ğen S├╝re 00:00:02.37

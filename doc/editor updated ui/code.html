@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Editorial AI Studio Workspace</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#13c8ec",
+                        "background-light": "#f6f8f8",
+                        "background-dark": "#101f22",
+                        "neutral-800": "#1a2e32",
+                        "neutral-700": "#234248",
+                        "neutral-600": "#325a62",
+                        "neutral-400": "#92c0c9",
+                    },
+                    fontFamily: {
+                        "display": ["Inter", "sans-serif"]
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            -webkit-font-smoothing: antialiased;
+        }
+        .editorial-grid-overlap > div:nth-child(1) { z-index: 10; transform: translate(5%, 5%); }
+        .editorial-grid-overlap > div:nth-child(2) { z-index: 20; transform: translate(-5%, 8%); }
+        .editorial-grid-overlap > div:nth-child(3) { z-index: 15; transform: translate(8%, -5%); }
+        .editorial-grid-overlap > div:nth-child(4) { z-index: 25; transform: translate(-2%, -2%); }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #234248; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-background-light dark:bg-background-dark text-white font-display overflow-hidden">
+<div class="relative flex h-screen w-full flex-col overflow-hidden">
+<!-- Top Navigation Bar -->
+<header class="flex items-center justify-between border-b border-solid border-neutral-700 px-8 py-3 bg-background-dark/80 backdrop-blur-md z-50">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-3 text-white">
+<div class="size-6 text-primary">
+<svg fill="none" viewbox="0 0 48 48" xmlns="http://www.w3.org/2000/svg">
+<path clip-rule="evenodd" d="M47.2426 24L24 47.2426L0.757355 24L24 0.757355L47.2426 24ZM12.2426 21H35.7574L24 9.24264L12.2426 21Z" fill="currentColor" fill-rule="evenodd"></path>
+</svg>
+</div>
+<div class="flex flex-col">
+<h2 class="text-white text-sm font-bold leading-tight tracking-widest uppercase">Editorial AI</h2>
+<p class="text-[10px] text-neutral-400 tracking-[0.2em] uppercase">Premium Studio v2.0</p>
+</div>
+</div>
+<div class="h-8 w-px bg-neutral-700 mx-2"></div>
+<nav class="flex items-center gap-6">
+<div class="flex items-center gap-2 text-neutral-400 text-xs font-medium tracking-wide">
+<span>Projects</span>
+<span class="material-symbols-outlined text-sm">chevron_right</span>
+<span class="text-white">Winter Campaign '24</span>
+</div>
+</nav>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2 bg-primary/10 px-3 py-1.5 rounded-full border border-primary/20">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+</span>
+<span class="text-primary text-[10px] font-bold tracking-widest uppercase">Rendering High Fidelity</span>
+</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined text-neutral-400 hover:text-white transition-colors">notifications</button>
+<div class="bg-center bg-no-repeat aspect-square bg-cover rounded-full size-8 border border-neutral-700" data-alt="User profile professional portrait" style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuB539vfordDuoi2-yEOuBuh6PWriu-lew-RfMc9S5PNQa5LjqXraNq19KT1vERxNOdvGM1LkR0SBIuI8AMscfMPmdVAvPCEZGfg-KpDWdAO4CNY23mqrHsFptED9zwas5g4wJjpp3w7ilMdyXlPHKskWbXUzsusecX-eggWalS4kBORaydfuqAnDwpbX2EIthfoxfDIDUaE1JSTx-vR6ormxygdAw0iJ6czKKQq2_Y3X51mZW8Uu0KU92vqngFo4z56aipDcWLBK_hJ");'></div>
+</div>
+</div>
+</header>
+<main class="flex flex-1 overflow-hidden">
+<!-- Left Panel: Scene Vibes & Selectors -->
+<aside class="w-[320px] border-r border-neutral-700 bg-background-dark flex flex-col custom-scrollbar overflow-y-auto">
+<div class="p-6 space-y-8">
+<!-- Scene Vibes Section -->
+<section>
+<h3 class="text-xs font-bold text-neutral-400 uppercase tracking-[0.2em] mb-4">Scene Vibes</h3>
+<div class="grid grid-cols-1 gap-4">
+<!-- Studio Card -->
+<div class="group relative aspect-[16/9] rounded-lg overflow-hidden cursor-pointer border-2 border-primary">
+<img class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-all duration-500" data-alt="Minimalist high fashion studio background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBSt4vjQXGG2BBUnX6qf6CMqhXE1KLW58nE5q9WskZvwUNow4gfVP1ILHh8WWURaV_B0okKdHKSrkV96r6psFIk-O9d1WzD02AHznEZ2ifZdDS6HpxDVJchzeqpS_LgyoWmt5RTQihEI_kkVLbCFCAbDz_cbnVEKbc01xKPQTTtfAadBLRLbagbfsbydwcxKP0kk_g36WUPe8E1YudAgHubXeKltcUNZcfMe79ktMP-SSTNxCwZIwQhY2YNxG9oqgTAQ1mBmhojPIi4"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-3">
+<div class="flex justify-between items-center w-full">
+<span class="text-xs font-medium tracking-wider">Studio Minimal</span>
+<span class="material-symbols-outlined text-primary text-sm">check_circle</span>
+</div>
+</div>
+</div>
+<!-- Street Card -->
+<div class="group relative aspect-[16/9] rounded-lg overflow-hidden cursor-pointer border border-transparent hover:border-neutral-600 transition-all">
+<img class="w-full h-full object-cover grayscale transition-all duration-500" data-alt="Urban street cinematic fashion background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBc8H-WH3cEtUIM_5OREtl18uGl5X4zwKKjuC449cY2TJlm2uvIkEbJD1Z-J4g4EXr2UuGwgr4cEmuXshII_hB7Qtt3q6Qo4ZJk-O2mSPYbR46XfE9PdFP77svSTyihTyMgibcdpnOTK2KVeqRW-8P1sZ9UeVJrwclFZp-PGeyK5_Js9Hxi8hPm2ZoFn_DxjiKgZmzOj06638tU-_jiTLLmZxW_1SZff-0B_fMh1wN9Al9lhCQd8k6W1giJYcyB1CbY-IpqngGTUckL"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-3">
+<span class="text-xs font-medium tracking-wider text-neutral-300">Urban Cinematic</span>
+</div>
+</div>
+<!-- Luxury Card -->
+<div class="group relative aspect-[16/9] rounded-lg overflow-hidden cursor-pointer border border-transparent hover:border-neutral-600 transition-all">
+<img class="w-full h-full object-cover grayscale transition-all duration-500" data-alt="Luxury architectural interior background" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDOIAPaDYSW-p2hnZz6mX5qR3ppz3jVd5tSE717-GvjaWHaYo_u--UpB1U2Cr9kxr3QJOhj0bQ7YBSWtZKbZDLGaE_3TF0qb7kFMuU3G-irCSx2gzC59Jv9_IfJTidl9Oq-H5BEc2oZ5ZaY4BGL4FwMAFI4ZtR3JyyOckZgCxeLQO08nIz26Gf03ZBwAYU8Dpp2b6fBozmywvKI15lk5ATjZ22BmZacq1v2IC0xSkGS7vKbyJXArudTqRV3qP4EWfT8G8VlR75RuibV"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-3">
+<span class="text-xs font-medium tracking-wider text-neutral-300">Architectural Luxury</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Dropdowns Section -->
+<section class="space-y-6">
+<div>
+<label class="text-xs font-bold text-neutral-400 uppercase tracking-[0.2em] mb-3 block">Fabric Texture</label>
+<div class="relative">
+<button class="w-full flex items-center justify-between bg-neutral-800 border border-neutral-700 px-4 py-3 rounded-lg text-sm group hover:border-neutral-600 transition-all">
+<span class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-lg">texture</span>
+<span>Raw Silk Crepe</span>
+</span>
+<span class="material-symbols-outlined text-neutral-400 group-hover:text-white">expand_more</span>
+</button>
+</div>
+</div>
+<div>
+<label class="text-xs font-bold text-neutral-400 uppercase tracking-[0.2em] mb-3 block">Category</label>
+<div class="relative">
+<button class="w-full flex items-center justify-between bg-neutral-800 border border-neutral-700 px-4 py-3 rounded-lg text-sm group hover:border-neutral-600 transition-all">
+<span class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-lg">apparel</span>
+<span>Structured Outerwear</span>
+</span>
+<span class="material-symbols-outlined text-neutral-400 group-hover:text-white">expand_more</span>
+</button>
+</div>
+</div>
+<div>
+<label class="text-xs font-bold text-neutral-400 uppercase tracking-[0.2em] mb-3 block">Lighting</label>
+<div class="relative">
+<button class="w-full flex items-center justify-between bg-neutral-800 border border-neutral-700 px-4 py-3 rounded-lg text-sm group hover:border-neutral-600 transition-all">
+<span class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary text-lg">wb_sunny</span>
+<span>Golden Hour Reflected</span>
+</span>
+<span class="material-symbols-outlined text-neutral-400 group-hover:text-white">expand_more</span>
+</button>
+</div>
+</div>
+</section>
+</div>
+<div class="mt-auto p-6 border-t border-neutral-700">
+<button class="w-full bg-primary text-background-dark font-bold text-sm tracking-widest uppercase py-4 rounded-lg flex items-center justify-center gap-2 hover:brightness-110 transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined">auto_fix_high</span>
+                        Generate Collection
+                    </button>
+</div>
+</aside>
+<!-- Central Canvas: Editorial Grid -->
+<section class="flex-1 bg-[#0a1416] relative flex items-center justify-center p-12 overflow-hidden">
+<div class="absolute inset-0 opacity-20 pointer-events-none" style="background-image: radial-gradient(circle at center, #13c8ec 0%, transparent 70%);"></div>
+<div class="grid grid-cols-2 gap-4 max-w-5xl w-full editorial-grid-overlap">
+<!-- Image 1 -->
+<div class="aspect-[3/4] bg-neutral-800 rounded-lg overflow-hidden shadow-2xl border border-white/5 hover:scale-105 hover:z-50 transition-all duration-500 cursor-zoom-in">
+<img class="w-full h-full object-cover" data-alt="High fashion editorial model in silk coat" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAF_TLpEi6B2DA5uohz0d89EuHTxUgtLjhW1H27d2uRT7sPXzGqLua-YCwkalvccS4wVe3rIdDcBt26TNwQ-J1mthPX8H1AUH2Rh8R9B_9wM0KYDUgz9jPHNxP74nKOUg3dy9tjycw6kInD79awSkN4QCRJdVN9LXz7nzi3kuNCb1GUHzHNb2S4dhmLIi-D4MyVCruPBPeU1xAkSzjJVTLGDANrmX3Cz0T1xol8pkSp9S2GGjSokGy8C5cYHXcq88yGWzDpLlOnnMZK"/>
+<div class="absolute top-4 left-4 bg-black/40 backdrop-blur-md px-2 py-1 rounded text-[10px] tracking-tighter uppercase font-bold text-primary border border-primary/20">Asset_01</div>
+</div>
+<!-- Image 2 -->
+<div class="aspect-[3/4] bg-neutral-800 rounded-lg overflow-hidden shadow-2xl border border-white/5 hover:scale-105 hover:z-50 transition-all duration-500 cursor-zoom-in">
+<img class="w-full h-full object-cover" data-alt="Fashion model posing in luxury studio setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDHBUQvglR9u3_2FVXISxC16jE1jrcxCz-Q-yrtS3kpICSyEptrS3z3JGUKrZq7MXI5uYKJgQ39moMkVyZmkL_XcF0Ig0zHVmy_HgM4m2DY1vGIgb2Okrt5UL9gnpU89-bOKXFlQXLnFzeswTtGt_-z56OU3SetkThy0OXhpVVrmF3b6OChUwD-Lnvl60HeWSgh9ZWiTZWS3SUOh8_JXTv89Qh_2JPEtyA_0sJzfYKtgNWb3960et-PpWcmt8RhZAJwWIZ7z1WhJiIn"/>
+<div class="absolute top-4 left-4 bg-black/40 backdrop-blur-md px-2 py-1 rounded text-[10px] tracking-tighter uppercase font-bold text-primary border border-primary/20">Asset_02</div>
+</div>
+<!-- Image 3 -->
+<div class="aspect-[3/4] bg-neutral-800 rounded-lg overflow-hidden shadow-2xl border border-white/5 hover:scale-105 hover:z-50 transition-all duration-500 cursor-zoom-in">
+<img class="w-full h-full object-cover" data-alt="Close up of high quality fabric texture on model" src="https://lh3.googleusercontent.com/aida-public/AB6AXuALebq9QC4YMq-qFuGSrHgoTF8bpOpL29qJ_DhfGqMOFQpjh8a5yLn7tEnOy07OVDMtNsbxwNYA4F3mq4Vnv95CVY_IjC9vQodz8wZsCAz3yjX_nOD67_ATo8jt3Oxira0WDg0X3_2sWzQcw78CvQLjXb2OlwTdjZfe-nz2Ed5G9aUMzvVXwse1ann4x_dVExlwJTkhbiXABIBLeDFD8A1JZKMf4jgHcB49M2jzQZFXmnCbv8Aee_Fy8zBmtXPXkaofti-WsgwkXYcp"/>
+<div class="absolute top-4 left-4 bg-black/40 backdrop-blur-md px-2 py-1 rounded text-[10px] tracking-tighter uppercase font-bold text-primary border border-primary/20">Asset_03</div>
+</div>
+<!-- Image 4 -->
+<div class="aspect-[3/4] bg-neutral-800 rounded-lg overflow-hidden shadow-2xl border border-white/5 hover:scale-105 hover:z-50 transition-all duration-500 cursor-zoom-in">
+<img class="w-full h-full object-cover" data-alt="Artistic full body fashion photography in studio" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDQc1uF3O5A7i30sivonc1ybGdadaYprudkRUCkAhy6y5F3BUati5ASsgoG91LIcy2-317Q8XSaE_7cYfSIJp0g1iNmjMNsR98I6o48g43NIL8A1rMe596BbNvkoHsALrjlH2e5VwaH2nyOxxW5xt02cWJ4Y2aSLyEP4nio-dfNmho8vaF7p8DBPjJZVmVF7awAWfPHABhW3AwrWqxazRKvH6rUpAFGDcB0qCNxsFZouIggc5HokOa7Ic29-LiUGNKbdvQ26R1gaCFo"/>
+<div class="absolute top-4 left-4 bg-black/40 backdrop-blur-md px-2 py-1 rounded text-[10px] tracking-tighter uppercase font-bold text-primary border border-primary/20">Asset_04</div>
+</div>
+</div>
+<!-- Floating Toolbar -->
+<div class="absolute bottom-8 left-1/2 -translate-x-1/2 flex items-center gap-2 bg-neutral-800/80 backdrop-blur-xl border border-neutral-700 p-2 rounded-full shadow-2xl">
+<button class="p-3 rounded-full hover:bg-neutral-700 text-neutral-400 hover:text-white transition-all material-symbols-outlined">zoom_in</button>
+<div class="h-6 w-px bg-neutral-700"></div>
+<button class="p-3 rounded-full hover:bg-neutral-700 text-neutral-400 hover:text-white transition-all material-symbols-outlined">refresh</button>
+<button class="p-3 rounded-full hover:bg-neutral-700 text-neutral-400 hover:text-white transition-all material-symbols-outlined">edit_note</button>
+<div class="h-6 w-px bg-neutral-700"></div>
+<button class="p-3 rounded-full hover:bg-neutral-700 text-neutral-400 hover:text-white transition-all material-symbols-outlined">share</button>
+</div>
+</section>
+<!-- Right Panel: Export Options -->
+<aside class="w-[280px] border-l border-neutral-700 bg-background-dark flex flex-col p-6 space-y-8">
+<div>
+<h3 class="text-xs font-bold text-neutral-400 uppercase tracking-[0.2em] mb-6">Format &amp; Export</h3>
+<div class="space-y-4">
+<label class="text-[10px] font-bold text-neutral-500 uppercase tracking-[0.15em] block">Lookbook Aspect Ratios</label>
+<div class="grid grid-cols-2 gap-2">
+<button class="flex flex-col items-center gap-2 p-4 rounded-lg border-2 border-primary bg-primary/5 transition-all">
+<div class="w-8 h-4.5 border border-primary rounded-sm opacity-60"></div>
+<span class="text-[10px] font-bold uppercase tracking-wider">16:9 Look</span>
+</button>
+<button class="flex flex-col items-center gap-2 p-4 rounded-lg border border-neutral-700 bg-neutral-800/50 hover:border-neutral-600 transition-all">
+<div class="w-6 h-7.5 border border-neutral-400 rounded-sm opacity-60"></div>
+<span class="text-[10px] font-bold uppercase tracking-wider text-neutral-400">4:5 Social</span>
+</button>
+<button class="flex flex-col items-center gap-2 p-4 rounded-lg border border-neutral-700 bg-neutral-800/50 hover:border-neutral-600 transition-all">
+<div class="w-6 h-6 border border-neutral-400 rounded-sm opacity-60"></div>
+<span class="text-[10px] font-bold uppercase tracking-wider text-neutral-400">1:1 Square</span>
+</button>
+<button class="flex flex-col items-center gap-2 p-4 rounded-lg border border-neutral-700 bg-neutral-800/50 hover:border-neutral-600 transition-all">
+<div class="w-4.5 h-8 border border-neutral-400 rounded-sm opacity-60"></div>
+<span class="text-[10px] font-bold uppercase tracking-wider text-neutral-400">9:16 Story</span>
+</button>
+</div>
+</div>
+</div>
+<div class="space-y-4">
+<label class="text-[10px] font-bold text-neutral-500 uppercase tracking-[0.15em] block">Asset Quality</label>
+<div class="space-y-3">
+<div class="flex items-center justify-between p-3 rounded-lg bg-neutral-800/50 border border-neutral-700">
+<span class="text-xs font-medium">Ultra High Res</span>
+<div class="w-8 h-4 bg-primary/20 rounded-full relative">
+<div class="absolute right-1 top-1 w-2 h-2 bg-primary rounded-full"></div>
+</div>
+</div>
+<div class="flex items-center justify-between p-3 rounded-lg bg-neutral-800/50 border border-neutral-700">
+<span class="text-xs font-medium">Lossless TIFF</span>
+<div class="w-8 h-4 bg-neutral-600 rounded-full relative">
+<div class="absolute left-1 top-1 w-2 h-2 bg-white rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="mt-auto space-y-3">
+<button class="w-full flex items-center justify-between px-4 py-3 rounded-lg border border-neutral-700 hover:bg-neutral-800 transition-all">
+<span class="text-xs font-bold tracking-widest uppercase">Save Selection</span>
+<span class="material-symbols-outlined text-sm">bookmark</span>
+</button>
+<button class="w-full flex items-center justify-between px-4 py-3 rounded-lg bg-neutral-800 border border-neutral-700 hover:border-neutral-600 transition-all">
+<span class="text-xs font-bold tracking-widest uppercase">Export Assets</span>
+<span class="material-symbols-outlined text-sm text-primary">download</span>
+</button>
+</div>
+</aside>
+</main>
+<!-- Bottom Bar: Status -->
+<footer class="h-8 border-t border-neutral-700 bg-background-dark flex items-center justify-between px-6 text-[10px] text-neutral-500 uppercase tracking-widest">
+<div class="flex items-center gap-4">
+<span class="flex items-center gap-1.5"><span class="w-1.5 h-1.5 rounded-full bg-green-500"></span> Engine Ready</span>
+<span class="h-3 w-px bg-neutral-700"></span>
+<span>Seed: 481029384</span>
+</div>
+<div class="flex items-center gap-4">
+<span>Rendering Latency: 420ms</span>
+<span class="h-3 w-px bg-neutral-700"></span>
+<span>Boutique Tier Plan</span>
+</div>
+</footer>
+</div>
+</body></html>

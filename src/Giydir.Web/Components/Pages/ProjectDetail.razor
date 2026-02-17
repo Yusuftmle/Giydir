@@ -1,0 +1,194 @@
+@page "/projects/{ProjectId:int}"
+@using Giydir.Core.Entities
+@using Giydir.Core.Interfaces
+@inject IProjectRepository ProjectRepository
+@inject IGeneratedImageRepository ImageRepository
+@inject IJwtTokenService JwtService
+@inject NavigationManager Navigation
+@inject IJSRuntime JS
+@rendermode InteractiveServer
+
+<div class="min-h-screen bg-background-dark pt-8 pb-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+        @if (project == null)
+        {
+            <div class="flex items-center justify-center py-32">
+                <div class="relative w-16 h-16">
+                    <div class="absolute inset-0 border-4 border-white/10 rounded-full"></div>
+                    <div class="absolute inset-0 border-4 border-primary rounded-full border-t-transparent animate-spin"></div>
+                </div>
+            </div>
+        }
+        else
+        {
+            <!-- Header -->
+            <div class="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10">
+                <div>
+                    <button @onclick="GoBack" class="text-[10px] font-bold tracking-[0.2em] uppercase text-slate-500 mb-3 flex items-center gap-1 hover:text-primary transition-colors">
+                        <span class="material-icons text-sm">arrow_back</span>
+                        Projelerim
+                    </button>
+                    <h1 class="text-3xl font-display font-semibold text-white mb-2 tracking-tight">@project.Name</h1>
+                    <p class="text-slate-400 text-sm">@images.Count görsel • @project.CreatedAt.ToString("dd MMMM yyyy")</p>
+                </div>
+                <div class="flex gap-3">
+                    <button @onclick="DownloadAll" class="flex items-center gap-2 px-5 py-3 bg-white/5 border border-white/10 text-white rounded-xl text-xs font-bold uppercase tracking-widest hover:bg-white/10 transition-all">
+                        <span class="material-icons text-sm">download</span>
+                        Tümünü İndir
+                    </button>
+                    <a href="/editor" class="flex items-center gap-2 px-5 py-3 bg-primary text-background-dark rounded-xl text-xs font-bold uppercase tracking-widest hover:brightness-110 transition-all no-underline">
+                        <span class="material-icons text-sm">add</span>
+                        Yeni Oluştur
+                    </a>
+                </div>
+            </div>
+
+            @if (!images.Any())
+            {
+                <div class="text-center py-32 bg-panel-dark rounded-2xl border border-white/5">
+                    <div class="w-20 h-20 mx-auto mb-6 bg-white/5 rounded-full flex items-center justify-center">
+                        <span class="material-icons text-4xl text-slate-600">photo_library</span>
+                    </div>
+                    <h3 class="text-xl font-semibold text-white mb-2">Henüz Görsel Yok</h3>
+                    <p class="text-slate-400 mb-6">Bu proje için henüz görsel oluşturulmamış.</p>
+                    <a href="/editor" class="inline-flex items-center gap-2 px-6 py-3 bg-primary text-background-dark rounded-xl font-bold text-sm tracking-widest no-underline hover:brightness-110 transition-all">
+                        <span class="material-icons">add_circle</span>
+                        EDITÖRE GİT
+                    </a>
+                </div>
+            }
+            else
+            {
+                <!-- Image Grid -->
+                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    @foreach (var image in images)
+                    {
+                        <div class="group relative rounded-xl overflow-hidden bg-panel-dark border border-white/5 hover:border-primary/30 transition-all">
+                            <div class="aspect-[3/4] bg-black/20">
+                                @if (!string.IsNullOrEmpty(image.GeneratedImagePath))
+                                {
+                                    <img src="@image.GeneratedImagePath" class="w-full h-full object-cover" alt="Generated" loading="lazy" />
+                                }
+                                else
+                                {
+                                    <div class="w-full h-full flex items-center justify-center">
+                                        <span class="material-icons text-4xl text-slate-700">image</span>
+                                    </div>
+                                }
+                            </div>
+
+                            <!-- Hover overlay -->
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-3">
+                                <div class="flex gap-2 justify-center">
+                                    @if (!string.IsNullOrEmpty(image.GeneratedImagePath))
+                                    {
+                                        <button @onclick="() => DownloadImage(image)" class="p-2.5 rounded-full bg-primary text-background-dark hover:brightness-110 transition-all shadow-lg">
+                                            <span class="material-icons text-sm">download</span>
+                                        </button>
+                                        <button @onclick="() => DeleteImage(image.Id)" class="p-2.5 rounded-full bg-white/10 backdrop-blur-md text-white hover:bg-red-500/30 transition-all shadow-lg">
+                                            <span class="material-icons text-sm">delete</span>
+                                        </button>
+                                    }
+                                </div>
+                            </div>
+
+                            <!-- Status indicator -->
+                            <div class="absolute top-2 right-2">
+                                @if (image.Status == "Completed")
+                                {
+                                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 block shadow-lg shadow-emerald-500/30"></span>
+                                }
+                                else if (image.Status == "Processing")
+                                {
+                                    <span class="w-2.5 h-2.5 rounded-full bg-amber-500 animate-pulse block"></span>
+                                }
+                                else
+                                {
+                                    <span class="w-2.5 h-2.5 rounded-full bg-red-500 block"></span>
+                                }
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter]
+    public int ProjectId { get; set; }
+
+    private Project? project;
+    private List<GeneratedImage> images = new();
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var token = await JS.InvokeAsync<string>("tokenStorage.getToken");
+            if (string.IsNullOrEmpty(token))
+            {
+                Navigation.NavigateTo("/login");
+                return;
+            }
+            var principal = JwtService.ValidateToken(token);
+            var userIdStr = principal?.FindFirst("sub")?.Value;
+            if (!int.TryParse(userIdStr, out var userId))
+            {
+                Navigation.NavigateTo("/login");
+                return;
+            }
+
+            project = await ProjectRepository.GetByIdAsync(ProjectId);
+            if (project == null || project.UserId != userId)
+            {
+                Navigation.NavigateTo("/projects");
+                return;
+            }
+
+            images = (await ImageRepository.GetByProjectIdAsync(ProjectId))
+                .Where(i => i.Status == "Completed" && !string.IsNullOrEmpty(i.GeneratedImagePath))
+                .ToList();
+            
+            StateHasChanged();
+        }
+    }
+
+    private void GoBack() => Navigation.NavigateTo("/projects");
+
+    private async Task DownloadImage(GeneratedImage image)
+    {
+        if (!string.IsNullOrEmpty(image.GeneratedImagePath))
+        {
+            await JS.InvokeVoidAsync("downloadImage", image.GeneratedImagePath, $"giydir_{image.Id}.jpg");
+        }
+    }
+
+    private async Task DownloadAll()
+    {
+        foreach (var image in images)
+        {
+            if (!string.IsNullOrEmpty(image.GeneratedImagePath))
+            {
+                await JS.InvokeVoidAsync("downloadImage", image.GeneratedImagePath, $"giydir_{image.Id}.jpg");
+                await Task.Delay(500);
+            }
+        }
+    }
+
+    private async Task DeleteImage(int imageId)
+    {
+        var confirmed = await JS.InvokeAsync<bool>("confirm", "Bu görseli silmek istediğinize emin misiniz?");
+        if (confirmed)
+        {
+            var image = images.FirstOrDefault(i => i.Id == imageId);
+            if (image != null)
+            {
+                images.Remove(image);
+                StateHasChanged();
+            }
+        }
+    }
+}
